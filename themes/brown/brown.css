@@ -1,0 +1,65 @@
+/*
+------------------------------
+	brown theme
+------------------------------
+*/
+.brownJqiwarning .brownJqi{ background-color: #cccccc; }
+.brownJqifade{
+	position: absolute;
+	background-color: #ffffff;
+}
+div.brownJqi{
+	position: absolute;
+	background-color: transparent;
+	padding: 10px;
+	width: 300px;
+	text-align: left;
+}
+div.brownJqi .brownJqiclose{
+    float: right;
+    margin: -20px 0 0 0;
+    cursor: pointer;
+    color: #777777;
+    font-size: 11px;
+}
+div.brownJqi .brownJqicontainer{
+	position: relative;
+	background-color: transparent;
+	border: solid 1px #5F5D5A;
+	color: #ffffff;
+	font-weight: bold;
+}
+div.brownJqi .brownJqimessage{
+	position: relative;
+	background-color: #F7F6F2;
+	border-top: solid 1px #C6B8AE;
+	border-bottom: solid 1px #C6B8AE;
+}
+div.brownJqi .brownJqimessage h3{
+	background: url(brown_theme_gradient.jpg) top left repeat-x #ffffff;
+	margin: 0;
+	padding: 7px 0 7px 15px;
+	color: #4D4A47;
+}
+div.brownJqi .brownJqimessage p{
+	padding: 10px;
+	color: #777777;
+}
+div.brownJqi .brownJqimessage img.helpImg{
+	position: absolute;
+	bottom: -25px;
+	left: 10px;
+}
+div.brownJqi .brownJqibuttons{
+	text-align: right;
+}
+div.brownJqi button{
+	background: url(brown_theme_gradient.jpg) top left repeat-x #ffffff;
+	border: solid #777777 1px;
+	font-size: 12px;
+	padding: 3px 10px 3px 10px;
+	margin: 5px 5px 5px 10px;
+}
+div.brownJqi button:hover{
+	border: solid #aaaaaa 1px;
+}
