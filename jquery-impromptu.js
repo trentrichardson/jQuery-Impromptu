@@ -111,10 +111,6 @@
 
 		});
 
-		var ie6scroll = function(){
-			$jqib.css({ top: $window.scrollTop() });
-		};
-
 		var fadeClicked = function(){
 			if(options.persistent){
 				var i = 0;
@@ -162,13 +158,14 @@
 		var positionPrompt = function(){
 			var bodyHeight = $body.outerHeight(true),
 				windowHeight = $window.height(),
-				height = bodyHeight > windowHeight ? bodyHeight : windowHeight;
+				height = bodyHeight > windowHeight ? bodyHeight : windowHeight,
+				top = parseInt($window.scrollTop(),10) + (options.top.toString().indexOf('%') >= 0? (windowHeight*(parseInt(options.top,10)/100)) : parseInt(options.top,10));
 			
 			$jqib.css({
-				position: (ie6) ? "absolute" : "fixed",
+				position: "absolute",
 				height: height,
 				width: "100%",
-				top: (ie6)? $window.scrollTop() : 0,
+				top: 0,
 				left: 0,
 				right: 0,
 				bottom: 0
@@ -184,7 +181,7 @@
 			});
 			$jqi.css({
 				position: "absolute",
-				top: options.top,
+				top: top,
 				left: "50%",
 				marginLeft: (($jqi.outerWidth()/2)*-1)
 			});
@@ -207,10 +204,6 @@
 
 		var removePrompt = function(callCallback, clicked, msg, formvals){
 			$jqi.remove();
-			//ie6, remove the scroll event
-			if(ie6) {
-				$body.unbind('scroll',ie6scroll);
-			}
 			$window.unbind('resize',positionPrompt);
 			$jqif.fadeOut(options.overlayspeed,function(){
 				$jqif.unbind('click',fadeClicked);
@@ -229,10 +222,6 @@
 		positionPrompt();
 		stylePrompt();
 		
-		//ie6, add a scroll event to fix position:fixed
-		if(ie6) {
-			$window.scroll(ie6scroll);
-		}
 		$jqif.click(fadeClicked);
 		$window.resize(positionPrompt);
 		$jqib.bind("keydown keypress",keyPressEventHandler);
@@ -264,6 +253,7 @@
 	 	callback: function(){
 
 
+
 	 	},
 		opacity: 0.6,
 	 	zIndex: 999,
@@ -272,7 +262,7 @@
    		show: 'promptDropIn',
 	   	focus: 0,
 	   	useiframe: false,
-	 	top: "15%",
+	 	top: '15%',
 	  	persistent: true,
 	  	timeout: 0,
 	  	state: {
@@ -359,17 +349,15 @@
 			
 			$.prompt($(this).clone(options.withDataAndEvents).html(),options);
 		},
-		
 		promptDropIn: function(speed, callback){ 
 			var $t = $(this); 
 			
 			if($t.css("display") == "none"){ 
-				var eltop = $t.css('top'),
-					elouterHeight = $t.outerHeight(true);
-				
-				$t.css({ top: -elouterHeight, display: 'block' }).animate({ top: eltop },speed,'swing',callback); 
+				var eltop = $t.css('top');
+				$t.css({ top: $(window).scrollTop(), display: 'block' }).animate({ top: eltop },speed,'swing',callback); 
 			}
 		}
+		
 	});
 	
 })(jQuery);
