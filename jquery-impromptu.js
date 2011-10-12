@@ -1,8 +1,8 @@
 /*
  * jQuery Impromptu
  * By: Trent Richardson [http://trentrichardson.com]
- * Version 3.1
- * Last Modified: 3/30/2010
+ * Version 3.2
+ * Last Modified: 10/12/2011
  * 
  * Copyright 2011 Trent Richardson
  * Dual licensed under the MIT and GPL licenses.
@@ -160,9 +160,13 @@
 		};
 		
 		var positionPrompt = function(){
+			var bodyHeight = $body.outerHeight(true),
+				windowHeight = $window.height(),
+				height = bodyHeight > windowHeight ? bodyHeight : windowHeight;
+			
 			$jqib.css({
 				position: (ie6) ? "absolute" : "fixed",
-				height: $window.height(),
+				height: height,
 				width: "100%",
 				top: (ie6)? $window.scrollTop() : 0,
 				left: 0,
@@ -171,7 +175,7 @@
 			});
 			$jqif.css({
 				position: "absolute",
-				height: $window.height(),
+				height: height,
 				width: "100%",
 				top: 0,
 				left: 0,
@@ -259,12 +263,13 @@
 		},
 	 	callback: function(){
 
+
 	 	},
 		opacity: 0.6,
 	 	zIndex: 999,
 	  	overlayspeed: 'slow',
 	   	promptspeed: 'fast',
-   		show: 'fadeIn',
+   		show: 'promptDropIn',
 	   	focus: 0,
 	   	useiframe: false,
 	 	top: "15%",
@@ -345,13 +350,26 @@
 		});
 	};
 	
-	$.fn.prompt = function(options){
-		if(options == undefined) 
-			options = {};
-		if(options.withDataAndEvents == undefined)
-			options.withDataAndEvents = false;
+	$.fn.extend({ 
+		prompt: function(options){
+			if(options == undefined) 
+				options = {};
+			if(options.withDataAndEvents == undefined)
+				options.withDataAndEvents = false;
 			
-		$.prompt($(this).clone(options.withDataAndEvents).html(),options);
-	}
+			$.prompt($(this).clone(options.withDataAndEvents).html(),options);
+		},
+		
+		promptDropIn: function(speed, callback){ 
+			var $t = $(this); 
+			
+			if($t.css("display") == "none"){ 
+				var eltop = $t.css('top'),
+					elouterHeight = $t.outerHeight(true);
+				
+				$t.css({ top: -elouterHeight, display: 'block' }).animate({ top: eltop },speed,'swing',callback); 
+			}
+		}
+	});
 	
 })(jQuery);
