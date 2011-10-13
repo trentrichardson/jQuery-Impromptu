@@ -113,15 +113,21 @@
 
 		var fadeClicked = function(){
 			if(options.persistent){
-				var i = 0;
-				$jqib.addClass(options.prefix +'warning');
-				var intervalid = setInterval(function(){
-					$jqib.toggleClass(options.prefix +'warning');
-					if(i++ > 1){
-						clearInterval(intervalid);
-						$jqib.removeClass(options.prefix +'warning');
-					}
-				}, 100);
+				var offset = (options.top.toString().indexOf('%') >= 0? ($window.height()*(parseInt(options.top,10)/100)) : parseInt(options.top,10)),
+					top = parseInt($jqi.css('top').replace('px',''),10) - offset;
+
+				//$window.scrollTop(top);
+				$('html,body').animate({ scrollTop: top }, 'fast', function(){
+					var i = 0;
+					$jqib.addClass(options.prefix +'warning');
+					var intervalid = setInterval(function(){
+						$jqib.toggleClass(options.prefix +'warning');
+						if(i++ > 1){
+							clearInterval(intervalid);
+							$jqib.removeClass(options.prefix +'warning');
+						}
+					}, 100);
+				});
 			}
 			else {
 				removePrompt();
