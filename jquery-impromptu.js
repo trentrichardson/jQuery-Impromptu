@@ -2,7 +2,7 @@
  * jQuery Impromptu
  * By: Trent Richardson [http://trentrichardson.com]
  * Version 3.2
- * Last Modified: 10/12/2011
+ * Last Modified: 10/31/2011
  * 
  * Copyright 2011 Trent Richardson
  * Dual licensed under the MIT and GPL licenses.
@@ -164,8 +164,10 @@
 		var positionPrompt = function(){
 			var bodyHeight = $body.outerHeight(true),
 				windowHeight = $window.height(),
+				documentHeight = $(document).height(),
 				height = bodyHeight > windowHeight ? bodyHeight : windowHeight,
 				top = parseInt($window.scrollTop(),10) + (options.top.toString().indexOf('%') >= 0? (windowHeight*(parseInt(options.top,10)/100)) : parseInt(options.top,10));
+			height = height > documentHeight? height : documentHeight;
 			
 			$jqib.css({
 				position: "absolute",
@@ -246,6 +248,7 @@
 	
 	$.prompt.defaults = {
 		prefix:'jqi',
+
 		classes: '',
 		buttons: {
 			Ok: true
