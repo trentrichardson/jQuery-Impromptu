@@ -1,8 +1,8 @@
 /*
  * jQuery Impromptu
  * By: Trent Richardson [http://trentrichardson.com]
- * Version 3.2
- * Last Modified: 10/31/2011
+ * Version 3.3
+ * Last Modified: 02/01/2012
  * 
  * Copyright 2011 Trent Richardson
  * Dual licensed under the MIT and GPL licenses.
@@ -13,43 +13,43 @@
  
 (function($) {
 	$.prompt = function(message, options) {
-		options = $.extend({},$.prompt.defaults,options);
-		$.prompt.currentPrefix = options.prefix;
+		$.prompt.options = $.extend({},$.prompt.defaults,options);
+		$.prompt.currentPrefix = $.prompt.options.prefix;
 
 		var ie6		= ($.browser.msie && $.browser.version < 7);
 		var $body	= $(document.body);
 		var $window	= $(window);
 		
-		options.classes = $.trim(options.classes);
-		if(options.classes != '')
-			options.classes = ' '+ options.classes;
+		$.prompt.options.classes = $.trim($.prompt.options.classes);
+		if($.prompt.options.classes != '')
+			$.prompt.options.classes = ' '+ $.prompt.options.classes;
 			
 		//build the box and fade
-		var msgbox = '<div class="'+ options.prefix +'box'+ options.classes +'" id="'+ options.prefix +'box">';
-		if(options.useiframe && (($('object, applet').length > 0) || ie6)) {
-			msgbox += '<iframe src="javascript:false;" style="display:block;position:absolute;z-index:-1;" class="'+ options.prefix +'fade" id="'+ options.prefix +'fade"></iframe>';
+		var msgbox = '<div class="'+ $.prompt.options.prefix +'box'+ $.prompt.options.classes +'" id="'+ $.prompt.options.prefix +'box">';
+		if($.prompt.options.useiframe && (($('object, applet').length > 0) || ie6)) {
+			msgbox += '<iframe src="javascript:false;" style="display:block;position:absolute;z-index:-1;" class="'+ $.prompt.options.prefix +'fade" id="'+ $.prompt.options.prefix +'fade"></iframe>';
 		} else {
 			if(ie6) {
 				$('select').css('visibility','hidden');
 			}
-			msgbox +='<div class="'+ options.prefix +'fade" id="'+ options.prefix +'fade"></div>';
+			msgbox +='<div class="'+ $.prompt.options.prefix +'fade" id="'+ $.prompt.options.prefix +'fade"></div>';
 		}
-		msgbox += '<div class="'+ options.prefix +'" id="'+ options.prefix +'"><div class="'+ options.prefix +'container"><div class="';
-		msgbox += options.prefix +'close">X</div><div id="'+ options.prefix +'states"></div>';
+		msgbox += '<div class="'+ $.prompt.options.prefix +'" id="'+ $.prompt.options.prefix +'"><div class="'+ $.prompt.options.prefix +'container"><div class="';
+		msgbox += $.prompt.options.prefix +'close">X</div><div id="'+ $.prompt.options.prefix +'states"></div>';
 		msgbox += '</div></div></div>';
 
-		var $jqib	= $(msgbox).appendTo($body);
-		var $jqi	= $jqib.children('#'+ options.prefix);
-		var $jqif	= $jqib.children('#'+ options.prefix +'fade');
+		$.prompt.jqib = $(msgbox).appendTo($body);
+		$.prompt.jqi	 = $.prompt.jqib.children('#'+ $.prompt.options.prefix);
+		$.prompt.jqif	= $.prompt.jqib.children('#'+ $.prompt.options.prefix +'fade');
 
 		//if a string was passed, convert to a single state
 		if(message.constructor == String){
 			message = {
 				state0: {
 					html: message,
-				 	buttons: options.buttons,
-				 	focus: options.focus,
-				 	submit: options.submit
+				 	buttons: $.prompt.options.buttons,
+				 	focus: $.prompt.options.focus,
+				 	submit: $.prompt.options.submit
 			 	}
 		 	};
 		}
@@ -60,26 +60,35 @@
 		$.each(message,function(statename,stateobj){
 			stateobj = $.extend({},$.prompt.defaults.state,stateobj);
 			message[statename] = stateobj;
-
-			states += '<div id="'+ options.prefix +'_state_'+ statename +'" class="'+ options.prefix + '_state" style="display:none;"><div class="'+ options.prefix +'message">' + stateobj.html +'</div><div class="'+ options.prefix +'buttons">';
+			
+			var arrow = "";
+			if(stateobj.position.arrow !== null)
+				arrow = '<div class="'+ $.prompt.options.prefix + 'arrow '+ $.prompt.options.prefix + 'arrow'+ stateobj.position.arrow +'"></div>';
+				
+			states += '<div id="'+ $.prompt.options.prefix +'_state_'+ statename +'" class="'+ $.prompt.options.prefix + '_state" style="display:none;">'+ arrow +'<div class="'+ $.prompt.options.prefix +'message">' + stateobj.html +'</div><div class="'+ $.prompt.options.prefix +'buttons">';
+			
 			$.each(stateobj.buttons, function(k, v){
 				if(typeof v == 'object')
-					states += '<button name="' + options.prefix + '_' + statename + '_button' + v.title.replace(/[^a-z0-9]+/gi,'') + '" id="' + options.prefix + '_' + statename + '_button' + v.title.replace(/[^a-z0-9]+/gi,'') + '" value="' + v.value + '">' + v.title + '</button>';
-				else states += '<button name="' + options.prefix + '_' + statename + '_button' + k + '" id="' + options.prefix +	'_' + statename + '_button' + k + '" value="' + v + '">' + k + '</button>';
+					states += '<button name="' + $.prompt.options.prefix + '_' + statename + '_button' + v.title.replace(/[^a-z0-9]+/gi,'') + '" id="' + $.prompt.options.prefix + '_' + statename + '_button' + v.title.replace(/[^a-z0-9]+/gi,'') + '" value="' + v.value + '">' + v.title + '</button>';
+				else states += '<button name="' + $.prompt.options.prefix + '_' + statename + '_button' + k + '" id="' + $.prompt.options.prefix +	'_' + statename + '_button' + k + '" value="' + v + '">' + k + '</button>';
 			});
 			states += '</div></div>';
 		});
 
 		//insert the states...
-		$jqi.find('#'+ options.prefix +'states').html(states).children('.'+ options.prefix +'_state:first').css('display','block');
-		$jqi.find('.'+ options.prefix +'buttons:empty').css('display','none');
+		$.prompt.states = message;
+		$.prompt.jqi.find('#'+ $.prompt.options.prefix +'states').html(states).children('.'+ $.prompt.options.prefix +'_state:first').css('display','block');
+		$.prompt.jqi.find('.'+ $.prompt.options.prefix +'buttons:empty').css('display','none');
 		
 		//Events
 		$.each(message,function(statename,stateobj){
-			var $state = $jqi.find('#'+ options.prefix +'_state_'+ statename);
+			var $state = $.prompt.jqi.find('#'+ $.prompt.options.prefix +'_state_'+ statename);
 
-			$state.children('.'+ options.prefix +'buttons').children('button').click(function(){
-				var msg = $state.children('.'+ options.prefix +'message');
+			if($.prompt.currentStateName === "")
+				$.prompt.currentStateName = statename;
+				
+			$state.children('.'+ $.prompt.options.prefix +'buttons').children('button').click(function(){
+				var msg = $state.children('.'+ $.prompt.options.prefix +'message');
 				var clicked = stateobj.buttons[$(this).text()];
 				if(clicked == undefined){
 					for(var i in stateobj.buttons)
@@ -92,7 +101,7 @@
 				var forminputs = {};
 
 				//collect all form element values from all states
-				$.each($jqi.find('#'+ options.prefix +'states :input').serializeArray(),function(i,obj){
+				$.each($.prompt.jqi.find('#'+ $.prompt.options.prefix +'states :input').serializeArray(),function(i,obj){
 					if (forminputs[obj.name] === undefined) {
 						forminputs[obj.name] = obj.value;
 					} else if (typeof forminputs[obj.name] == Array || typeof forminputs[obj.name] == 'object') {
@@ -107,24 +116,24 @@
 					removePrompt(true,clicked,msg,forminputs);
 				}
 			});
-			$state.find('.'+ options.prefix +'buttons button:eq('+ stateobj.focus +')').addClass(options.prefix +'defaultbutton');
+			$state.find('.'+ $.prompt.options.prefix +'buttons button:eq('+ stateobj.focus +')').addClass($.prompt.options.prefix +'defaultbutton');
 
 		});
 
 		var fadeClicked = function(){
-			if(options.persistent){
-				var offset = (options.top.toString().indexOf('%') >= 0? ($window.height()*(parseInt(options.top,10)/100)) : parseInt(options.top,10)),
-					top = parseInt($jqi.css('top').replace('px',''),10) - offset;
+			if($.prompt.options.persistent){
+				var offset = ($.prompt.options.top.toString().indexOf('%') >= 0? ($window.height()*(parseInt($.prompt.options.top,10)/100)) : parseInt($.prompt.options.top,10)),
+					top = parseInt($.prompt.jqi.css('top').replace('px',''),10) - offset;
 
 				//$window.scrollTop(top);
 				$('html,body').animate({ scrollTop: top }, 'fast', function(){
 					var i = 0;
-					$jqib.addClass(options.prefix +'warning');
+					$.prompt.jqib.addClass($.prompt.options.prefix +'warning');
 					var intervalid = setInterval(function(){
-						$jqib.toggleClass(options.prefix +'warning');
+						$.prompt.jqib.toggleClass($.prompt.options.prefix +'warning');
 						if(i++ > 1){
 							clearInterval(intervalid);
-							$jqib.removeClass(options.prefix +'warning');
+							$.prompt.jqib.removeClass($.prompt.options.prefix +'warning');
 						}
 					}, 100);
 				});
@@ -144,7 +153,7 @@
 			
 			//constrain tabs
 			if (key == 9){
-				var $inputels = $(':input:enabled:visible',$jqib);
+				var $inputels = $(':input:enabled:visible',$.prompt.jqib);
 				var fwd = !e.shiftKey && e.target == $inputels[$inputels.length-1];
 				var back = e.shiftKey && e.target == $inputels[0];
 				if (fwd || back) {
@@ -160,115 +169,59 @@
 				}
 			}
 		};
-		
-		var positionPrompt = function(){
-			var bodyHeight = $body.outerHeight(true),
-				windowHeight = $window.height(),
-				documentHeight = $(document).height(),
-				height = bodyHeight > windowHeight ? bodyHeight : windowHeight,
-				top = parseInt($window.scrollTop(),10) + (options.top.toString().indexOf('%') >= 0? (windowHeight*(parseInt(options.top,10)/100)) : parseInt(options.top,10));
-			height = height > documentHeight? height : documentHeight;
-			
-			$jqib.css({
-				position: "absolute",
-				height: height,
-				width: "100%",
-				top: 0,
-				left: 0,
-				right: 0,
-				bottom: 0
-			});
-			$jqif.css({
-				position: "absolute",
-				height: height,
-				width: "100%",
-				top: 0,
-				left: 0,
-				right: 0,
-				bottom: 0
-			});
-			$jqi.css({
-				position: "absolute",
-				top: top,
-				left: "50%",
-				marginLeft: (($jqi.outerWidth()/2)*-1)
-			});
-		};
-
-		var stylePrompt = function(){
-			$jqif.css({
-				zIndex: options.zIndex,
-				display: "none",
-				opacity: options.opacity
-			});
-			$jqi.css({
-				zIndex: options.zIndex+1,
-				display: "none"
-			});
-			$jqib.css({
-				zIndex: options.zIndex
-			});
-		};
 
 		var removePrompt = function(callCallback, clicked, msg, formvals){
-			$jqi.remove();
-			$window.unbind('resize',positionPrompt);
-			$jqif.fadeOut(options.overlayspeed,function(){
-				$jqif.unbind('click',fadeClicked);
-				$jqif.remove();
+			$.prompt.jqi.remove();
+			$window.unbind('resize',$.prompt.position);
+			$.prompt.jqif.fadeOut($.prompt.options.overlayspeed,function(){
+				$.prompt.jqif.unbind('click',fadeClicked);
+				$.prompt.jqif.remove();
 				if(callCallback) {
-					options.callback(clicked,msg,formvals);
+					$.prompt.options.callback(clicked,msg,formvals);
 				}
-				$jqib.unbind('keypress',keyPressEventHandler);
-				$jqib.remove();
-				if(ie6 && !options.useiframe) {
+				$.prompt.jqib.unbind('keypress',keyPressEventHandler);
+				$.prompt.jqib.remove();
+				if(ie6 && !$.prompt.options.useiframe) {
 					$('select').css('visibility','visible');
 				}
 			});
 		};
 
-		positionPrompt();
-		stylePrompt();
+		$.prompt.position();
+		$.prompt.style();
 		
-		$jqif.click(fadeClicked);
-		$window.resize(positionPrompt);
-		$jqib.bind("keydown keypress",keyPressEventHandler);
-		$jqi.find('.'+ options.prefix +'close').click(removePrompt);
+		$.prompt.jqif.click(fadeClicked);
+		$window.resize($.prompt.position);
+		$.prompt.jqib.bind("keydown keypress",keyPressEventHandler);
+		$.prompt.jqi.find('.'+ $.prompt.options.prefix +'close').click(removePrompt);
 
 		//Show it
-		$jqif.fadeIn(options.overlayspeed);
-		$jqi[options.show](options.promptspeed,options.loaded);
-		$jqi.find('#'+ options.prefix +'states .'+ options.prefix +'_state:first .'+ options.prefix +'defaultbutton').focus();
+		$.prompt.jqif.fadeIn($.prompt.options.overlayspeed);
+		$.prompt.jqi[$.prompt.options.show]($.prompt.options.promptspeed,$.prompt.options.loaded);
+		$.prompt.jqi.find('#'+ $.prompt.options.prefix +'states .'+ $.prompt.options.prefix +'_state:first .'+ $.prompt.options.prefix +'defaultbutton').focus();
 		
-		if(options.timeout > 0)
-			setTimeout($.prompt.close,options.timeout);
+		if($.prompt.options.timeout > 0)
+			setTimeout($.prompt.close,$.prompt.options.timeout);
 
-		return $jqib;
+		return $.prompt.jqib;
 	};
 	
 	$.prompt.defaults = {
 		prefix:'jqi',
-
 		classes: '',
 		buttons: {
 			Ok: true
 		},
-	 	loaded: function(){
-
-	 	},
+	 	loaded: function(){},
 	  	submit: function(){
 	  		return true;
 		},
-	 	callback: function(){
-
-
-
-	 	},
+	 	callback: function(){},
 		opacity: 0.6,
 	 	zIndex: 999,
 	  	overlayspeed: 'slow',
 	   	promptspeed: 'fast',
-   		show: 'promptDropIn',
+   		show: 'fadeIn',//'promptDropIn',
 	   	focus: 0,
 	   	useiframe: false,
 	 	top: '15%',
@@ -280,6 +233,12 @@
 		 		Ok: true
 		 	},
 		  	focus: 0,
+		  	position: { 
+		  		container: null, 
+		  		x: null, 
+		  		y: null,
+		  		arrow: null
+		  	},
 		   	submit: function(){
 		   		return true;
 		   }
@@ -287,7 +246,9 @@
 	};
 	
 	$.prompt.currentPrefix = $.prompt.defaults.prefix;
-
+	
+	$.prompt.currentStateName = "";
+	
 	$.prompt.setDefaults = function(o) {
 		$.prompt.defaults = $.extend({}, $.prompt.defaults, o);
 	};
@@ -295,7 +256,79 @@
 	$.prompt.setStateDefaults = function(o) {
 		$.prompt.defaults.state = $.extend({}, $.prompt.defaults.state, o);
 	};
+
+	$.prompt.position = function(){
+		var $window = $(window),
+			bodyHeight = $(document.body).outerHeight(true),
+			windowHeight = $(window).height(),
+			documentHeight = $(document).height(),
+			height = bodyHeight > windowHeight ? bodyHeight : windowHeight,
+			top = parseInt($window.scrollTop(),10) + ($.prompt.options.top.toString().indexOf('%') >= 0? (windowHeight*(parseInt($.prompt.options.top,10)/100)) : parseInt($.prompt.options.top,10));
+		height = height > documentHeight? height : documentHeight;
+		
+		$.prompt.jqib.css({
+			position: "absolute",
+			height: height,
+			width: "100%",
+			top: 0,
+			left: 0,
+			right: 0,
+			bottom: 0
+		});
+		$.prompt.jqif.css({
+			position: "absolute",
+			height: height,
+			width: "100%",
+			top: 0,
+			left: 0,
+			right: 0,
+			bottom: 0
+		});
+		
+		if($.prompt.states[$.prompt.currentStateName].position.container !== null){
+			var pos = $.prompt.states[$.prompt.currentStateName].position,
+				offset = $(pos.container).offset();
+				
+			$.prompt.jqi.css({
+				position: "absolute"
+			});
+			$.prompt.jqi.animate({
+				top: offset.top + pos.y,
+				left: offset.left + pos.x,
+				marginLeft: 0,
+				width: (pos.width !== undefined)? pos.width : null
+			},
+			function(){
+				top = (offset.top + pos.y) - ($.prompt.options.top.toString().indexOf('%') >= 0? (windowHeight*(parseInt($.prompt.options.top,10)/100)) : parseInt($.prompt.options.top,10));
+				$('html,body').animate({ scrollTop: top }, 'fast', function(){});
+			});
+		}
+		else{
+			$.prompt.jqi.css({
+				position: "absolute",
+				top: top,
+				left: $window.width()/2,
+				marginLeft: (($.prompt.jqi.outerWidth()/2)*-1)
+			});
+		}
+		
+	};
 	
+	$.prompt.style = function(){
+		$.prompt.jqif.css({
+			zIndex: $.prompt.options.zIndex,
+			display: "none",
+			opacity: $.prompt.options.opacity
+		});
+		$.prompt.jqi.css({
+			zIndex: $.prompt.options.zIndex+1,
+			display: "none"
+		});
+		$.prompt.jqib.css({
+			zIndex: $.prompt.options.zIndex
+		});
+	};
+
 	$.prompt.getStateContent = function(state) {
 		return $('#'+ $.prompt.currentPrefix +'_state_'+ state);
 	};
@@ -311,36 +344,29 @@
 	};
 	
 	$.prompt.goToState = function(state, callback) {
-		$('.'+ $.prompt.currentPrefix +'_state').slideUp('slow');
+		$.prompt.currentStateName = state;
+		
+		$('.'+ $.prompt.currentPrefix +'_state').slideUp('slow')
+			.find('.'+ $.prompt.currentPrefix +'arrow').slideToggle();
+			
 		$('#'+ $.prompt.currentPrefix +'_state_'+ state).slideDown('slow',function(){
-			$(this).find('.'+ $.prompt.currentPrefix +'defaultbutton').focus();
+			$(this).find('.'+ $.prompt.currentPrefix +'defaultbutton').focus()
+				.find('.'+ $.prompt.currentPrefix +'arrow').slideToggle();
 			if (typeof callback == 'function')
 				callback();
 		});
+		
+		$.prompt.position();
 	};
 	
 	$.prompt.nextState = function(callback) {
-		var $next = $('.'+ $.prompt.currentPrefix +'_state:visible').next();
-
-		$('.'+ $.prompt.currentPrefix +'_state').slideUp('slow');
-		
-		$next.slideDown('slow',function(){
-			$next.find('.'+ $.prompt.currentPrefix +'defaultbutton').focus();
-			if (typeof callback == 'function')
-				callback();
-		});
+		var $next = $('#'+ $.prompt.currentPrefix +'_state_'+ $.prompt.currentStateName).next();
+		$.prompt.goToState( $next.attr('id').replace($.prompt.currentPrefix +'_state_','') );
 	};
 	
 	$.prompt.prevState = function(callback) {
-		var $next = $('.'+ $.prompt.currentPrefix +'_state:visible').prev();
-
-		$('.'+ $.prompt.currentPrefix +'_state').slideUp('slow');
-		
-		$next.slideDown('slow',function(){
-			$next.find('.'+ $.prompt.currentPrefix +'defaultbutton').focus();
-			if (typeof callback == 'function')
-				callback();
-		});
+		var $prev = $('#'+ $.prompt.currentPrefix +'_state_'+ $.prompt.currentStateName).prev();
+		$.prompt.goToState( $prev.attr('id').replace($.prompt.currentPrefix +'_state_','') );
 	};
 	
 	$.prompt.close = function() {
