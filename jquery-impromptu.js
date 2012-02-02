@@ -297,11 +297,9 @@
 				left: offset.left + pos.x,
 				marginLeft: 0,
 				width: (pos.width !== undefined)? pos.width : null
-			},
-			function(){
-				top = (offset.top + pos.y) - ($.prompt.options.top.toString().indexOf('%') >= 0? (windowHeight*(parseInt($.prompt.options.top,10)/100)) : parseInt($.prompt.options.top,10));
-				$('html,body').animate({ scrollTop: top }, 'fast', function(){});
 			});
+			top = (offset.top + pos.y) - ($.prompt.options.top.toString().indexOf('%') >= 0? (windowHeight*(parseInt($.prompt.options.top,10)/100)) : parseInt($.prompt.options.top,10));
+			$('html,body').animate({ scrollTop: top }, 'slow', 'swing', function(){});
 		}
 		else{
 			$.prompt.jqi.css({
@@ -347,11 +345,11 @@
 		$.prompt.currentStateName = state;
 		
 		$('.'+ $.prompt.currentPrefix +'_state').slideUp('slow')
-			.find('.'+ $.prompt.currentPrefix +'arrow').slideToggle();
+			.find('.'+ $.prompt.currentPrefix +'arrow').fadeToggle();
 			
 		$('#'+ $.prompt.currentPrefix +'_state_'+ state).slideDown('slow',function(){
 			$(this).find('.'+ $.prompt.currentPrefix +'defaultbutton').focus()
-				.find('.'+ $.prompt.currentPrefix +'arrow').slideToggle();
+				.find('.'+ $.prompt.currentPrefix +'arrow').fadeToggle('slow');
 			if (typeof callback == 'function')
 				callback();
 		});
