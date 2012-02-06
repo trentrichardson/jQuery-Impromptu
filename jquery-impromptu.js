@@ -15,6 +15,7 @@
 	$.prompt = function(message, options) {
 		$.prompt.options = $.extend({},$.prompt.defaults,options);
 		$.prompt.currentPrefix = $.prompt.options.prefix;
+		$.prompt.currentStateName = "";
 
 		var ie6		= ($.browser.msie && $.browser.version < 7);
 		var $body	= $(document.body);
