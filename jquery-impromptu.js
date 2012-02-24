@@ -1,8 +1,8 @@
 /*
  * jQuery Impromptu
  * By: Trent Richardson [http://trentrichardson.com]
- * Version 3.3
- * Last Modified: 02/01/2012
+ * Version 3.3.1
+ * Last Modified: 02/24/2012
  * 
  * Copyright 2011 Trent Richardson
  * Dual licensed under the MIT and GPL licenses.
@@ -306,7 +306,7 @@
 			$.prompt.jqi.css({
 				position: "absolute",
 				top: top,
-				left: $window.width()/2,
+				left: '50%',//$window.width()/2,
 				marginLeft: (($.prompt.jqi.outerWidth()/2)*-1)
 			});
 		}
