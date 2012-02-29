@@ -1,8 +1,8 @@
 /*
  * jQuery Impromptu
  * By: Trent Richardson [http://trentrichardson.com]
- * Version 3.3.1
- * Last Modified: 02/24/2012
+ * Version 3.3.2
+ * Last Modified: 02/27/2012
  * 
  * Copyright 2011 Trent Richardson
  * Dual licensed under the MIT and GPL licenses.
@@ -192,7 +192,7 @@
 		$.prompt.style();
 		
 		$.prompt.jqif.click(fadeClicked);
-		$window.resize($.prompt.position);
+		$window.resize({animate:false}, $.prompt.position);
 		$.prompt.jqib.bind("keydown keypress",keyPressEventHandler);
 		$.prompt.jqi.find('.'+ $.prompt.options.prefix +'close').click(removePrompt);
 
@@ -258,14 +258,22 @@
 		$.prompt.defaults.state = $.extend({}, $.prompt.defaults.state, o);
 	};
 
-	$.prompt.position = function(){
-		var $window = $(window),
+	$.prompt.position = function(e){
+		var restoreFx = $.fx.off,
+			$window = $(window),
 			bodyHeight = $(document.body).outerHeight(true),
 			windowHeight = $(window).height(),
 			documentHeight = $(document).height(),
 			height = bodyHeight > windowHeight ? bodyHeight : windowHeight,
 			top = parseInt($window.scrollTop(),10) + ($.prompt.options.top.toString().indexOf('%') >= 0? (windowHeight*(parseInt($.prompt.options.top,10)/100)) : parseInt($.prompt.options.top,10));
+
+		// This fixes the whitespace at the bottom of the fade, but it is 
+		// inconsistant and can cause an unneeded scrollbar, making the page jump
 		height = height > documentHeight? height : documentHeight;
+
+		// when resizing the window turn off animation
+		if(e !== undefined && e.data.animate === false)
+			$.fx.off = true;
 		
 		$.prompt.jqib.css({
 			position: "absolute",
@@ -285,7 +293,8 @@
 			right: 0,
 			bottom: 0
 		});
-		
+
+		// tour positioning
 		if($.prompt.states[$.prompt.currentStateName].position.container !== null){
 			var pos = $.prompt.states[$.prompt.currentStateName].position,
 				offset = $(pos.container).offset();
@@ -302,6 +311,7 @@
 			top = (offset.top + pos.y) - ($.prompt.options.top.toString().indexOf('%') >= 0? (windowHeight*(parseInt($.prompt.options.top,10)/100)) : parseInt($.prompt.options.top,10));
 			$('html,body').animate({ scrollTop: top }, 'slow', 'swing', function(){});
 		}
+		// standard prompt positioning
 		else{
 			$.prompt.jqi.css({
 				position: "absolute",
@@ -310,7 +320,10 @@
 				marginLeft: (($.prompt.jqi.outerWidth()/2)*-1)
 			});
 		}
-		
+
+		// restore fx settings
+		if(e !== undefined && e.data.animate === false)
+			$.fx.off = restoreFx;
 	};
 	
 	$.prompt.style = function(){
@@ -346,11 +359,12 @@
 		$.prompt.currentStateName = state;
 		
 		$('.'+ $.prompt.currentPrefix +'_state').slideUp('slow')
-			.find('.'+ $.prompt.currentPrefix +'arrow').fadeToggle();
+			.find('.'+ $.prompt.currentPrefix +'arrow').fadeOut();
 			
 		$('#'+ $.prompt.currentPrefix +'_state_'+ state).slideDown('slow',function(){
-			$(this).find('.'+ $.prompt.currentPrefix +'defaultbutton').focus()
-				.find('.'+ $.prompt.currentPrefix +'arrow').fadeToggle('slow');
+			var $t = $(this);
+			$t.find('.'+ $.prompt.currentPrefix +'defaultbutton').focus();
+			$t.find('.'+ $.prompt.currentPrefix +'arrow').fadeIn('slow');
 			if (typeof callback == 'function')
 				callback();
 		});
