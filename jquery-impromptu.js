@@ -1,10 +1,10 @@
 /*
  * jQuery Impromptu
  * By: Trent Richardson [http://trentrichardson.com]
- * Version 3.3.3
+ * Version 4.0
  * Last Modified: 03/01/2012
  * 
- * Copyright 2011 Trent Richardson
+ * Copyright 2012 Trent Richardson
  * Dual licensed under the MIT and GPL licenses.
  * http://trentrichardson.com/Impromptu/GPL-LICENSE.txt
  * http://trentrichardson.com/Impromptu/MIT-LICENSE.txt
@@ -88,9 +88,7 @@
 			if($.prompt.currentStateName === "")
 				$.prompt.currentStateName = statename;
 
-			$state.bind('promptsubmit', function(e,v,m,f){
-				return stateobj.submit.apply($state, [v,m,f]);
-			});
+			$state.bind('promptsubmit', stateobj.submit);
 			
 			$state.children('.'+ $.prompt.options.prefix +'buttons').children('button').click(function(){
 				var msg = $state.children('.'+ $.prompt.options.prefix +'message');
@@ -390,9 +388,7 @@
 		$.prompt.jqib.fadeOut('fast',function(){
 
 			if(callCallback) {
-				$.prompt.jqib.bind('promptclose', function(e,v,m,f){
-					$.prompt.options.callback.apply($.prompt.jqib, [v,m,f]);
-				});
+				$.prompt.jqib.bind('promptclose', $.prompt.options.callback);
 				$.prompt.jqib.trigger('promptclose', [clicked,msg,formvals]);
 			}
 			$.prompt.jqib.remove();
