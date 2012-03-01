@@ -1,8 +1,8 @@
 /*
  * jQuery Impromptu
  * By: Trent Richardson [http://trentrichardson.com]
- * Version 3.3.2
- * Last Modified: 02/27/2012
+ * Version 3.3.3
+ * Last Modified: 03/01/2012
  * 
  * Copyright 2011 Trent Richardson
  * Dual licensed under the MIT and GPL licenses.
@@ -87,7 +87,11 @@
 
 			if($.prompt.currentStateName === "")
 				$.prompt.currentStateName = statename;
-				
+
+			$state.bind('promptsubmit', function(e,v,m,f){
+				return stateobj.submit.apply($state, [v,m,f]);
+			});
+			
 			$state.children('.'+ $.prompt.options.prefix +'buttons').children('button').click(function(){
 				var msg = $state.children('.'+ $.prompt.options.prefix +'message');
 				var clicked = stateobj.buttons[$(this).text()];
@@ -112,9 +116,14 @@
 					} 
 				});
 
-				var close = stateobj.submit(clicked,msg,forminputs);
-				if(close === undefined || close) {
-					removePrompt(true,clicked,msg,forminputs);
+				// trigger an event
+				var promptsubmite = new $.Event('promptsubmit');
+				promptsubmite.stateName = statename;
+				promptsubmite.state = $state;
+				$state.trigger(promptsubmite, [clicked, msg, forminputs]);
+				
+				if(!promptsubmite.isDefaultPrevented()){
+					$.prompt.close(true, clicked,msg,forminputs);
 				}
 			});
 			$state.find('.'+ $.prompt.options.prefix +'buttons button:eq('+ stateobj.focus +')').addClass($.prompt.options.prefix +'defaultbutton');
@@ -140,7 +149,7 @@
 				});
 			}
 			else {
-				removePrompt();
+				$.prompt.close(true);
 			}
 		};
 		
@@ -170,35 +179,21 @@
 				}
 			}
 		};
-
-		var removePrompt = function(callCallback, clicked, msg, formvals){
-			$.prompt.jqi.remove();
-			$window.unbind('resize',$.prompt.position);
-			$.prompt.jqif.fadeOut($.prompt.options.overlayspeed,function(){
-				$.prompt.jqif.unbind('click',fadeClicked);
-				$.prompt.jqif.remove();
-				if(callCallback) {
-					$.prompt.options.callback(clicked,msg,formvals);
-				}
-				$.prompt.jqib.unbind('keypress',keyPressEventHandler);
-				$.prompt.jqib.remove();
-				if(ie6 && !$.prompt.options.useiframe) {
-					$('select').css('visibility','visible');
-				}
-			});
-		};
-
+		
 		$.prompt.position();
 		$.prompt.style();
 		
 		$.prompt.jqif.click(fadeClicked);
 		$window.resize({animate:false}, $.prompt.position);
 		$.prompt.jqib.bind("keydown keypress",keyPressEventHandler);
-		$.prompt.jqi.find('.'+ $.prompt.options.prefix +'close').click(removePrompt);
+		$.prompt.jqi.find('.'+ $.prompt.options.prefix +'close').click($.prompt.close);
 
 		//Show it
 		$.prompt.jqif.fadeIn($.prompt.options.overlayspeed);
-		$.prompt.jqi[$.prompt.options.show]($.prompt.options.promptspeed,$.prompt.options.loaded);
+		$.prompt.jqi[$.prompt.options.show]($.prompt.options.promptspeed, function(){
+			$.prompt.jqib.bind('promptloaded', $.prompt.options.loaded);
+			$.prompt.jqib.trigger('promptloaded');
+		});
 		$.prompt.jqi.find('#'+ $.prompt.options.prefix +'states .'+ $.prompt.options.prefix +'_state:first .'+ $.prompt.options.prefix +'defaultbutton').focus();
 		
 		if($.prompt.options.timeout > 0)
@@ -269,7 +264,7 @@
 
 		// This fixes the whitespace at the bottom of the fade, but it is 
 		// inconsistant and can cause an unneeded scrollbar, making the page jump
-		height = height > documentHeight? height : documentHeight;
+		//height = height > documentHeight? height : documentHeight;
 
 		// when resizing the window turn off animation
 		if(e !== undefined && e.data.animate === false)
@@ -356,20 +351,29 @@
 	};
 	
 	$.prompt.goToState = function(state, callback) {
-		$.prompt.currentStateName = state;
+		var promptstatechanginge = new $.Event('promptstatechanging');
+		$.prompt.jqib.trigger(promptstatechanginge, [$.prompt.currentStateName, state]);
 		
-		$('.'+ $.prompt.currentPrefix +'_state').slideUp('slow')
-			.find('.'+ $.prompt.currentPrefix +'arrow').fadeOut();
+		if(!promptstatechanginge.isDefaultPrevented()){
+			$.prompt.currentStateName = state;
 			
-		$('#'+ $.prompt.currentPrefix +'_state_'+ state).slideDown('slow',function(){
-			var $t = $(this);
-			$t.find('.'+ $.prompt.currentPrefix +'defaultbutton').focus();
-			$t.find('.'+ $.prompt.currentPrefix +'arrow').fadeIn('slow');
-			if (typeof callback == 'function')
-				callback();
-		});
+			$('.'+ $.prompt.currentPrefix +'_state').slideUp('slow')
+				.find('.'+ $.prompt.currentPrefix +'arrow').fadeOut();
+			
+			$('#'+ $.prompt.currentPrefix +'_state_'+ state).slideDown('slow',function(){
+				var $t = $(this);
+				$t.find('.'+ $.prompt.currentPrefix +'defaultbutton').focus();
+				$t.find('.'+ $.prompt.currentPrefix +'arrow').fadeIn('slow');
+				
+				if (typeof callback == 'function'){
+					$.prompt.jqib.bind('promptstatechanged', callback);
+				}
+				$.prompt.jqib.trigger('promptstatechanged', [state]);
+			});
 		
-		$.prompt.position();
+			$.prompt.position();
+		
+		}
 	};
 	
 	$.prompt.nextState = function(callback) {
@@ -382,9 +386,22 @@
 		$.prompt.goToState( $prev.attr('id').replace($.prompt.currentPrefix +'_state_','') );
 	};
 	
-	$.prompt.close = function() {
-		$('#'+ $.prompt.currentPrefix +'box').fadeOut('fast',function(){
-        		$(this).remove();
+	$.prompt.close = function(callCallback, clicked, msg, formvals){
+		$.prompt.jqib.fadeOut('fast',function(){
+
+			if(callCallback) {
+				$.prompt.jqib.bind('promptclose', function(e,v,m,f){
+					$.prompt.options.callback.apply($.prompt.jqib, [v,m,f]);
+				});
+				$.prompt.jqib.trigger('promptclose', [clicked,msg,formvals]);
+			}
+			$.prompt.jqib.remove();
+			
+			$('window').unbind('resize',$.prompt.position);
+			
+			if(($.browser.msie && $.browser.version < 7) && !$.prompt.options.useiframe) {
+				$('select').css('visibility','visible');
+			}
 		});
 	};
 	
