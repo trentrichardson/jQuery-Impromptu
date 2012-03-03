@@ -1,8 +1,8 @@
 /*
  * jQuery Impromptu
  * By: Trent Richardson [http://trentrichardson.com]
- * Version 4.0
- * Last Modified: 03/01/2012
+ * Version 4.0.1
+ * Last Modified: 03/03/2012
  * 
  * Copyright 2012 Trent Richardson
  * Dual licensed under the MIT and GPL licenses.
@@ -185,11 +185,14 @@
 		$window.resize({animate:false}, $.prompt.position);
 		$.prompt.jqib.bind("keydown keypress",keyPressEventHandler);
 		$.prompt.jqi.find('.'+ $.prompt.options.prefix +'close').click($.prompt.close);
+		$.prompt.jqib.bind('promptloaded', $.prompt.options.loaded);
+		$.prompt.jqib.bind('promptclose', $.prompt.options.callback);
+		$.prompt.jqib.bind('promptstatechanging', $.prompt.options.statechanging);
+		$.prompt.jqib.bind('promptstatechanged', $.prompt.options.statechanged);
 
 		//Show it
 		$.prompt.jqif.fadeIn($.prompt.options.overlayspeed);
 		$.prompt.jqi[$.prompt.options.show]($.prompt.options.promptspeed, function(){
-			$.prompt.jqib.bind('promptloaded', $.prompt.options.loaded);
 			$.prompt.jqib.trigger('promptloaded');
 		});
 		$.prompt.jqi.find('#'+ $.prompt.options.prefix +'states .'+ $.prompt.options.prefix +'_state:first .'+ $.prompt.options.prefix +'defaultbutton').focus();
@@ -206,11 +209,11 @@
 		buttons: {
 			Ok: true
 		},
-	 	loaded: function(){},
-	  	submit: function(){
-	  		return true;
-		},
-	 	callback: function(){},
+	 	loaded: function(e){},
+	  	submit: function(e,v,m,f){},
+	 	callback: function(e,v,m,f){},
+	 	statechanging: function(e, from, to){},
+	 	statechanged: function(e, to){},
 		opacity: 0.6,
 	 	zIndex: 999,
 	  	overlayspeed: 'slow',
@@ -233,7 +236,7 @@
 		  		y: null,
 		  		arrow: null
 		  	},
-		   	submit: function(){
+		   	submit: function(e,v,m,f){
 		   		return true;
 		   }
 	  	}
@@ -364,9 +367,12 @@
 				$t.find('.'+ $.prompt.currentPrefix +'arrow').fadeIn('slow');
 				
 				if (typeof callback == 'function'){
-					$.prompt.jqib.bind('promptstatechanged', callback);
+					$.prompt.jqib.bind('promptstatechanged.tmp', callback);
 				}
 				$.prompt.jqib.trigger('promptstatechanged', [state]);
+				if (typeof callback == 'function'){
+					$.prompt.jqib.unbind('promptstatechanged.tmp');
+				}
 			});
 		
 			$.prompt.position();
@@ -376,19 +382,18 @@
 	
 	$.prompt.nextState = function(callback) {
 		var $next = $('#'+ $.prompt.currentPrefix +'_state_'+ $.prompt.currentStateName).next();
-		$.prompt.goToState( $next.attr('id').replace($.prompt.currentPrefix +'_state_','') );
+		$.prompt.goToState( $next.attr('id').replace($.prompt.currentPrefix +'_state_',''), callback );
 	};
 	
 	$.prompt.prevState = function(callback) {
 		var $prev = $('#'+ $.prompt.currentPrefix +'_state_'+ $.prompt.currentStateName).prev();
-		$.prompt.goToState( $prev.attr('id').replace($.prompt.currentPrefix +'_state_','') );
+		$.prompt.goToState( $prev.attr('id').replace($.prompt.currentPrefix +'_state_',''), callback );
 	};
 	
 	$.prompt.close = function(callCallback, clicked, msg, formvals){
 		$.prompt.jqib.fadeOut('fast',function(){
 
 			if(callCallback) {
-				$.prompt.jqib.bind('promptclose', $.prompt.options.callback);
 				$.prompt.jqib.trigger('promptclose', [clicked,msg,formvals]);
 			}
 			$.prompt.jqib.remove();
