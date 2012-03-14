@@ -59,22 +59,36 @@
 		var states = "";
 
 		$.each(message,function(statename,stateobj){
-			stateobj = $.extend({},$.prompt.defaults.state,stateobj);
-			message[statename] = stateobj;
-			
-			var arrow = "";
-			if(stateobj.position.arrow !== null)
-				arrow = '<div class="'+ $.prompt.options.prefix + 'arrow '+ $.prompt.options.prefix + 'arrow'+ stateobj.position.arrow +'"></div>';
-				
-			states += '<div id="'+ $.prompt.options.prefix +'_state_'+ statename +'" class="'+ $.prompt.options.prefix + '_state" style="display:none;">'+ arrow +'<div class="'+ $.prompt.options.prefix +'message">' + stateobj.html +'</div><div class="'+ $.prompt.options.prefix +'buttons">';
-			
-			$.each(stateobj.buttons, function(k, v){
-				if(typeof v == 'object')
-					states += '<button name="' + $.prompt.options.prefix + '_' + statename + '_button' + v.title.replace(/[^a-z0-9]+/gi,'') + '" id="' + $.prompt.options.prefix + '_' + statename + '_button' + v.title.replace(/[^a-z0-9]+/gi,'') + '" value="' + v.value + '">' + v.title + '</button>';
-				else states += '<button name="' + $.prompt.options.prefix + '_' + statename + '_button' + k + '" id="' + $.prompt.options.prefix +	'_' + statename + '_button' + k + '" value="' + v + '">' + k + '</button>';
-			});
-			states += '</div></div>';
-		});
+	            stateobj = $.extend({},$.prompt.defaults.state,stateobj);
+	            message[statename] = stateobj;
+	            
+	            var arrow = "";
+	            if(stateobj.position.arrow !== null)
+	                arrow = '<div class="'+ $.prompt.options.prefix + 'arrow '+ $.prompt.options.prefix + 'arrow'+ stateobj.position.arrow +'"></div>';
+	                
+	            states += '<div id="'+ $.prompt.options.prefix +'_state_'+ statename +'" class="'+ $.prompt.options.prefix + '_state" style="display:none;">'+ arrow +'<div class="'+ $.prompt.options.prefix +'message">' + stateobj.html +'</div><div class="'+ $.prompt.options.prefix +'buttons">';
+	            
+	            $.each(stateobj.buttons, function(k, v){
+	                if(typeof v == 'object'){
+	                    
+	                    states += '<button ';
+	                    if(typeof v.classes !== "undefined"){
+	                        states += 'class="'
+	                        $.each(v.classes, function(k, v){
+	                            states += ' ' + v
+	                        })
+	                        states += '" ';
+	                    }
+	
+	                    states += ' name="' + $.prompt.options.prefix + '_' + statename + '_button' + v.title.replace(/[^a-z0-9]+/gi,'') + '" id="' + $.prompt.options.prefix + '_' + statename + '_button' + v.title.replace(/[^a-z0-9]+/gi,'') + '" value="' + v.value + '">' + v.title + '</button>';
+	
+	                } else {
+	                    //states += '<button name="' + $.prompt.options.prefix + '_' + statename + '_button' + k + '" id="' + $.prompt.options.prefix +  '_' + statename + '_button' + k + '" value="' + v + '">' + k + '</button>';
+	                    
+	                }
+	            });
+	            states += '</div></div>';
+	        });
 
 		//insert the states...
 		$.prompt.states = message;
