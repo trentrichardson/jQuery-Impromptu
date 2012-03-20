@@ -1,11 +1,11 @@
 /*
  * jQuery Impromptu
  * By: Trent Richardson [http://trentrichardson.com]
- * Version 4.0.1
- * Last Modified: 03/03/2012
+ * Version 4.0.2
+ * Last Modified: 03/20/2012
  * 
  * Copyright 2012 Trent Richardson
- * Dual licensed under the MIT and GPL licenses.
+ * You may use this project under MIT or GPL licenses.
  * http://trentrichardson.com/Impromptu/GPL-LICENSE.txt
  * http://trentrichardson.com/Impromptu/MIT-LICENSE.txt
  * 
@@ -193,12 +193,12 @@
 		
 		$.prompt.jqif.click(fadeClicked);
 		$window.resize({animate:false}, $.prompt.position);
-		$.prompt.jqib.bind("keydown keypress",keyPressEventHandler);
 		$.prompt.jqi.find('.'+ $.prompt.options.prefix +'close').click($.prompt.close);
-		$.prompt.jqib.bind('promptloaded', $.prompt.options.loaded);
-		$.prompt.jqib.bind('promptclose', $.prompt.options.callback);
-		$.prompt.jqib.bind('promptstatechanging', $.prompt.options.statechanging);
-		$.prompt.jqib.bind('promptstatechanged', $.prompt.options.statechanged);
+		$.prompt.jqib.bind("keydown keypress",keyPressEventHandler)
+					.bind('promptloaded', $.prompt.options.loaded)
+					.bind('promptclose', $.prompt.options.callback)
+					.bind('promptstatechanging', $.prompt.options.statechanging)
+					.bind('promptstatechanged', $.prompt.options.statechanged);
 
 		//Show it
 		$.prompt.jqif.fadeIn($.prompt.options.overlayspeed);
