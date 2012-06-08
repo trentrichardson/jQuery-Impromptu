@@ -1,8 +1,8 @@
 /*
  * jQuery Impromptu
  * By: Trent Richardson [http://trentrichardson.com]
- * Version 4.0.2
- * Last Modified: 03/20/2012
+ * Version 4.0.3
+ * Last Modified: 06/08/2012
  * 
  * Copyright 2012 Trent Richardson
  * You may use this project under MIT or GPL licenses.
@@ -301,21 +301,23 @@
 		});
 
 		// tour positioning
-		if($.prompt.states[$.prompt.currentStateName].position.container !== null){
+		if($.prompt.states[$.prompt.currentStateName].position.container){
 			var pos = $.prompt.states[$.prompt.currentStateName].position,
 				offset = $(pos.container).offset();
-				
-			$.prompt.jqi.css({
-				position: "absolute"
-			});
-			$.prompt.jqi.animate({
-				top: offset.top + pos.y,
-				left: offset.left + pos.x,
-				marginLeft: 0,
-				width: (pos.width !== undefined)? pos.width : null
-			});
-			top = (offset.top + pos.y) - ($.prompt.options.top.toString().indexOf('%') >= 0? (windowHeight*(parseInt($.prompt.options.top,10)/100)) : parseInt($.prompt.options.top,10));
-			$('html,body').animate({ scrollTop: top }, 'slow', 'swing', function(){});
+			
+			if($.isPlainObject(offset) && offset.top !== undefined){
+				$.prompt.jqi.css({
+					position: "absolute"
+				});
+				$.prompt.jqi.animate({
+					top: offset.top + pos.y,
+					left: offset.left + pos.x,
+					marginLeft: 0,
+					width: (pos.width !== undefined)? pos.width : null
+				});
+				top = (offset.top + pos.y) - ($.prompt.options.top.toString().indexOf('%') >= 0? (windowHeight*(parseInt($.prompt.options.top,10)/100)) : parseInt($.prompt.options.top,10));
+				$('html,body').animate({ scrollTop: top }, 'slow', 'swing', function(){});
+			}
 		}
 		// standard prompt positioning
 		else{

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title>Impromptu Tour</title>
+
+		<style type="text/css">
+			body,img,p,h1,h2,fieldset,form,pre,code{ margin:0; padding:0; border:0; }
+			body {
+				font: 12px/16px Arial, Helvetica, sans-serif;
+				border-top: solid 5px #A04334;
+				background-color: #FAF9F4;
+				text-align: center;
+			}
+			noscript{ color: #ff0000; font-weight: bold; }
+			h1{ font-family: Times, serif; color: #555; margin: 0 0 10px 0; letter-spacing: 2px; }
+			p{ line-height: 18px; margin: 10px 0; }
+			#wrapper{ text-align: left; margin: 0 auto; background-color: #ffffff; width: 500px; min-height: 200px; padding: 25px; }
+
+		</style>
+		<link href="default.css" rel="stylesheet" type="text/css" />
+		
+		<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="jquery-impromptu.js"></script>
+		
+		<script type="text/javascript">
+			
+			/*
+				Tour: by adding a "position" entry for a state the prompt will animate to that position.
+				There are also a couple events attached by using bind(). Open your firebug or console.
+			*/
+			function tour(){
+				var submitFunc = function(event,v,m,f){
+							if(v === -1){
+								$.prompt.prevState();
+								return false;
+							}
+							else if(v === 1){
+								$.prompt.nextState();
+								return false;
+							}
+				},
+				states = [
+					{
+						html: 'Welcome to the tour',
+						buttons: { Next: 1 },
+						submit: submitFunc
+					},
+					{
+						html: 'This is tour stop 1, Please do not feed the animals',
+						buttons: { Prev: -1, Next: 1 },
+						focus: 1,
+						position: { container: '#header1', x: 10, y: 40, width: 200, arrow: 'tc' },
+						submit: submitFunc
+					},
+					{
+						html: 'Welcome to the bulls and bears den',
+						buttons: { Prev: -1, Next: 1 },
+						focus: 1,
+						position: { container: '#header2', x: 170, y: -10, width: 200, arrow: 'lt' },
+						submit: submitFunc
+					},
+					{
+						html: "I'm not sure what this creature is",
+						buttons: { Prev: -1, Next: 1 },
+						focus: 1,
+						position: { container: '#wrapper', x: 40, y: 540, width: 250, arrow: 'rm' },
+						submit: submitFunc
+					},
+					{
+						html: 'On the left you will see the ligers and giraffelants',
+						buttons: { Prev: -1, Next: 1 },
+						focus: 1,
+						position: { container: '#header3', x: 215, y: -45, width: 300, arrow: 'lm' },
+						submit: submitFunc
+					},
+					{
+						html: 'This concludes our tour.<br>You may go back to: <select onchange="$.prompt.goToState(this.value);"><option value="2">Bears and Bulls</option><option value="3">Unknown Creature</option><option value="4">Ligers and Giraffelants</option></select>',
+						buttons: { Done: 2 },
+						focus: 1,
+						position: { container: '#header4', x: 0, y: 30, width: 200 },
+						submit: submitFunc
+					}
+				];
+				var $jqi = $.prompt(states, { opacity: 0.3 });
+
+				$jqi.bind('promptstatechanged', function(e,to){
+					if(window.console) console.log(arguments);
+
+				});
+
+				$jqi.bind('promptclose', function(e){
+					if(window.console) console.log('close');
+
+				});
+			}
+
+			/*
+				Standard: demonstrate a standard old school prompt
+				There are also an events attached by using bind()
+			*/
+			function standard(){
+				var $jqi = $.prompt('<p>Standard Issue Prompt</p>',{ 
+						overlayspeed:'fast',
+						buttons: [
+								{ title: 'Ok', value: '1', classes: ['foo','bar'] },
+								{ title: 'Cancel', value: '0', classes: "test1 test2" },
+								{ title: 'Other', value: '-1' }
+							]
+						});
+
+				$jqi.bind('promptsubmit', function(e,v,m,f){
+					
+					if(window.console) console.log(arguments);
+				});
+			}
+			$(function() {
+				
+				
+			});
+		</script>
+	</head>
+
+	<body>
+		<div id="wrapper">
+			<h1 id="header1">The Impromptu Tour</h1>
+			<a href="javascript:tour();">Tour</a> | <a href="javascript:standard();">Standard</a> 
+			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur molestie metus quis mi elementum sed condimentum arcu condimentum. Sed fringilla luctus sapien, in mollis velit viverra vehicula. Praesent lectus orci, dapibus id tempor commodo, rutrum sit amet risus. Nullam risus odio, tincidunt auctor lacinia et, feugiat eu metus. Vestibulum sed augue sed velit imperdiet adipiscing. Donec consequat neque ultrices ante aliquet pellentesque ullamcorper tortor pretium. Nam aliquet ante in diam hendrerit vel aliquet libero lobortis. Fusce nibh eros, sodales et condimentum vitae, porttitor ut nunc. Praesent aliquet dolor vitae lorem vulputate bibendum. In ut nulla non dui cursus vehicula. Donec in quam nisi, ut congue tellus. Suspendisse ligula nibh, rhoncus in interdum eu, adipiscing in leo. Integer pulvinar, justo lobortis semper venenatis, elit est pharetra augue, at facilisis sapien nulla sed arcu. Aenean sit amet nunc sem, nec sollicitudin ipsum. Phasellus sit amet risus ante. Quisque porta, massa et lacinia varius, risus lorem consectetur orci, id tempor eros nunc id massa.</p>
+
+			<h2 id="header2">Bulls and Bears</h2>
+			<p>Maecenas mattis rutrum est, et posuere lorem dignissim aliquam. Pellentesque quis accumsan leo. Duis massa felis, hendrerit in fermentum ut, adipiscing id velit. Nulla bibendum arcu eu augue blandit iaculis. Proin sodales, nunc vitae ultricies venenatis, erat orci vestibulum felis, vel suscipit erat justo a ligula. Curabitur venenatis magna consectetur ante mollis sed fringilla dui facilisis. Morbi odio felis, pellentesque ultrices tincidunt eget, euismod non nunc.</p>
+
+			<h2 id="header3">Ligers and Giraffelants</h2>
+			<p>Nam enim ante, dapibus sed accumsan ac, tristique et augue. In diam ante, dignissim ut ultricies a, condimentum rhoncus augue. Morbi quis massa urna. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Fusce a tincidunt est. Phasellus sit amet urna nunc. Donec placerat nisl sed nunc eleifend pulvinar. Vivamus nec nisl turpis, at commodo lorem. In quis metus eget urna tincidunt fringilla. In hac habitasse platea dictumst. Nullam in purus at nibh iaculis aliquet sed eu felis. Nullam quis dolor eget tellus ornare fringilla. Praesent arcu erat, tincidunt ut interdum vitae, semper ac enim. Vestibulum nec elit id metus aliquam sollicitudin. Aliquam ut arcu in velit interdum sagittis.</p>
+			<p>Nunc in cursus turpis. Quisque at turpis tortor, at rhoncus libero. Morbi at dui ut tortor elementum tincidunt. Pellentesque ac mollis enim. Suspendisse justo quam, ullamcorper vel semper ut, malesuada ac dolor. Maecenas aliquet semper velit, varius scelerisque ante scelerisque sed. Fusce accumsan venenatis libero, et blandit ante facilisis sed. In nec leo nec augue tempor volutpat non vitae magna. Cras lorem eros, suscipit at pellentesque quis, imperdiet id lacus. Aenean facilisis, justo ac gravida mattis, risus magna luctus elit, dignissim rutrum dolor purus eget metus. Pellentesque porttitor felis sit amet leo fermentum tempus.</p>
+
+			<h2 id="header4">Exit to the Rear</h2>
+			<p>Maecenas sit amet purus eu nisi condimentum dignissim eget id diam. Donec eget magna quis erat posuere iaculis id pretium felis. Nulla semper mi eget enim porttitor ac posuere sem sodales. Donec ante ligula, elementum venenatis tincidunt elementum, fermentum at nisl. Pellentesque tincidunt lectus sit amet nisi lacinia lobortis. Nullam eget est urna. Sed sit amet enim magna. Suspendisse lacinia augue ac ipsum aliquam commodo. Integer cursus lorem ut nisi imperdiet mollis. Mauris ac arcu velit. Cras ac orci magna. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras lacinia aliquam dignissim. Integer sit amet mi dui, in ornare tellus. Proin imperdiet, urna et commodo feugiat, dolor mauris feugiat tellus, ac scelerisque turpis magna at erat.</p>			
+		</div>
+	</body>
+</html>
