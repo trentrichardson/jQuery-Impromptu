@@ -1,8 +1,8 @@
 /*
  * jQuery Impromptu
  * By: Trent Richardson [http://trentrichardson.com]
- * Version 4.0.3
- * Last Modified: 06/08/2012
+ * Version 4.0.4
+ * Last Modified: 08/01/2012
  * 
  * Copyright 2012 Trent Richardson
  * You may use this project under MIT or GPL licenses.
@@ -101,11 +101,12 @@
 			$state.bind('promptsubmit', stateobj.submit);
 			
 			$state.children('.'+ $.prompt.options.prefix +'buttons').children('button').click(function(){
-				var msg = $state.children('.'+ $.prompt.options.prefix +'message');
-				var clicked = stateobj.buttons[$(this).text()];
+				var $t = $(this),
+					msg = $state.children('.'+ $.prompt.options.prefix +'message'),
+					clicked = stateobj.buttons[$t.text()] || stateobj.buttons[$t.html()];
 				if(clicked == undefined){
 					for(var i in stateobj.buttons)
-						if(stateobj.buttons[i].title == $(this).text())
+						if(stateobj.buttons[i].title == $t.text() || stateobj.buttons[i].title == $t.html())
 							clicked = stateobj.buttons[i].value;
 				}
 				
