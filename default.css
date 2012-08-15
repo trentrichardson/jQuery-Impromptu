@@ -21,7 +21,6 @@ div.jqi{
 	padding: 7px;
 }
 div.jqi .jqicontainer{ 
-	font-weight: bold; 
 }
 div.jqi .jqiclose{ 
 	position: absolute;
@@ -30,6 +29,12 @@ div.jqi .jqiclose{
 	cursor: default; 
 	color: #bbbbbb; 
 	font-weight: bold; 
+}
+div.jqi .jqititle{
+	padding: 5px 10px;
+	font-size: 16px; 
+	line-height: 20px; 
+	border-bottom: solid 1px #eeeeee;
 }
 div.jqi .jqimessage{ 
 	padding: 10px; 

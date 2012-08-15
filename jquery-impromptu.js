@@ -47,6 +47,7 @@
 		if(message.constructor == String){
 			message = {
 				state0: {
+					title: $.prompt.options.title,
 					html: message,
 				 	buttons: $.prompt.options.buttons,
 				 	focus: $.prompt.options.focus,
@@ -62,11 +63,13 @@
 				stateobj = $.extend({},$.prompt.defaults.state,stateobj);
 				message[statename] = stateobj;
 				
-				var arrow = "";
+				var arrow = "",
+					title = "";
 				if(stateobj.position.arrow !== null)
 					arrow = '<div class="'+ $.prompt.options.prefix + 'arrow '+ $.prompt.options.prefix + 'arrow'+ stateobj.position.arrow +'"></div>';
-				    
-				states += '<div id="'+ $.prompt.options.prefix +'_state_'+ statename +'" class="'+ $.prompt.options.prefix + '_state" style="display:none;">'+ arrow +'<div class="'+ $.prompt.options.prefix +'message">' + stateobj.html +'</div><div class="'+ $.prompt.options.prefix +'buttons">';
+				if(stateobj.title && stateobj.title !== '')
+				    title = '<div class="'+ $.prompt.options.prefix + 'title '+ $.prompt.options.prefix + 'title">'+  stateobj.title +'</div>';
+				states += '<div id="'+ $.prompt.options.prefix +'_state_'+ statename +'" class="'+ $.prompt.options.prefix + '_state" style="display:none;">'+ arrow + title +'<div class="'+ $.prompt.options.prefix +'message">' + stateobj.html +'</div><div class="'+ $.prompt.options.prefix +'buttons">';
 				
 				$.each(stateobj.buttons, function(k, v){
 					if(typeof v == 'object'){
@@ -217,6 +220,7 @@
 	$.prompt.defaults = {
 		prefix:'jqi',
 		classes: '',
+		title: '',
 		buttons: {
 			Ok: true
 		},
@@ -236,6 +240,7 @@
 	  	persistent: true,
 	  	timeout: 0,
 	  	state: {
+	  		title: '',
 			html: '',
 		 	buttons: {
 		 		Ok: true

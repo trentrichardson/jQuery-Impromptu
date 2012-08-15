@@ -18,7 +18,7 @@
 			#wrapper{ text-align: left; margin: 0 auto; background-color: #ffffff; width: 500px; min-height: 200px; padding: 25px; }
 
 		</style>
-		<link href="default.css" rel="stylesheet" type="text/css" />
+		<link href="themes/zoo.css" rel="stylesheet" type="text/css" />
 		
 		<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
 		<script type="text/javascript" src="jquery-impromptu.js"></script>
@@ -42,8 +42,9 @@
 				},
 				states = [
 					{
-						html: 'Welcome to the tour',
-						buttons: { Next: 1 },
+						title: 'Welcome to the Tour',
+						html: 'Get ready for a tour through the adventurous lands of Impromptzoo!',
+						buttons: { Next: 1, 'Lets Go': true },
 						submit: submitFunc
 					},
 					{
@@ -82,7 +83,7 @@
 						submit: submitFunc
 					}
 				];
-				var $jqi = $.prompt(states, { opacity: 0.3 });
+				var $jqi = $.prompt(states, { prefix: 'jqizoo' });
 
 				$jqi.bind('promptstatechanged', function(e,to){
 					if(window.console) console.log(arguments);
@@ -100,8 +101,10 @@
 				There are also an events attached by using bind()
 			*/
 			function standard(){
-				var $jqi = $.prompt('<p>Standard Issue Prompt</p>',{ 
+				var $jqi = $.prompt('<p>A simple prompt with the simplest of states.</p>',{ 
 						overlayspeed:'fast',
+						title: 'Standard Issue Prompt',
+						prefix: 'jqizoo',
 						buttons: [
 								{ title: 'Ok', value: '1', classes: ['foo','bar'] },
 								{ title: 'Cancel', value: '0', classes: "test1 test2" },
