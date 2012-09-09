@@ -1,6 +1,12 @@
 jQuery Impromptu
 ================
 
+About
+-----
+- Author: [Trent Richardson](http://trentrichardson.com)
+- Documentation: [http://trentrichardson.com/Impromptu/](http://trentrichardson.com/Impromptu/)
+- Twitter: [@practicalweb](http://twitter.com/practicalweb)
+
 Use
 ---
 - Include jQuery and Impromptu into your page
@@ -8,9 +14,6 @@ Use
 - call using $.prompt('hello world!');
 - Visit the [Impromptu Documentation](http://trentrichardson.com/Impromptu/) for MUCH more advanced usage
 
-About
------
-Author: [Trent Richardson](http://trentrichardson.com)
 
 License
 -------
