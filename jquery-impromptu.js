@@ -1,8 +1,8 @@
 /*
  * jQuery Impromptu
  * By: Trent Richardson [http://trentrichardson.com]
- * Version 4.0.5
- * Last Modified: 08/15/2012
+ * Version 4.0.6
+ * Last Modified: 11/05/2012
  * 
  * Copyright 2012 Trent Richardson
  * You may use this project under MIT or GPL licenses.
@@ -50,6 +50,7 @@
 					title: $.prompt.options.title,
 					html: message,
 				 	buttons: $.prompt.options.buttons,
+				 	position: $.prompt.options.position,
 				 	focus: $.prompt.options.focus,
 				 	submit: $.prompt.options.submit
 			 	}
@@ -237,6 +238,12 @@
 	   	focus: 0,
 	   	useiframe: false,
 	 	top: '15%',
+		position: { 
+			container: null, 
+			x: null, 
+			y: null,
+			arrow: null
+		},
 	  	persistent: true,
 	  	timeout: 0,
 	  	state: {
@@ -277,7 +284,8 @@
 			windowHeight = $(window).height(),
 			documentHeight = $(document).height(),
 			height = bodyHeight > windowHeight ? bodyHeight : windowHeight,
-			top = parseInt($window.scrollTop(),10) + ($.prompt.options.top.toString().indexOf('%') >= 0? (windowHeight*(parseInt($.prompt.options.top,10)/100)) : parseInt($.prompt.options.top,10));
+			top = parseInt($window.scrollTop(),10) + ($.prompt.options.top.toString().indexOf('%') >= 0? (windowHeight*(parseInt($.prompt.options.top,10)/100)) : parseInt($.prompt.options.top,10)),
+			pos = $.prompt.states[$.prompt.currentStateName].position;
 
 		// This fixes the whitespace at the bottom of the fade, but it is 
 		// inconsistant and can cause an unneeded scrollbar, making the page jump
@@ -307,9 +315,8 @@
 		});
 
 		// tour positioning
-		if($.prompt.states[$.prompt.currentStateName].position.container){
-			var pos = $.prompt.states[$.prompt.currentStateName].position,
-				offset = $(pos.container).offset();
+		if(pos && pos.container){
+			var offset = $(pos.container).offset();
 			
 			if($.isPlainObject(offset) && offset.top !== undefined){
 				$.prompt.jqi.css({
@@ -324,6 +331,19 @@
 				top = (offset.top + pos.y) - ($.prompt.options.top.toString().indexOf('%') >= 0? (windowHeight*(parseInt($.prompt.options.top,10)/100)) : parseInt($.prompt.options.top,10));
 				$('html,body').animate({ scrollTop: top }, 'slow', 'swing', function(){});
 			}
+		}
+		// custom state width animation
+		else if(pos && pos.width){
+			$.prompt.jqi.css({
+					position: "absolute",
+					left: '50%'
+				});
+			$.prompt.jqi.animate({
+					top: pos.y || top,
+					left: pos.x || '50%',
+					marginLeft: ((pos.width/2)*-1),
+					width: pos.width
+				});
 		}
 		// standard prompt positioning
 		else{

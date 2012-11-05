@@ -45,6 +45,14 @@
 						title: 'Welcome to the Tour',
 						html: 'Get ready for a tour through the adventurous lands of Impromptzoo!',
 						buttons: { Next: 1, 'Lets Go': true },
+						position: { width: 250 },
+						submit: submitFunc
+					},
+					{
+						title: 'Before we Begin',
+						html: 'Remember to stay seated with your seatbelts fastened.  Keep your body parts and cameras inside the vehicle.',
+						buttons: { 'Nope, Sorry': false, 'Ok, Promise!': 1 },
+						position: { width: 400 },
 						submit: submitFunc
 					},
 					{
@@ -105,6 +113,7 @@
 						overlayspeed:'fast',
 						title: 'Standard Issue Prompt',
 						prefix: 'jqizoo',
+						//position: { width: 250, y: 200 },
 						buttons: [
 								{ title: 'Ok', value: '1', classes: ['foo','bar'] },
 								{ title: 'Cancel', value: '0', classes: "test1 test2" },
