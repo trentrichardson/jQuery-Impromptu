@@ -15,9 +15,9 @@ div.jqi{
 	font-size: 11px; 
 	text-align: left; 
 	border: solid 1px #eeeeee;
-	border-radius: 10px;
-	-moz-border-radius: 10px;
-	-webkit-border-radius: 10px;
+	border-radius: 6px;
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
 	padding: 7px;
 }
 div.jqi .jqicontainer{ 

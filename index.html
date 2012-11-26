@@ -1,0 +1,541 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">  
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"> 
+	<head> 
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>jQuery Impromptu</title>
+		<meta name="Description" content="The home page of jQuery Impromptu. jQuery Impromptu is an extention to help provide a more pleasant way to spontaneously prompt a user for input." />
+		<meta name="Keywords" content="Impromptu,jQuery Impromptu,jQuery alert,javascript alert,alert,jQuery prompt,javascript prompt,prompt,jQuery confirm,javascript confirm,confirm,jQuery modal,javascript modal,modal,jQuery plugin,jQuery extension" />
+
+		
+		<style type="text/css"> 
+			body,img,p,h1,h2,h3,h4,h5,h6,form,table,td,ul,ol,li,dl,dt,dd,pre,blockquote,fieldset,label{
+				margin:0;
+				padding:0;
+				border:0;
+			}
+			body{ background-color: #f8f7ec; border-top: solid 10px #777; font: 90% Helvetica, sans-serif; padding: 20px; }
+			h1,h2,h3,h4{ margin: 10px 0; font-family: Plantin, "Plantin std", "Plantin", "Baskerville", Georgia, "Times New Roman", serif; font-weight: normal; }
+			h1{font-size: 2.2em;margin: 0 0 20px 0; }
+			h2{ background-color: #D95656; line-height: 18px; font-size: 18px; letter-spacing: 1px; padding: 5px 10px; margin: 10px 0 10px -60px; color: #fff; display: inline-block; border-radius: 4px; -moz-border-radius: 4px;-webkit-border-radius: 4px; }
+			h3{ color: #D95656; font-size: 18px; letter-spacing: 1px;  margin: 10px 0 10px -20px; }
+			h4{ color: #777; font-size: 18px; letter-spacing: 1px; }
+			p{ margin: 10px 0; line-height: 150%; }
+			a{ color: #7b94b2; }
+			ul,ol{ margin: 10px 0 10px 40px; }
+			li{ margin: 4px 0; }
+			dl{ margin: 10px 0; }
+			dl dt{ font-weight: bold; line-height: 20px; margin: 10px 0 0 0; }
+			dl dd{ margin: -20px 0 10px 120px; padding-bottom: 10px; border-bottom: solid 1px #eee;}
+			pre{ font-size: 12px; line-height: 16px; padding: 5px 5px 5px 10px; margin: 10px 0; background-color: #e4f4d4; border-left: solid 5px #9EC45F; overflow: auto; }
+
+			.wrapper{ background-color: #ffffff; width: 600px; border: solid 1px #eeeeee; padding: 20px 20px 20px 40px; margin: 0 auto; border-radius: 6px; -moz-border-radius: 6px;-webkit-border-radius: 6px; }
+			.header{ text-align: center;}
+			.header ul{ margin: 10px 0; display: block; }
+			.header ul li{ display: inline; list-style: none; margin: 10px 10px; }
+			.header ul li a{ text-transform: uppercase; color: #777; text-decoration: none; }
+			.header ul li a:hover{ color: #555; }
+			.header .tour{ color: #fff; background-color: #9ec45f; padding: 4px 10px; margin: 10px 0; font-size: 18px; line-height: 18px; text-decoration: none;border-radius: 4px; -moz-border-radius: 4px;-webkit-border-radius: 4px;}
+			.header .tour:hover{ background-color: #8eb44f; }
+			.clear{ clear: both; }
+			
+			.methoddl dd{ margin-top: 0; }
+			.example-container{ border-bottom: double 3px #ccc; margin: 0 0 20px 0; padding: 0 0 20px 0; }
+			.example-container button{ border: none; color: #fff; padding: 4px 8px; background-color: #9ec45f; border-radius: 4px; -moz-border-radius: 4px;-webkit-border-radius: 4px; }
+		</style> 
+		
+		<link rel="stylesheet" media="all" type="text/css" href="jquery-impromptu.css" />
+		
+		<script type="text/javascript" src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
+		<script type="text/javascript" src="jquery-impromptu.js"></script>
+		<script type="text/javascript">
+			
+			$(function(){
+				$('.example-container').each(function(i,el){
+					var $ex = $(this),
+						$run = $ex.find('.run'),
+						code = $ex.find('.code').text();
+					$run.click(function(e){
+						e.preventDefault();
+						(new Function(code))();
+					});
+				});
+
+				$('#TourLink').click(function(e){
+					e.preventDefault();
+					$('#TourExample button').click();
+				});
+			});
+			
+		</script>
+	</head> 
+	<body> 
+		<div class="wrapper">
+			<div class="header">
+				<h1>jQuery Impromptu</h1> 
+
+				<p><a href="#" title="Take the Tour" class="tour" id="TourLink">Take the Tour</a></p>
+
+				<ul>
+					<li><a href="#Get_Started" title="Get Started">Get Started</a></li>
+					<li><a href="#Options" title="Options">Options</a></li>
+					<li><a href="#Methods" title="Methods">Methods</a></li>
+					<li><a href="#Events" title="Events">Events</a></li>
+					<li><a href="#Examples" title="Examples">Examples</a></li>
+				</ul>
+			</div>
+
+			<div class="content">
+				<!-- ---------------------------------------------- -->
+				<!-- ---------------------------------------------- -->
+				<div id="About" class="section">
+					<h2>About</h2>
+					<p class="intro">jQuery Impromptu is an extension to help provide a more pleasant way to spontaneously prompt a user for input.  More or less this is a great replacement for an alert, prompt, and confirm.  Not only does it replace these but it also allows for creating forms within these controls.  This is not intended to be a modal replacement, just a quick tool to prompt user input in a fashionable way.</p>
+				</div>
+
+				<!-- ---------------------------------------------- -->
+				<!-- ---------------------------------------------- -->
+				<div id="Get_Started" class="section">
+					<h2>Get Started</h2>
+					
+					<h3>Highly Recommended</h3>
+					<p>Subscribe to <a href="http://trentrichardson.com" title="TrentRichardson.com">my newsletter</a> and follow me <a href="http://twitter.com/practicalweb" title="Follow me on Twitter">@practicalweb</a>.</p>
+
+					<h3>Donation</h3>
+					<a href="http://carbounce.com" title="Car Bounce" style="float: right; display: inline-block;width:300px;padding: 10px;background-color: #fbfbfb;border: dotted 4px #e8e8e8;color: #9EC45F;font-size: 14px;text-decoration:none;letter-spacing:1px;"><img src="http://carbounce.com/img/logo_small.png" alt="Car Bounce" align="left" style="margin-right: 20px;"/>Try my new app to keep you informed of your car's financing status and value.</a>	
+					<p>Has Impromptu been helpful to you?</p>
+					<div class="donation">					
+						<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+						<input type="hidden" name="cmd" value="_s-xclick">
+						<input type="hidden" name="hosted_button_id" value="LF6AGYRBK6P2S">
+						<input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+						<img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
+						</form>
+					</div>
+					
+					<h3 id="Download">Download</h3>
+					<ul>
+						<li><a href="https://github.com/trentrichardson/jQuery-Impromptu" title="Fork it on Github">Github</a></li>
+						<li><a href="scripts/mootools-impromptu.3.1.js" title="Download Mootools Impromptu Development">Moopromptu</a></li>
+					</ul>
+
+					<h3>Version</h3>
+					<p>Version 4.0.1</p>
+					<p>Last updated on 03/03/2012</p>
+
+					<p>jQuery Impromptu is currently available for use in all personal or commercial projects under both MIT and GPL licenses. This means that you can choose the license that best suits your project, and use it accordingly. </p>
+					<ul>
+						<li><a href="http://trentrichardson.com/Impromptu/GPL-LICENSE.txt" title="GPL License">GPL License</a></li>
+						<li><a href="http://trentrichardson.com/Impromptu/MIT-LICENSE.txt" title="MIT License">MIT License</a></li>
+					</ul>
+					
+
+
+				</div>
+
+				<!-- ---------------------------------------------- -->
+				<!-- ---------------------------------------------- -->
+				<div id="Options" class="section">
+					<h2>Options</h2>
+					<pre><code>$.prompt( msg , options )</code></pre>
+					<h3>msg</h3>
+					<p>The message can either be an html string, or an object of "states".  Each state has the following properties:</p>
+					<dl>
+						<dt>html</dt>
+						<dd>A string of html or text for the content</dd>
+						
+						<dt>buttons</dt>
+						<dd>An object containing the text and values of each button the user may click. <em>Default: { Ok : true }</em></dd>
+						
+						<dt>focus</dt>
+						<dd>Index of the button to focus(0,1,2..). <em>Default: 0</em></dd>
+											
+						<dt>submit</dt>
+						<dd>A function to be called when the prompt is submitted. <em>Default: function(event, value, message, formVals){}</em> Return false or event.preventDefault() to keep the prompt open. Event object also has properties event.state and event.stateName.</dd>
+					</dl>
+<pre><code>var temp = {
+	state0: {
+		html:'test 1...',
+		buttons: { Cancel: false, Next: true },
+		focus: 1,
+		position: { container: '#elId', x: -300, y: -45, width: 250, arrow: 'rm' },
+		submit:function(e,v,m,f){ }
+	},
+	state1: {
+		html:'test 2..',
+		buttons: { Back: -1, Exit: 0, Next: 1 },
+		focus: 2,
+		submit:function(e,v,m,f){ }
+	}
+};</code></pre>
+					<p>If a string is passed as the message in place of a state, buttons, focus, and submit will be substituted from the options below.</p>
+
+					<h3>options</h3>
+					<dl>
+						<dt>loaded</dt>
+						<dd>A function to be called when the prompt is fully loaded  <em>Default: function(event){}</em></dd>
+						
+						<dt>submit</dt>
+						<dd>See state submit event above.</dd>
+						
+						<dt>statechanging</dt>
+						<dd>A function to be called when a state is about to change. <em>Default: function(event, fromStatename, toStateName){}</em> Return false or event.preventDefault() to prevent the state change.</dd>
+						
+						<dt>statechanged</dt>
+						<dd>A function to be called when a state has changed. <em>Default: function(event, toStateName){}</em></dd>
+						
+						<dt>callback</dt>
+						<dd>A function to be called when the prompt is submitted and removed. <em>Default: function(event[, value, message, formVals]){}</em> Last three paremeters available only when button was clicked.</dd>
+						
+						<dt>buttons</dt>
+						<dd>An object containing the text and values of each button the user may click. <em>Default: { Ok : true }</em></dd>
+
+						<dt>prefix</dt>
+						<dd>A prefix to be used for all css classes and html object id's. <em>Default: 'jqi'</em></dd>
+						
+						<dt>classes</dt>
+						<dd>Add class names to the outer Impromptu shell (parent of the fade and prompt) <em>Default: ''</em></dd>
+						
+						<dt>focus</dt>
+						<dd>Index of the button to focus(0,1,2..). <em>Default: 0</em></dd>
+
+						<dt>zIndex</dt>
+						<dd>zIndex to apply to the prompt. <em>Default: 999</em></dd>
+	                                
+						<dt>useiframe</dt>
+						<dd>Will use an iframe for the overlay in IE6 to cover up &lt;select&gt;. <em>Default: false</em></dd>
+						
+						<dt>top</dt>
+						<dd>Distance from the top of the screen the prompt will be <em>Default: 15%</em></dd>
+						
+						<dt>opacity</dt>
+						<dd>The prefered opacity of the transparent layer placed over the container. <em>Default: 0.6</em></dd>
+						
+						<dt>overlayspeed</dt>
+						<dd>The prefered speed of the fadeIn and fadeOut of the overlay ("slow", "fast", number) <em>Default: "slow"</em></dd>
+						
+						<dt>promptspeed</dt>
+						<dd>The prefered opacity of the showing of the prompt ("slow", "fast", number). <em>Default: "fast"</em></dd>
+
+						<dt>show</dt>
+						<dd>Name of the jQuery method to animate the entrance of the prompt("show","fadeIn","slideDown"). <em>Default: "promptDropIn"</em></dd>
+
+						<dt>persistent</dt>
+						<dd>If the prompt should close when the fade is clicked (true doesn't close). <em>Default: true</em></dd>
+						
+						<dt>timeout</dt>
+						<dd>The number of milliseconds until the prompt automatically closes.  <em>Default: 0</em></dd>						
+					</dl>
+
+				</div>
+
+				<!-- ---------------------------------------------- -->
+				<!-- ---------------------------------------------- -->
+				<div id="Methods" class="section">
+					<h2>Methods</h2>
+					<dl class="methoddl">
+						<dt>jQuery.prompt.setDefaults(options)</dt>
+						<dd>
+							Sets the defaults for prompts.<br />
+<pre><code>jQuery.prompt.setDefaults({
+	prefix: 'myPrompt',
+	show: 'slideDown'
+});</pre></code>
+						</dd>
+						
+						<dt>jQuery.prompt.setStateDefaults(options)</dt>
+						<dd>
+							Sets the defaults for states.<br />
+<pre><code>jQuery.prompt.setStateDefaults({
+	buttons: { Ok:true, Cancel:false },
+	focus: 1
+});</pre></code>
+						</dd>
+						
+						<dt>jQuery.prompt.getCurrentState()</dt>
+						<dd>Returns a jquery object of the current visible state.</dd>
+						
+						<dt>jQuery.prompt.getCurrentStateName()</dt>
+						<dd>Returns a string current visible state's name.</dd>
+						
+						<dt>jQuery.prompt.getStateContent(stateName)</dt>
+						<dd>Returns a jquery object of the state, so you can update the content within it.</dd>
+						
+						<dt>jQuery.prompt.goToState(stateName, callback)</dt>
+						<dd>Transitions to the specified state. Callback represents a statechanged event.</dd>
+						
+						<dt>jQuery.prompt.nextState(callback)</dt>
+						<dd>Transitions to the next state. Callback represents a statechanged event.</dd>
+						
+						<dt>jQuery.prompt.prevState(callback)</dt>
+						<dd>Transitions to the previous state. Callback represents a statechanged event.</dd>
+						
+						<dt>jQuery.prompt.close()</dt>
+						<dd>Closes the prompt.</dd>
+					</dl>
+
+				</div>
+
+				<!-- ---------------------------------------------- -->
+				<!-- ---------------------------------------------- -->
+				<div id="Events" class="section">
+					<h2>Events</h2>
+
+					<p>If you like to bind events manually you can do so with the following:</p>
+					<dl class="methoddl">
+						<dt>promptloaded</dt>
+						<dd>Same as loaded option. Scope is the entire prompt and fade container.
+<pre>var myPrompt = jQuery.prompt(/*...*/);
+myPrompt.bind('promptloaded', function(e){});</pre>
+						</dd>
+						
+						<dt>promptsubmit</dt>
+						<dd>Same as submit option. Scope is the state element.  These events are per state, so you must attach it directly to a state.
+<pre>var myPrompt = jQuery.prompt(/*...*/);
+$.prompt.getStateContent('state2')
+	.bind('promptsubmit', function(e,v,m,f){});</pre></dd>
+						
+						<dt>promptclose</dt>
+						<dd>Same as callback option. Scope is entire prompt and fade container</dd>
+						
+						<dt>promptstatechanging</dt>
+						<dd>Same as statechangin option. Scope is the entire prompt and fade container. This fires before the state changes, so you may return false or use e.preventDefault() prevent the state change.</dd>
+						
+						<dt>promptstatechanged</dt>
+						<dd>Same as statechanged option.  Scope is the entire prompt and fade container. This fires after the state has successfully changed.</dd>
+					</dl>
+
+				</div>
+
+				<!-- ---------------------------------------------- -->
+				<!-- ---------------------------------------------- -->
+				<div id="Examples" class="section">
+					<h2>Examples</h2>
+					
+					<h3>Basics</h3>
+					
+<div class="example-container">
+	<p>A prompt in the simplest of fashion.</p>
+<pre class="code">$.prompt("Hello World!");</pre>
+	<div class="buttons">
+		<button class="run">Run It!</button>
+	</div>
+</div>
+
+<div class="example-container">
+	<p>Lets add some buttons and a title.</p>
+<pre class="code">$.prompt("Proceeding may be good for your site..", {
+	title: "Are you Ready?",
+	buttons: { "Yes, I'm Ready": true, "No, Lets Wait": false }
+});</pre>
+	<div class="buttons">
+		<button class="run">Run It!</button>
+	</div>
+</div>
+
+<div class="example-container">
+	<p>Use the submit function to get the answer.</p>
+<pre class="code">$.prompt("Open your javascript console to see the answer.", {
+	title: "Are you Ready?",
+	buttons: { "Yes, I'm Ready": true, "No, Lets Wait": false },
+	submit: function(e,v,m,f){
+		// use e.preventDefault() to prevent closing when needed or return false. 
+		// e.preventDefault(); 
+
+		console.log("Value clicked was: "+ v);
+	}
+});</pre>
+	<div class="buttons">
+		<button class="run">Run It!</button>
+	</div>
+</div>
+
+					<h3>States</h3>
+
+<div class="example-container">
+	<p>To use states pass in a collection (array or object) of objects with common properties (html, buttons, focus, submit, position..).</p>
+<pre class="code">var statesdemo = {
+	state0: {
+		html:'test 1.&lt;br /&gt;test 1..&lt;br /&gt;test 1...',
+		buttons: { Cancel: false, Next: true },
+		focus: 1,
+		submit:function(e,v,m,f){ 
+			if(v){
+				e.preventDefault();
+				$.prompt.goToState('state1');
+			}
+			return false; 
+		}
+	},
+	state1: {
+		html:'test 2',
+		buttons: { Back: -1, Exit: 0 },
+		focus: 1,
+		submit:function(e,v,m,f){ 
+			if(v==0) $.prompt.close()
+			else if(v==-1)
+				$.prompt.goToState('state0');
+			e.preventDefault();
+		}
+	}
+};
+
+$.prompt(statesdemo);</pre>
+	<div class="buttons">
+		<button class="run">Run It!</button>
+	</div>
+</div>
+
+<div class="example-container" id="TourExample">
+	<p>To use states pass in a collection (array or object) of objects with common properties (html, buttons, focus, submit, position..).</p>
+<pre class="code" id="TourCode">var tourSubmitFunc = function(e,v,m,f){
+			if(v === -1){
+				$.prompt.prevState();
+				return false;
+			}
+			else if(v === 1){
+				$.prompt.nextState();
+				return false;
+			}
+},
+tourStates = [
+	{
+		title: 'Welcome',
+		html: 'Ready to take a quick tour of jQuery Impromptu?',
+		buttons: { Next: 1 },
+		focus: 1,
+		position: { container: 'h1', x: 200, y: 60, width: 200, arrow: 'tc' },
+		submit: tourSubmitFunc
+	},
+	{
+		title: 'Download',
+		html: 'When you get ready to use Impromptu, you can get it here.',
+		buttons: { Prev: -1, Next: 1 },
+		focus: 1,
+		position: { container: '#Download', x: 170, y: 0, width: 300, arrow: 'lt' },
+		submit: tourSubmitFunc
+	},
+	{
+		title: "You've Got Options",
+		html: 'A description of the options are can be found here.',
+		buttons: { Prev: -1, Next: 1 },
+		focus: 1,
+		position: { container: '#Options', x: -10, y: -145, width: 200, arrow: 'bl' },
+		submit: tourSubmitFunc
+	},
+	{
+		title: 'Examples..',
+		html: 'You will find plenty of examples to get you going..',
+		buttons: { Prev: -1, Next: 1 },
+		focus: 1,
+		position: { container: '#Examples', x: 80, y: 10, width: 500, arrow: 'lt' },
+		submit: tourSubmitFunc
+	},
+	{
+		title: 'The Tour Code',
+		html: 'Including this tour... See, creating a tour is easy!',
+		buttons: { Prev: -1, Next: 1 },
+		focus: 1,
+		position: { container: '#TourCode', x: 180, y: -130, width: 400, arrow: 'br' },
+		submit: tourSubmitFunc
+	},
+	{
+		title: 'Conclusion',
+		html: 'If you found Impromptu helpful, please see the links to the left, if not, thanks for stopping by!',
+		buttons: { Done: 2 },
+		focus: 1,
+		position: { container: '.donation', x: 120, y: 5, width: 300, arrow: 'lt' },
+		submit: tourSubmitFunc
+	}
+];
+$.prompt(tourStates);</pre>
+	<div class="buttons">
+		<button class="run">Run It!</button>
+	</div>
+</div>
+
+					<h3>Forms</h3>
+
+<div class="example-container">
+	<p>The bread and butter of Impromptu is forms.  By simply including form fields in the html all form values are gathered and sent via the "f" (aka "form") parameter.  The "m" (aka "message") parameter is a jQuery object of the message itself incase you need to modify the dom. Open your javascript console to view the object sent on submit.</p>
+<pre class="code">var statesdemo = {
+	state0: {
+		title: 'Name',
+		html:'&lt;label&gt;First &lt;input type="text" name="fname" value=""&gt;&lt;/label&gt;&lt;br /&gt;'+
+			'&lt;label&gt;Last &lt;input type="text" name="lname" value=""&gt;&lt;/label&gt;&lt;br /&gt;',
+		buttons: { Next: 1 },
+		focus: 1,
+		submit:function(e,v,m,f){ 
+			console.log(f);
+
+			e.preventDefault();
+			$.prompt.goToState('state1');
+		}
+	},
+	state1: {
+		title: 'Gender',
+		html:'&lt;label&gt;&lt;input type="radio" name="gender" value="Male"&gt; Male&lt;/label&gt;&lt;br /&gt;'+
+			'&lt;label&gt;&lt;input type="radio" name="gender" value="Female"&gt; Female&lt;/label&gt;',
+		buttons: { Back: -1, Next: 1 },
+		focus: 1,
+		submit:function(e,v,m,f){ 
+			console.log(f);
+
+			if(v==1) $.prompt.goToState('state2')
+			if(v==-1) $.prompt.goToState('state0');
+			e.preventDefault();
+		}
+	},
+	state2: {
+		title: 'Transportation',
+		html:'&lt;label&gt;Travels By &lt;select name="travel" multiple&gt;'+
+				'&lt;option value="Car" selected&gt;Car&lt;/option&gt;'+
+				'&lt;option value="Bus"&gt;Bus&lt;/option&gt;'+
+				'&lt;option value="Plane" selected&gt;Plane&lt;/option&gt;'+
+				'&lt;option value="Train"&gt;Train&lt;/option&gt;'+
+			'&lt;/select&gt;&lt;/label&gt;',
+		buttons: { Back: -1, Done: 1 },
+		focus: 1,
+		submit:function(e,v,m,f){ 
+			console.log(f);
+
+			e.preventDefault();
+			if(v==1) $.prompt.close();
+			if(v==-1) $.prompt.goToState('state1');
+		}
+	},
+};
+
+$.prompt(statesdemo);</pre>
+	<div class="buttons">
+		<button class="run">Run It!</button>
+	</div>
+</div>
+					
+					<h3>Advanced</h3>
+					<p>The following are example demonstrations of various useful utilities with Impromptu.</p>
+					<ul>
+						<li><a href="demos/user_manager.html" title="User Manager Demo">User Manager</a></li>
+						<li><a href="demos/survey.html" title="Survey Demo">Survey</a></li>
+						<li><a href="demos/loan_calculator.html" title="Loan Calculator Demo">Loan Calculator</a></li>
+						<li><a href="demos/select_filter.html" title="Select Dropdown Search Filter Demo">Select Dropdown Search Filter</a></li>
+					</ul>
+				</div>
+			</div>
+
+			<div class="footer">
+
+			</div>
+		</div>
+
+		<script type="text/javascript">
+		var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+		document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+		</script>
+		<script type="text/javascript">
+		try {
+		var pageTracker = _gat._getTracker("UA-7602218-1");
+		pageTracker._trackPageview();
+		} catch(err) {}</script>
+
+	</body>
+</html>
