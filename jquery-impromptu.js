@@ -2,7 +2,7 @@
  * jQuery Impromptu
  * By: Trent Richardson [http://trentrichardson.com]
  * Version 4.1
- * Last Modified: 11/28/2012
+ * Last Modified: 12/02/2012
  * 
  * Copyright 2012 Trent Richardson
  * You may use this project under MIT or GPL licenses.

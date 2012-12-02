@@ -79,7 +79,7 @@
 				}
 				
 				$.prompt(temp,{
-					callback: function(e,v,m,f){
+					close: function(e,v,m,f){
 						var str = "You can now process with this given information:<br />";
 						$.each(f,function(i,obj){
 							str += i + " - <em>" + obj + "</em><br />";

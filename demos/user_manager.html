@@ -61,7 +61,7 @@
 						}
 						return flag;
 					},
-					callback: function(e,v,m,f){
+					close: function(e,v,m,f){
 						
 						if(v){							
 							//Here is where you would do an ajax post to edit the user
@@ -90,7 +90,7 @@
 				
 				$.prompt(txt,{ 
 					buttons:{Delete:true, Cancel:false},
-					callback: function(e,v,m,f){
+					close: function(e,v,m,f){
 						
 						if(v){
 							var uid = f.userid;
