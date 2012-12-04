@@ -44,6 +44,9 @@
 			.methoddl dd{ margin-top: 0; }
 			.example-container{ border-bottom: double 3px #ccc; margin: 0 0 20px 0; padding: 0 0 20px 0; }
 			.example-container button{ border: none; color: #fff; padding: 4px 8px; background-color: #9ec45f; border-radius: 4px; -moz-border-radius: 4px;-webkit-border-radius: 4px; }
+			.ebook{}
+			.ebook img.ebookimg{ float: left; margin: 0 15px 15px 0; width: 100px; }
+			.ebook .buyp a iframe{ margin-bottom: -5px; }
 		</style> 
 		
 		<link rel="stylesheet" media="all" type="text/css" href="jquery-impromptu.css" />
@@ -117,6 +120,15 @@
 					
 					<h3>Highly Recommended</h3>
 					<p>Subscribe to <a href="http://trentrichardson.com/category/impromptu/" title="TrentRichardson.com">my newsletter</a> and follow me <a href="http://twitter.com/practicalweb" title="Follow me on Twitter">@practicalweb</a>.</p>
+					<div class="ebook">
+						<a href="http://sellfy.com/p/IrwS" title="Impromptu From I to U"><img src="http://trentrichardson.com/wp-content/uploads/2012/12/Impromptu-FromItoU.jpg" alt="Impromptu From I to U" class="ebookimg" /></a>
+						<p>Get the ebook Impromptu From I to U. Learn about advanced functionality of Impromptu including states, forms, tours, theming, and more!</p>
+						<p class="buyp"><a href="http://sellfy.com/p/IrwS" id="IrwS" class="sellfy-buy-button sellfy-small">buy</a> PDF + Code</p>
+						<p class="buyp"><a href="http://sellfy.com/p/e14I" id="e14I" class="sellfy-buy-button sellfy-small">buy</a> PDF Only</p>
+						<script type="text/javascript" src="http://sellfy.com/js/api_buttons.js"></script>
+						<div class="clear"></div>
+					</div>
+
 
 					<h3>Donation</h3>
 					<a href="http://carbounce.com" title="Car Bounce" style="float: right; display: inline-block;width:300px;padding: 10px;background-color: #fbfbfb;border: dotted 4px #e8e8e8;color: #9EC45F;font-size: 14px;text-decoration:none;letter-spacing:1px;"><img src="http://carbounce.com/img/logo_small.png" alt="Car Bounce" align="left" style="margin-right: 20px;"/>Try my new app to keep you informed of your car's financing status and value.</a>	
@@ -458,11 +470,11 @@ tourStates = [
 		submit: tourSubmitFunc
 	},
 	{
-		title: 'Conclusion',
-		html: 'If you found Impromptu helpful, please see the links to the left, if not, thanks for stopping by!',
+		title: 'Learn More',
+		html: 'If you would like to learn more please consider purchasing a copy of Impromptu From I to U. If you found Impromptu helpful, please see the links to the left, if not, thanks for stopping by!',
 		buttons: { Done: 2 },
 		focus: 1,
-		position: { container: '.donation', x: 120, y: 5, width: 300, arrow: 'lt' },
+		position: { container: '.donation', x: 120, y: -70, width: 400, arrow: 'tl lb' },
 		submit: tourSubmitFunc
 	}
 ];
