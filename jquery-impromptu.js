@@ -1,10 +1,10 @@
 /*
  * jQuery Impromptu
  * By: Trent Richardson [http://trentrichardson.com]
- * Version 4.1
- * Last Modified: 12/02/2012
+ * Version 4.2
+ * Last Modified: 01/25/2013
  * 
- * Copyright 2012 Trent Richardson
+ * Copyright 2013 Trent Richardson
  * You may use this project under MIT or GPL licenses.
  * http://trentrichardson.com/Impromptu/GPL-LICENSE.txt
  * http://trentrichardson.com/Impromptu/MIT-LICENSE.txt
@@ -17,7 +17,6 @@
 		$.prompt.currentPrefix = $.prompt.options.prefix;
 		$.prompt.currentStateName = "";
 
-		var ie6		= ($.browser.msie && $.browser.version < 7);
 		var $body	= $(document.body);
 		var $window	= $(window);
 		
@@ -27,12 +26,9 @@
 			
 		//build the box and fade
 		var msgbox = '<div class="'+ $.prompt.options.prefix +'box'+ $.prompt.options.classes +'">';
-		if($.prompt.options.useiframe && (($('object, applet').length > 0) || ie6)) {
+		if($.prompt.options.useiframe && ($('object, applet').length > 0)) {
 			msgbox += '<iframe src="javascript:false;" style="display:block;position:absolute;z-index:-1;" class="'+ $.prompt.options.prefix +'fade"></iframe>';
 		} else {
-			if(ie6) {
-				$('select').css('visibility','hidden');
-			}
 			msgbox +='<div class="'+ $.prompt.options.prefix +'fade"></div>';
 		}
 		msgbox += '<div class="'+ $.prompt.options.prefix +'"><div class="'+ $.prompt.options.prefix +'container"><div class="';
@@ -441,9 +437,6 @@
 			
 			$('window').unbind('resize',$.prompt.position);
 			
-			if(($.browser.msie && $.browser.version < 7) && !$.prompt.options.useiframe) {
-				$('select').css('visibility','visible');
-			}
 		});
 	};
 	
