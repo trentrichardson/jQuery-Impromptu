@@ -11,6 +11,11 @@
  * 
  */
  
+ // Mod in goToState() - uses the promptspeed variable instead of default slow to slide (around line 400)
+ // Mod in prompt.position() - removed unnecessary height variables, use document.height as fade height to cover everything!
+ // Mod at the bottom of prompt.position() - set max jqimessage height and scrollbars as necessary to keep prompt on screen!
+ // Mod at buttom of the main showing part - try to find the first text input and then select it automatically...
+ 
 (function($) {
 	$.prompt = function(message, options) {
 		$.prompt.options = $.extend({},$.prompt.defaults,options);
@@ -208,6 +213,8 @@
 		});
 		$.prompt.jqi.find('.'+ $.prompt.options.prefix +'states .'+ $.prompt.options.prefix +'state:first .'+ $.prompt.options.prefix +'defaultbutton').focus();
 		
+		$('.jqimessage').children(':input')[0] ? $('.jqimessage').children(':input')[0].select() : '';	// andromeda mod...
+		
 		if($.prompt.options.timeout > 0)
 			setTimeout($.prompt.close,$.prompt.options.timeout);
 
@@ -278,12 +285,8 @@
 	$.prompt.position = function(e){
 		var restoreFx = $.fx.off,
 			$window = $(window),
-			bodyHeight = $(document.body).outerHeight(true),
-			windowHeight = $(window).height(),
-			documentHeight = $(document).height(),
-			height = bodyHeight > windowHeight ? bodyHeight : windowHeight,
 			top = parseInt($window.scrollTop(),10) + ($.prompt.options.top.toString().indexOf('%') >= 0? 
-					(windowHeight*(parseInt($.prompt.options.top,10)/100)) : parseInt($.prompt.options.top,10)),
+					($(window).height()*(parseInt($.prompt.options.top,10)/100)) : parseInt($.prompt.options.top,10)),
 			pos = $.prompt.states[$.prompt.currentStateName].position;
 
 		// This fixes the whitespace at the bottom of the fade, but it is 
@@ -296,7 +299,7 @@
 		
 		$.prompt.jqib.css({
 			position: "absolute",
-			height: height,
+			height: $(document).height(),
 			width: "100%",
 			top: 0,
 			left: 0,
@@ -305,7 +308,7 @@
 		});
 		$.prompt.jqif.css({
 			position: "absolute",
-			height: height,
+			height: $(document).height(),
 			width: "100%",
 			top: 0,
 			left: 0,
@@ -357,6 +360,13 @@
 		// restore fx settings
 		if(e !== undefined && e.data.animate === false)
 			$.fx.off = restoreFx;
+			
+		var max_height = window.innerHeight - $.prompt.jqi.offset().top - 128;
+				
+		if ($.prompt.getStateContent('output').find('.jqimessage').height() > max_height) {
+			$.prompt.getStateContent('output').find('.jqimessage').height(max_height).css('overflow-y','scroll');
+		}
+
 	};
 	
 	$.prompt.style = function(){
@@ -395,13 +405,13 @@
 		if(!promptstatechanginge.isDefaultPrevented()){
 			$.prompt.currentStateName = state;
 			
-			$('.'+ $.prompt.currentPrefix +'state').slideUp('slow')
+			$('.'+ $.prompt.currentPrefix +'state').slideUp($.prompt.options.promptspeed)
 				.find('.'+ $.prompt.currentPrefix +'arrow').fadeOut();
 			
-			$('#'+ $.prompt.currentPrefix +'state_'+ state).slideDown('slow',function(){
+			$('#'+ $.prompt.currentPrefix +'state_'+ state).slideDown($.prompt.options.promptspeed,function(){
 				var $t = $(this);
 				$t.find('.'+ $.prompt.currentPrefix +'defaultbutton').focus();
-				$t.find('.'+ $.prompt.currentPrefix +'arrow').fadeIn('slow');
+				$t.find('.'+ $.prompt.currentPrefix +'arrow').fadeIn($.prompt.options.promptspeed);
 				
 				if (typeof callback == 'function'){
 					$.prompt.jqib.bind('promptstatechanged.tmp', callback);
