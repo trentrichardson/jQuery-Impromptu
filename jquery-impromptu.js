@@ -64,6 +64,9 @@
 		for(k in message){
 			v = $.extend({},$.prompt.defaults.state,{name:k},message[k]);
 			$.prompt.addState(v.name, v);
+
+			if($.prompt.currentStateName === '')
+				$.prompt.currentStateName = v.name;
 		}
 
 		// Go ahead and transition to the first state. It won't be visible just yet though until we show the prompt
@@ -241,6 +244,12 @@
 	* of the current prompt ex: "jqi"
 	*/
 	$.prompt.currentPrefix = $.prompt.defaults.prefix;
+	
+	/**
+	* currentStateName String - At any time this is the current state
+	* of the current prompt ex: "state0"
+	*/
+	$.prompt.currentStateName = "";
 		
 	/**
 	* setDefaults - Sets the default options
@@ -266,15 +275,15 @@
 	*/
 	$.prompt.position = function(e){
 		var restoreFx = $.fx.off,
+			$state = $.prompt.getCurrentState(),
+			pos = $state.data('jqi').position,
 			$window = $(window),
 			bodyHeight = $(document.body).outerHeight(true),
 			windowHeight = $(window).height(),
 			documentHeight = $(document).height(),
 			height = bodyHeight > windowHeight ? bodyHeight : windowHeight,
 			top = parseInt($window.scrollTop(),10) + ($.prompt.options.top.toString().indexOf('%') >= 0? 
-					(windowHeight*(parseInt($.prompt.options.top,10)/100)) : parseInt($.prompt.options.top,10)),
-			$state = $.prompt.getCurrentState(),
-			pos = $state.data('jqi').position;
+					(windowHeight*(parseInt($.prompt.options.top,10)/100)) : parseInt($.prompt.options.top,10));
 
 		// This fixes the whitespace at the bottom of the fade, but it is 
 		// inconsistant and can cause an unneeded scrollbar, making the page jump
@@ -391,7 +400,7 @@
 			$jqistates = $('.'+ $.prompt.currentPrefix +'states'),
 			k,v,i=0;
 
-		stateobj = $.extend({},$.prompt.defaults.state, stateobj);
+		stateobj = $.extend({},$.prompt.defaults.state, {name:statename}, stateobj);
 
 		if(stateobj.position.arrow !== null)
 			arrow = '<div class="'+ $.prompt.options.prefix + 'arrow '+ $.prompt.options.prefix + 'arrow'+ stateobj.position.arrow +'"></div>';
@@ -428,7 +437,7 @@
 		$state.data('jqi',stateobj).bind('promptsubmit', stateobj.submit);
 
 		if(afterState !== undefined){
-			$jqistates.find('#'+ $.prompt.currentPrefix +'state_'+ afterState).after(state);
+			$jqistates.find('#'+ $.prompt.currentPrefix +'state_'+ afterState).after($state);
 		}
 		else{
 			$jqistates.append($state);
@@ -483,7 +492,7 @@
 	* @return jQuery - the current visible state
 	*/
 	$.prompt.getCurrentState = function() {
-		return $('.'+ $.prompt.currentPrefix +'state:visible');
+		return $.prompt.getState($.prompt.getCurrentStateName());
 	};
 		
 	/**
@@ -491,7 +500,7 @@
 	* @return String - the current visible state's name
 	*/
 	$.prompt.getCurrentStateName = function() {
-		return $.prompt.getCurrentState().data('jqi-name');
+		return $.prompt.currentStateName;
 	};
 	
 	/**
@@ -506,6 +515,7 @@
 			$state = $.prompt.getState(state),
 			stateobj = $state.data('jqi'),
 			promptstatechanginge = new $.Event('promptstatechanging');
+
 		$.prompt.jqib.trigger(promptstatechanginge, [$.prompt.getCurrentStateName(), state]);
 		
 		if(!promptstatechanginge.isDefaultPrevented() && $state.length > 0){
@@ -513,6 +523,8 @@
 			$('.'+ $.prompt.currentPrefix +'state').not($state).slideUp(jqiopts.promptspeed)
 				.find('.'+ $.prompt.currentPrefix +'arrow').fadeOut();
 			
+			$.prompt.currentStateName = stateobj.name;
+
 			$state.slideDown(jqiopts.promptspeed,function(){
 				var $t = $(this);
 

@@ -177,7 +177,7 @@
 						<dd>An object containing the text and values of each button the user may click. <em>Default: { Ok : true }</em></dd>
 						
 						<dt>focus</dt>
-						<dd>Index of the button to focus(0,1,2..). <em>Default: 0</em></dd>
+						<dd>Index of the button to focus or selector to element to focus. <em>Default: 0</em></dd>
 											
 						<dt>submit</dt>
 						<dd>A function to be called when the prompt is submitted. <em>Default: function(event, value, message, formVals){}</em> Return false or event.preventDefault() to keep the prompt open. Event object also has properties event.state and event.stateName.</dd>
@@ -211,7 +211,7 @@
 						<dd>A function to be called when the prompt is closed and just before being removed from the DOM. <em>Default: function(event[, value, message, formVals]){}</em> Last three paremeters available only when button was clicked.</dd>
 						
 						<dt>focus</dt>
-						<dd>Index of the button to focus(0,1,2..). <em>Default: 0</em></dd>
+						<dd>Index of the button to focus or selector to element to focus. <em>Default: 0</em></dd>
 
 						<dt>loaded</dt>
 						<dd>A function to be called when the prompt is fully loaded  <em>Default: function(event){}</em></dd>
@@ -418,12 +418,12 @@ $.prompt(statesdemo);</pre>
 
 <div class="example-container" id="TourExample">
 	<p>To use states pass in a collection (array or object) of objects with common properties (html, buttons, focus, submit, position..).</p>
-<pre class="code" id="TourCode">var tourSubmitFunc = function(e,v,m,f){console.log(v);
-			if(v === -1){console.log('prev');
+<pre class="code" id="TourCode">var tourSubmitFunc = function(e,v,m,f){
+			if(v === -1){
 				$.prompt.prevState();
 				return false;
 			}
-			else if(v === 1){console.log('next');
+			else if(v === 1){
 				$.prompt.nextState();
 				return false;
 			}
