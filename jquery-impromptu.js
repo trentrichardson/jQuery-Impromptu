@@ -1,8 +1,8 @@
 /*
  * jQuery Impromptu
  * By: Trent Richardson [http://trentrichardson.com]
- * Version 4.2
- * Last Modified: 01/25/2013
+ * Version 4.3-dev
+ * Last Modified: 05/07/2013
  * 
  * Copyright 2013 Trent Richardson
  * You may use this project under MIT or GPL licenses.
@@ -12,10 +12,16 @@
  */
  
 (function($) {
+
+	/**
+	* setDefaults - Sets the default options
+	* @param message String/Object - String of html or Object of states
+	* @param options Object - Options to set the prompt
+	* @return jQuery - container with overlay and prompt
+	*/
 	$.prompt = function(message, options) {
 		$.prompt.options = $.extend({},$.prompt.defaults,options);
 		$.prompt.currentPrefix = $.prompt.options.prefix;
-		$.prompt.currentStateName = "";
 
 		var $body	= $(document.body);
 		var $window	= $(window);
@@ -36,8 +42,8 @@
 		msgbox += '</div></div></div>';
 
 		$.prompt.jqib = $(msgbox).appendTo($body);
-		$.prompt.jqi	 = $.prompt.jqib.children('.'+ $.prompt.options.prefix);
-		$.prompt.jqif	= $.prompt.jqib.children('.'+ $.prompt.options.prefix +'fade');
+		$.prompt.jqi = $.prompt.jqib.children('.'+ $.prompt.options.prefix).data('jqi',$.prompt.options);
+		$.prompt.jqif = $.prompt.jqib.children('.'+ $.prompt.options.prefix +'fade');
 
 		//if a string was passed, convert to a single state
 		if(message.constructor == String){
@@ -54,91 +60,57 @@
 		}
 
 		//build the states
-		var states = "";
+		var k,v;
+		for(k in message){
+			v = $.extend({},$.prompt.defaults.state,{name:k},message[k]);
+			$.prompt.addState(v.name, v);
+		}
 
-		$.each(message,function(statename,stateobj){
-				stateobj = $.extend({},$.prompt.defaults.state,stateobj);
-				message[statename] = stateobj;
-				
-				var arrow = "",
-					title = "";
-				if(stateobj.position.arrow !== null)
-					arrow = '<div class="'+ $.prompt.options.prefix + 'arrow '+ $.prompt.options.prefix + 'arrow'+ stateobj.position.arrow +'"></div>';
-				if(stateobj.title && stateobj.title !== '')
-				    title = '<div class="'+ $.prompt.options.prefix + 'title">'+  stateobj.title +'</div>';
-				states += '<div id="'+ $.prompt.options.prefix +'state_'+ statename +'" class="'+ $.prompt.options.prefix + 'state" style="display:none;">'+ arrow + title +'<div class="'+ $.prompt.options.prefix +'message">' + stateobj.html +'</div><div class="'+ $.prompt.options.prefix +'buttons">';
-				
-				$.each(stateobj.buttons, function(k, v){
-					if(typeof v == 'object'){
-						states += '<button ';
-						
-						if(typeof v.classes !== "undefined"){
-							states += 'class="' + ($.isArray(v.classes)? v.classes.join(' ') : v.classes) + '" ';
-						}
-						
-						states += ' name="' + $.prompt.options.prefix + '_' + statename + '_button' + v.title.replace(/[^a-z0-9]+/gi,'') + '" id="' + $.prompt.options.prefix + '_' + statename + '_button' + v.title.replace(/[^a-z0-9]+/gi,'') + '" value="' + v.value + '">' + v.title + '</button>';
-						
-					} else {
-						states += '<button name="' + $.prompt.options.prefix + '_' + statename + '_button' + k + '" id="' + $.prompt.options.prefix +  '_' + statename + '_button' + k + '" value="' + v + '">' + k + '</button>';
-						
-					}
-				});
-				states += '</div></div>';
-		});
+		// Go ahead and transition to the first state. It won't be visible just yet though until we show the prompt
+		var $firstState = $.prompt.jqi.find('.'+ $.prompt.options.prefix +'states .'+ $.prompt.options.prefix +'state:first');
+		$.prompt.goToState($firstState.data('jqi').name);
 
-		//insert the states...
-		$.prompt.states = message;
-		$.prompt.jqi.find('.'+ $.prompt.options.prefix +'states').html(states).children('.'+ $.prompt.options.prefix +'state:first').css('display','block');
-		$.prompt.jqi.find('.'+ $.prompt.options.prefix +'buttons:empty').css('display','none');
-		
 		//Events
-		$.each(message,function(statename,stateobj){
-			var $state = $.prompt.jqi.find('#'+ $.prompt.options.prefix +'state_'+ statename);
+		$.prompt.jqi.delegate('.'+ $.prompt.options.prefix +'buttons button', 'click', function(e){
+			var $t = $(this),
+				$state = $t.parents('.'+ $.prompt.options.prefix +'state'),
+				stateobj = $state.data('jqi'),
+				msg = $state.children('.'+ $.prompt.options.prefix +'message'),
+				clicked = stateobj.buttons[$t.text()] || stateobj.buttons[$t.html()],
+				forminputs = {};
 
-			if($.prompt.currentStateName === "")
-				$.prompt.currentStateName = statename;
-
-			$state.bind('promptsubmit', stateobj.submit);
-			
-			$state.children('.'+ $.prompt.options.prefix +'buttons').children('button').click(function(){
-				var $t = $(this),
-					msg = $state.children('.'+ $.prompt.options.prefix +'message'),
-					clicked = stateobj.buttons[$t.text()] || stateobj.buttons[$t.html()];
-				if(clicked == undefined){
-					for(var i in stateobj.buttons)
-						if(stateobj.buttons[i].title == $t.text() || stateobj.buttons[i].title == $t.html())
-							clicked = stateobj.buttons[i].value;
+			// if for some reason we couldn't get the value
+			if(clicked == undefined){
+				for(var i in stateobj.buttons){
+					if(stateobj.buttons[i].title == $t.text() || stateobj.buttons[i].title == $t.html()){
+						clicked = stateobj.buttons[i].value;
+					}
 				}
-				
-				if(typeof clicked == 'object')
-					clicked = clicked.value;
-				var forminputs = {};
+			}
 
-				//collect all form element values from all states
-				$.each($.prompt.jqi.find('.'+ $.prompt.options.prefix +'states :input').serializeArray(),function(i,obj){
-					if (forminputs[obj.name] === undefined) {
-						forminputs[obj.name] = obj.value;
-					} else if (typeof forminputs[obj.name] == Array || typeof forminputs[obj.name] == 'object') {
-						forminputs[obj.name].push(obj.value);
-					} else {
-						forminputs[obj.name] = [forminputs[obj.name],obj.value];	
-					} 
-				});
-
-				// trigger an event
-				var promptsubmite = new $.Event('promptsubmit');
-				promptsubmite.stateName = statename;
-				promptsubmite.state = $state;
-				$state.trigger(promptsubmite, [clicked, msg, forminputs]);
-				
-				if(!promptsubmite.isDefaultPrevented()){
-					$.prompt.close(true, clicked,msg,forminputs);
-				}
+			//collect all form element values from all states
+			$.each($.prompt.jqi.find('.'+ $.prompt.options.prefix +'states :input').serializeArray(),function(i,obj){
+				if (forminputs[obj.name] === undefined) {
+					forminputs[obj.name] = obj.value;
+				} else if (typeof forminputs[obj.name] == Array || typeof forminputs[obj.name] == 'object') {
+					forminputs[obj.name].push(obj.value);
+				} else {
+					forminputs[obj.name] = [forminputs[obj.name],obj.value];	
+				} 
 			});
-			$state.find('.'+ $.prompt.options.prefix +'buttons button:eq('+ stateobj.focus +')').addClass($.prompt.options.prefix +'defaultbutton');
 
+			// trigger an event
+			var promptsubmite = new $.Event('promptsubmit');
+			promptsubmite.stateName = stateobj.name;
+			promptsubmite.state = $state;
+			$state.trigger(promptsubmite, [clicked, msg, forminputs]);
+			
+			if(!promptsubmite.isDefaultPrevented()){
+				$.prompt.close(true, clicked,msg,forminputs);
+			}
 		});
 
+		// if the fade is clicked blink the prompt
 		var fadeClicked = function(){
 			if($.prompt.options.persistent){
 				var offset = ($.prompt.options.top.toString().indexOf('%') >= 0? ($window.height()*(parseInt($.prompt.options.top,10)/100)) : parseInt($.prompt.options.top,10)),
@@ -162,15 +134,16 @@
 			}
 		};
 		
+		// listen for esc or tab keys
 		var keyPressEventHandler = function(e){
-			var key = (window.event) ? event.keyCode : e.keyCode; // MSIE or Firefox?
+			var key = (window.event) ? event.keyCode : e.keyCode;
 			
 			//escape key closes
 			if(key==27) {
 				fadeClicked();	
 			}
 			
-			//constrain tabs
+			//constrain tabs, tabs should iterate through the state and not leave
 			if (key == 9){
 				var $inputels = $(':input:enabled:visible',$.prompt.jqib);
 				var fwd = !e.shiftKey && e.target == $inputels[$inputels.length-1];
@@ -206,7 +179,6 @@
 		$.prompt.jqi[$.prompt.options.show]($.prompt.options.promptspeed, function(){
 			$.prompt.jqib.trigger('promptloaded');
 		});
-		$.prompt.jqi.find('.'+ $.prompt.options.prefix +'states .'+ $.prompt.options.prefix +'state:first .'+ $.prompt.options.prefix +'defaultbutton').focus();
 		
 		if($.prompt.options.timeout > 0)
 			setTimeout($.prompt.close,$.prompt.options.timeout);
@@ -244,6 +216,7 @@
 	  	persistent: true,
 	  	timeout: 0,
 	  	state: {
+	  		name: null,
 	  		title: '',
 			html: '',
 		 	buttons: {
@@ -263,18 +236,34 @@
 	  	}
 	};
 	
+	/**
+	* currentPrefix String - At any time this show be the prefix 
+	* of the current prompt ex: "jqi"
+	*/
 	$.prompt.currentPrefix = $.prompt.defaults.prefix;
-	
-	$.prompt.currentStateName = "";
-	
+		
+	/**
+	* setDefaults - Sets the default options
+	* @param o Object - Options to set as defaults
+	* @return void
+	*/
 	$.prompt.setDefaults = function(o) {
 		$.prompt.defaults = $.extend({}, $.prompt.defaults, o);
 	};
 	
+	/**
+	* setStateDefaults - Sets the default options for a state
+	* @param o Object - Options to set as defaults
+	* @return void
+	*/
 	$.prompt.setStateDefaults = function(o) {
 		$.prompt.defaults.state = $.extend({}, $.prompt.defaults.state, o);
 	};
 
+	/**
+	* position - Repositions the prompt (Used internally)
+	* @return void
+	*/
 	$.prompt.position = function(e){
 		var restoreFx = $.fx.off,
 			$window = $(window),
@@ -284,7 +273,8 @@
 			height = bodyHeight > windowHeight ? bodyHeight : windowHeight,
 			top = parseInt($window.scrollTop(),10) + ($.prompt.options.top.toString().indexOf('%') >= 0? 
 					(windowHeight*(parseInt($.prompt.options.top,10)/100)) : parseInt($.prompt.options.top,10)),
-			pos = $.prompt.states[$.prompt.currentStateName].position;
+			$state = $.prompt.getCurrentState(),
+			pos = $state.data('jqi').position;
 
 		// This fixes the whitespace at the bottom of the fade, but it is 
 		// inconsistant and can cause an unneeded scrollbar, making the page jump
@@ -359,6 +349,10 @@
 			$.fx.off = restoreFx;
 	};
 	
+	/**
+	* style - Restyles the prompt (Used internally)
+	* @return void
+	*/
 	$.prompt.style = function(){
 		$.prompt.jqif.css({
 			zIndex: $.prompt.options.zIndex,
@@ -374,34 +368,163 @@
 		});
 	};
 
-	$.prompt.getStateContent = function(state) {
-		return $('#'+ $.prompt.currentPrefix +'state_'+ state);
+	/**
+	* get - Get the prompt
+	* @return jQuery - the prompt
+	*/
+	$.prompt.get = function(state) {
+		return $('.'+ $.prompt.currentPrefix);
+	};
+
+	/**
+	* addState - Injects a state into the prompt
+	* @param statename String - Name of the state
+	* @param stateobj Object - options for the state
+	* @param afterState String - selector of the state to insert after
+	* @return jQuery - the newly created state
+	*/
+	$.prompt.addState = function(statename, stateobj, afterState) {
+		var state = "",
+			$state = null,
+			arrow = "",
+			title = "",
+			$jqistates = $('.'+ $.prompt.currentPrefix +'states'),
+			k,v,i=0;
+
+		stateobj = $.extend({},$.prompt.defaults.state, stateobj);
+
+		if(stateobj.position.arrow !== null)
+			arrow = '<div class="'+ $.prompt.options.prefix + 'arrow '+ $.prompt.options.prefix + 'arrow'+ stateobj.position.arrow +'"></div>';
+		if(stateobj.title && stateobj.title !== '')
+		    title = '<div class="'+ $.prompt.options.prefix + 'title">'+  stateobj.title +'</div>';
+		state += '<div id="'+ $.prompt.options.prefix +'state_'+ statename +'" class="'+ $.prompt.options.prefix + 'state" data-jqi-name="'+ statename +'" style="display:none;">'+ 
+					arrow + title +
+					'<div class="'+ $.prompt.options.prefix +'message">' + stateobj.html +'</div>'+
+					'<div class="'+ $.prompt.options.prefix +'buttons"'+ ($.isEmptyObject(stateobj.buttons)? 'style="display:none;"':'') +'>';
+		
+		for(k in stateobj.buttons){
+			v = stateobj.buttons[k],
+			defbtn = stateobj.focus === i? ($.prompt.currentPrefix+'defaultbutton '):'';
+
+			if(typeof v == 'object'){
+				state += '<button class="'+ defbtn;
+				
+				if(typeof v.classes !== "undefined"){
+					state += ($.isArray(v.classes)? v.classes.join(' ') : v.classes) + ' ';
+				}
+				
+				state += ' name="' + $.prompt.options.prefix + '_' + statename + '_button' + v.title.replace(/[^a-z0-9]+/gi,'') + '" id="' + $.prompt.options.prefix + '_' + statename + '_button' + v.title.replace(/[^a-z0-9]+/gi,'') + '" value="' + v.value + '">' + v.title + '</button>';
+				
+			} else {
+				state += '<button class="'+ defbtn +'" name="' + $.prompt.options.prefix + '_' + statename + '_button' + k + '" id="' + $.prompt.options.prefix +  '_' + statename + '_button' + k + '" value="' + v + '">' + k + '</button>';
+				
+			}
+			i++;
+		}
+		state += '</div></div>';
+		
+		$state = $(state);
+
+		$state.data('jqi',stateobj).bind('promptsubmit', stateobj.submit);
+
+		if(afterState !== undefined){
+			$jqistates.find('#'+ $.prompt.currentPrefix +'state_'+ afterState).after(state);
+		}
+		else{
+			$jqistates.append($state);
+		}
+
+		return $state;
 	};
 	
+	/**
+	* removeState - Removes a state from the promt
+	* @param state String - Name of the state
+	* @return Boolean - returns true on success, false on failure
+	*/
+	$.prompt.removeState = function(state) {
+		var $state = $.prompt.getState(state),
+			rm = function(){ $state.remove(); };
+
+		if($state.length === 0){
+			return false;
+		}
+
+		// transition away from it before deleting
+		if($state.is(':visible')){
+			if($state.next().length > 0){
+				$.prompt.nextState(rm);
+			}
+			else{
+				$.prompt.prevState(rm);
+			}
+		}
+		else{
+			$state.slideUp('slow', rm);
+		}
+
+		return true;
+	};
+
+	/**
+	* getState - Get the state by its name
+	* @param state String - Name of the state
+	* @return jQuery - the state
+	*/
+	$.prompt.getState = function(state) {
+		return $('#'+ $.prompt.currentPrefix +'state_'+ state);
+	};
+	$.prompt.getStateContent = function(state) {
+		return $.prompt.getState(state);
+	};
+	
+	/**
+	* getCurrentState - Get the current visible state
+	* @return jQuery - the current visible state
+	*/
 	$.prompt.getCurrentState = function() {
 		return $('.'+ $.prompt.currentPrefix +'state:visible');
 	};
-	
-	$.prompt.getCurrentStateName = function() {
-		var stateid = $.prompt.getCurrentState().attr('id');
 		
-		return stateid.replace($.prompt.currentPrefix +'state_','');
+	/**
+	* getCurrentStateName - Get the name of the current visible state
+	* @return String - the current visible state's name
+	*/
+	$.prompt.getCurrentStateName = function() {
+		return $.prompt.getCurrentState().data('jqi-name');
 	};
 	
+	/**
+	* goToState - Goto the specified state
+	* @param state String - name of the state to transition to
+	* @param callback Function - called when the transition is complete
+	* @return jQuery - the newly active state
+	*/	
 	$.prompt.goToState = function(state, callback) {
-		var promptstatechanginge = new $.Event('promptstatechanging');
-		$.prompt.jqib.trigger(promptstatechanginge, [$.prompt.currentStateName, state]);
+		var $jqi = $.prompt.get(),
+			jqiopts = $jqi.data('jqi'),
+			$state = $.prompt.getState(state),
+			stateobj = $state.data('jqi'),
+			promptstatechanginge = new $.Event('promptstatechanging');
+		$.prompt.jqib.trigger(promptstatechanginge, [$.prompt.getCurrentStateName(), state]);
 		
-		if(!promptstatechanginge.isDefaultPrevented()){
-			$.prompt.currentStateName = state;
+		if(!promptstatechanginge.isDefaultPrevented() && $state.length > 0){
 			
-			$('.'+ $.prompt.currentPrefix +'state').slideUp('slow')
+			$('.'+ $.prompt.currentPrefix +'state').not($state).slideUp(jqiopts.promptspeed)
 				.find('.'+ $.prompt.currentPrefix +'arrow').fadeOut();
 			
-			$('#'+ $.prompt.currentPrefix +'state_'+ state).slideDown('slow',function(){
+			$state.slideDown(jqiopts.promptspeed,function(){
 				var $t = $(this);
-				$t.find('.'+ $.prompt.currentPrefix +'defaultbutton').focus();
-				$t.find('.'+ $.prompt.currentPrefix +'arrow').fadeIn('slow');
+
+				// if focus is a selector, find it, else its button index
+				if(typeof(stateobj.focus) === 'string'){
+					$t.find(stateobj.focus).focus();
+				}
+				else{
+					$t.find('.'+ $.prompt.currentPrefix +'defaultbutton').focus();
+				}
+
+				$t.find('.'+ $.prompt.currentPrefix +'arrow').fadeIn(jqiopts.promptspeed);
 				
 				if (typeof callback == 'function'){
 					$.prompt.jqib.bind('promptstatechanged.tmp', callback);
@@ -412,21 +535,39 @@
 				}
 			});
 		
-			$.prompt.position();
-		
+			$.prompt.position();		
 		}
+		return $state;
 	};
-	
+
+	/**
+	* nextState - Transition to the next state
+	* @param callback Function - called when the transition is complete
+	* @return jQuery - the newly active state
+	*/	
 	$.prompt.nextState = function(callback) {
-		var $next = $('#'+ $.prompt.currentPrefix +'state_'+ $.prompt.currentStateName).next();
-		$.prompt.goToState( $next.attr('id').replace($.prompt.currentPrefix +'state_',''), callback );
+		var $next = $('#'+ $.prompt.currentPrefix +'state_'+ $.prompt.getCurrentStateName()).next();
+		return $.prompt.goToState( $next.attr('id').replace($.prompt.currentPrefix +'state_',''), callback );
 	};
 	
+	/**
+	* prevState - Transition to the previous state
+	* @param callback Function - called when the transition is complete
+	* @return jQuery - the newly active state
+	*/	
 	$.prompt.prevState = function(callback) {
-		var $prev = $('#'+ $.prompt.currentPrefix +'state_'+ $.prompt.currentStateName).prev();
+		var $prev = $('#'+ $.prompt.currentPrefix +'state_'+ $.prompt.getCurrentStateName()).prev();
 		$.prompt.goToState( $prev.attr('id').replace($.prompt.currentPrefix +'state_',''), callback );
 	};
 	
+	/**
+	* close - Closes the prompt
+	* @param callback Function - called when the transition is complete
+	* @param clicked String - value of the button clicked (only used internally)
+	* @param msg jQuery - The state message body (only used internally)
+	* @param forvals Object - key/value pairs of all form field names and values (only used internally)
+	* @return jQuery - the newly active state
+	*/	
 	$.prompt.close = function(callCallback, clicked, msg, formvals){
 		$.prompt.jqib.fadeOut('fast',function(){
 
@@ -440,6 +581,10 @@
 		});
 	};
 	
+	/**
+	* Enable using $('.selector').prompt({});
+	* This will grab the html within the prompt as the prompt message
+	*/
 	$.fn.extend({ 
 		prompt: function(options){
 			if(options == undefined) 

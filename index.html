@@ -149,8 +149,8 @@
 					</ul>
 
 					<h3>Version</h3>
-					<p>Version 4.2</p>
-					<p>Last updated on 01/25/2013</p>
+					<p>Version 4.3</p>
+					<p>Last updated on 05/07/2013</p>
 
 					<p>jQuery Impromptu is currently available for use in all personal or commercial projects under both MIT and GPL licenses. This means that you can choose the license that best suits your project, and use it accordingly. </p>
 					<ul>
@@ -288,7 +288,7 @@
 						<dt>jQuery.prompt.getCurrentStateName()</dt>
 						<dd>Returns a string current visible state's name.</dd>
 						
-						<dt>jQuery.prompt.getStateContent(stateName)</dt>
+						<dt>jQuery.prompt.getState(stateName)</dt>
 						<dd>Returns a jquery object of the state, so you can update the content within it.</dd>
 						
 						<dt>jQuery.prompt.goToState(stateName, callback)</dt>
@@ -389,7 +389,7 @@ $.prompt.getStateContent('state2')
 		html:'test 1.&lt;br /&gt;test 1..&lt;br /&gt;test 1...',
 		buttons: { Cancel: false, Next: true },
 		focus: 1,
-		submit:function(e,v,m,f){ 
+		submit:function(e,v,m,f){
 			if(v){
 				e.preventDefault();
 				$.prompt.goToState('state1');
@@ -401,7 +401,7 @@ $.prompt.getStateContent('state2')
 		html:'test 2',
 		buttons: { Back: -1, Exit: 0 },
 		focus: 1,
-		submit:function(e,v,m,f){ 
+		submit:function(e,v,m,f){
 			if(v==0) $.prompt.close()
 			else if(v==-1)
 				$.prompt.goToState('state0');
@@ -418,12 +418,12 @@ $.prompt(statesdemo);</pre>
 
 <div class="example-container" id="TourExample">
 	<p>To use states pass in a collection (array or object) of objects with common properties (html, buttons, focus, submit, position..).</p>
-<pre class="code" id="TourCode">var tourSubmitFunc = function(e,v,m,f){
-			if(v === -1){
+<pre class="code" id="TourCode">var tourSubmitFunc = function(e,v,m,f){console.log(v);
+			if(v === -1){console.log('prev');
 				$.prompt.prevState();
 				return false;
 			}
-			else if(v === 1){
+			else if(v === 1){console.log('next');
 				$.prompt.nextState();
 				return false;
 			}
@@ -494,7 +494,7 @@ $.prompt(tourStates);</pre>
 		html:'&lt;label&gt;First &lt;input type="text" name="fname" value=""&gt;&lt;/label&gt;&lt;br /&gt;'+
 			'&lt;label&gt;Last &lt;input type="text" name="lname" value=""&gt;&lt;/label&gt;&lt;br /&gt;',
 		buttons: { Next: 1 },
-		focus: 1,
+		focus: "input[name='fname']",
 		submit:function(e,v,m,f){ 
 			console.log(f);
 
@@ -507,7 +507,7 @@ $.prompt(tourStates);</pre>
 		html:'&lt;label&gt;&lt;input type="radio" name="gender" value="Male"&gt; Male&lt;/label&gt;&lt;br /&gt;'+
 			'&lt;label&gt;&lt;input type="radio" name="gender" value="Female"&gt; Female&lt;/label&gt;',
 		buttons: { Back: -1, Next: 1 },
-		focus: 1,
+		focus: ":input:first",
 		submit:function(e,v,m,f){ 
 			console.log(f);
 
