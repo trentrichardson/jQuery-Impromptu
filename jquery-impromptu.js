@@ -38,7 +38,7 @@
 			msgbox +='<div class="'+ $.prompt.options.prefix +'fade"></div>';
 		}
 		msgbox += '<div class="'+ $.prompt.options.prefix +'"><div class="'+ $.prompt.options.prefix +'container"><div class="';
-		msgbox += $.prompt.options.prefix +'close">X</div><div class="'+ $.prompt.options.prefix +'states"></div>';
+		msgbox += $.prompt.options.prefix +'close">'+ $.prompt.options.closeText +'</div><div class="'+ $.prompt.options.prefix +'states"></div>';
 		msgbox += '</div></div></div>';
 
 		$.prompt.jqib = $(msgbox).appendTo($body);
@@ -193,6 +193,7 @@
 		prefix:'jqi',
 		classes: '',
 		title: '',
+		closeText: '&times;',
 		buttons: {
 			Ok: true
 		},
@@ -405,7 +406,7 @@
 		if(stateobj.position.arrow !== null)
 			arrow = '<div class="'+ $.prompt.options.prefix + 'arrow '+ $.prompt.options.prefix + 'arrow'+ stateobj.position.arrow +'"></div>';
 		if(stateobj.title && stateobj.title !== '')
-		    title = '<div class="'+ $.prompt.options.prefix + 'title">'+  stateobj.title +'</div>';
+		    title = '<div class="lead '+ $.prompt.options.prefix + 'title">'+  stateobj.title +'</div>';
 		state += '<div id="'+ $.prompt.options.prefix +'state_'+ statename +'" class="'+ $.prompt.options.prefix + 'state" data-jqi-name="'+ statename +'" style="display:none;">'+ 
 					arrow + title +
 					'<div class="'+ $.prompt.options.prefix +'message">' + stateobj.html +'</div>'+
@@ -413,19 +414,19 @@
 		
 		for(k in stateobj.buttons){
 			v = stateobj.buttons[k],
-			defbtn = stateobj.focus === i? ($.prompt.currentPrefix+'defaultbutton '):'';
+			defbtn = stateobj.focus === i? ($.prompt.currentPrefix+'defaultbutton btn-primary'):'';
 
 			if(typeof v == 'object'){
-				state += '<button class="'+ defbtn;
+				state += '<button class="btn '+ defbtn;
 				
 				if(typeof v.classes !== "undefined"){
-					state += ($.isArray(v.classes)? v.classes.join(' ') : v.classes) + ' ';
+					state += ' '+ ($.isArray(v.classes)? v.classes.join(' ') : v.classes) + ' ';
 				}
 				
-				state += ' name="' + $.prompt.options.prefix + '_' + statename + '_button' + v.title.replace(/[^a-z0-9]+/gi,'') + '" id="' + $.prompt.options.prefix + '_' + statename + '_button' + v.title.replace(/[^a-z0-9]+/gi,'') + '" value="' + v.value + '">' + v.title + '</button>';
+				state += '" name="' + $.prompt.options.prefix + '_' + statename + '_button' + v.title.replace(/[^a-z0-9]+/gi,'') + '" id="' + $.prompt.options.prefix + '_' + statename + '_button' + v.title.replace(/[^a-z0-9]+/gi,'') + '" value="' + v.value + '">' + v.title + '</button>';
 				
 			} else {
-				state += '<button class="'+ defbtn +'" name="' + $.prompt.options.prefix + '_' + statename + '_button' + k + '" id="' + $.prompt.options.prefix +  '_' + statename + '_button' + k + '" value="' + v + '">' + k + '</button>';
+				state += '<button class="btn '+ defbtn +'" name="' + $.prompt.options.prefix + '_' + statename + '_button' + k + '" id="' + $.prompt.options.prefix +  '_' + statename + '_button' + k + '" value="' + v + '">' + k + '</button>';
 				
 			}
 			i++;
