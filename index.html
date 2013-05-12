@@ -151,7 +151,7 @@
 
 					<h3>Version</h3>
 					<p>Version 4.3</p>
-					<p>Last updated on 05/07/2013</p>
+					<p>Last updated on 05/12/2013</p>
 
 					<p>jQuery Impromptu is currently available for use in all personal or commercial projects under both MIT and GPL licenses. This means that you can choose the license that best suits your project, and use it accordingly. </p>
 					<ul>
@@ -171,6 +171,9 @@
 					<h3>msg</h3>
 					<p>The message can either be an html string, or an object of "states".  Each state has the following properties:</p>
 					<dl>
+						<dt>name</dt>
+						<dd>A valid variable name to access the state by. <em>Default: State's array index or object key</dd>
+
 						<dt>html</dt>
 						<dd>A string of html or text for the content</dd>
 						
@@ -291,6 +294,12 @@
 						
 						<dt>jQuery.prompt.getState(stateName)</dt>
 						<dd>Returns a jquery object of the state, so you can update the content within it.</dd>
+						
+						<dt>jQuery.prompt.addState(stateName, stateOptions, insertAfterState)</dt>
+						<dd>Injects a new state after the indicated insertAfterState name.  Returns a jQuery object of the new state.</dd>
+						
+						<dt>jQuery.prompt.removeState(stateName)</dt>
+						<dd>Removes the state. Returns true on success, false on failure.</dd>
 						
 						<dt>jQuery.prompt.goToState(stateName, callback)</dt>
 						<dd>Transitions to the specified state. Callback represents a statechanged event.</dd>
