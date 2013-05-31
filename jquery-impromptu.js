@@ -23,38 +23,35 @@
 		$.prompt.options = $.extend({},$.prompt.defaults,options);
 		$.prompt.currentPrefix = $.prompt.options.prefix;
 
-		var $body	= $(document.body);
-		var $window	= $(window);
-		
-		$.prompt.options.classes = $.trim($.prompt.options.classes);
-		if($.prompt.options.classes != '')
-			$.prompt.options.classes = ' '+ $.prompt.options.classes;
-			
+		var opts = $.prompt.options,
+			$body = $(document.body),
+			$window = $(window);
+					
 		//build the box and fade
-		var msgbox = '<div class="'+ $.prompt.options.prefix +'box'+ $.prompt.options.classes +'">';
-		if($.prompt.options.useiframe && ($('object, applet').length > 0)) {
-			msgbox += '<iframe src="javascript:false;" style="display:block;position:absolute;z-index:-1;" class="'+ $.prompt.options.prefix +'fade"></iframe>';
+		var msgbox = '<div class="'+ $.prompt.options.prefix +'box '+ opts.classes.box +'">';
+		if(opts.useiframe && ($('object, applet').length > 0)) {
+			msgbox += '<iframe src="javascript:false;" style="display:block;position:absolute;z-index:-1;" class="'+ opts.prefix +'fade '+ opts.classes.fade +'"></iframe>';
 		} else {
-			msgbox +='<div class="'+ $.prompt.options.prefix +'fade"></div>';
+			msgbox +='<div class="'+ opts.prefix +'fade '+ opts.classes.fade +'"></div>';
 		}
-		msgbox += '<div class="'+ $.prompt.options.prefix +'"><div class="'+ $.prompt.options.prefix +'container"><div class="';
-		msgbox += $.prompt.options.prefix +'close">'+ $.prompt.options.closeText +'</div><div class="'+ $.prompt.options.prefix +'states"></div>';
+		msgbox += '<div class="'+ opts.prefix +' '+ opts.classes.prompt +'"><div class="'+ opts.prefix +'container"><div class="';
+		msgbox += opts.prefix +'close '+ opts.classes.close +'">'+ opts.closeText +'</div><div class="'+ opts.prefix +'states"></div>';
 		msgbox += '</div></div></div>';
 
 		$.prompt.jqib = $(msgbox).appendTo($body);
-		$.prompt.jqi = $.prompt.jqib.children('.'+ $.prompt.options.prefix).data('jqi',$.prompt.options);
-		$.prompt.jqif = $.prompt.jqib.children('.'+ $.prompt.options.prefix +'fade');
+		$.prompt.jqi = $.prompt.jqib.children('.'+ opts.prefix).data('jqi',opts);
+		$.prompt.jqif = $.prompt.jqib.children('.'+ opts.prefix +'fade');
 
 		//if a string was passed, convert to a single state
 		if(message.constructor == String){
 			message = {
 				state0: {
-					title: $.prompt.options.title,
+					title: opts.title,
 					html: message,
-				 	buttons: $.prompt.options.buttons,
-				 	position: $.prompt.options.position,
-				 	focus: $.prompt.options.focus,
-				 	submit: $.prompt.options.submit
+				 	buttons: opts.buttons,
+				 	position: opts.position,
+				 	focus: opts.focus,
+				 	submit: opts.submit
 			 	}
 		 	};
 		}
@@ -70,15 +67,15 @@
 		}
 
 		// Go ahead and transition to the first state. It won't be visible just yet though until we show the prompt
-		var $firstState = $.prompt.jqi.find('.'+ $.prompt.options.prefix +'states .'+ $.prompt.options.prefix +'state:first');
+		var $firstState = $.prompt.jqi.find('.'+ opts.prefix +'states .'+ opts.prefix +'state:first');
 		$.prompt.goToState($firstState.data('jqi').name);
 
 		//Events
-		$.prompt.jqi.delegate('.'+ $.prompt.options.prefix +'buttons button', 'click', function(e){
+		$.prompt.jqi.delegate('.'+ opts.prefix +'buttons button', 'click', function(e){
 			var $t = $(this),
-				$state = $t.parents('.'+ $.prompt.options.prefix +'state'),
+				$state = $t.parents('.'+ opts.prefix +'state'),
 				stateobj = $state.data('jqi'),
-				msg = $state.children('.'+ $.prompt.options.prefix +'message'),
+				msg = $state.children('.'+ opts.prefix +'message'),
 				clicked = stateobj.buttons[$t.text()] || stateobj.buttons[$t.html()],
 				forminputs = {};
 
@@ -92,7 +89,7 @@
 			}
 
 			//collect all form element values from all states
-			$.each($.prompt.jqi.find('.'+ $.prompt.options.prefix +'states :input').serializeArray(),function(i,obj){
+			$.each($.prompt.jqi.find('.'+ opts.prefix +'states :input').serializeArray(),function(i,obj){
 				if (forminputs[obj.name] === undefined) {
 					forminputs[obj.name] = obj.value;
 				} else if (typeof forminputs[obj.name] == Array || typeof forminputs[obj.name] == 'object') {
@@ -115,19 +112,19 @@
 
 		// if the fade is clicked blink the prompt
 		var fadeClicked = function(){
-			if($.prompt.options.persistent){
-				var offset = ($.prompt.options.top.toString().indexOf('%') >= 0? ($window.height()*(parseInt($.prompt.options.top,10)/100)) : parseInt($.prompt.options.top,10)),
+			if(opts.persistent){
+				var offset = (opts.top.toString().indexOf('%') >= 0? ($window.height()*(parseInt(opts.top,10)/100)) : parseInt(opts.top,10)),
 					top = parseInt($.prompt.jqi.css('top').replace('px',''),10) - offset;
 
 				//$window.scrollTop(top);
 				$('html,body').animate({ scrollTop: top }, 'fast', function(){
 					var i = 0;
-					$.prompt.jqib.addClass($.prompt.options.prefix +'warning');
+					$.prompt.jqib.addClass(opts.prefix +'warning');
 					var intervalid = setInterval(function(){
-						$.prompt.jqib.toggleClass($.prompt.options.prefix +'warning');
+						$.prompt.jqib.toggleClass(opts.prefix +'warning');
 						if(i++ > 1){
 							clearInterval(intervalid);
-							$.prompt.jqib.removeClass($.prompt.options.prefix +'warning');
+							$.prompt.jqib.removeClass(opts.prefix +'warning');
 						}
 					}, 100);
 				});
@@ -170,28 +167,38 @@
 		
 		$.prompt.jqif.click(fadeClicked);
 		$window.resize({animate:false}, $.prompt.position);
-		$.prompt.jqi.find('.'+ $.prompt.options.prefix +'close').click($.prompt.close);
+		$.prompt.jqi.find('.'+ opts.prefix +'close').click($.prompt.close);
 		$.prompt.jqib.bind("keydown keypress",keyPressEventHandler)
-					.bind('promptloaded', $.prompt.options.loaded)
-					.bind('promptclose', $.prompt.options.close)
-					.bind('promptstatechanging', $.prompt.options.statechanging)
-					.bind('promptstatechanged', $.prompt.options.statechanged);
+					.bind('promptloaded', opts.loaded)
+					.bind('promptclose', opts.close)
+					.bind('promptstatechanging', opts.statechanging)
+					.bind('promptstatechanged', opts.statechanged);
 
 		//Show it
-		$.prompt.jqif.fadeIn($.prompt.options.overlayspeed);
-		$.prompt.jqi[$.prompt.options.show]($.prompt.options.promptspeed, function(){
+		$.prompt.jqif.fadeIn(opts.overlayspeed);
+		$.prompt.jqi[opts.show](opts.promptspeed, function(){
 			$.prompt.jqib.trigger('promptloaded');
 		});
 		
-		if($.prompt.options.timeout > 0)
-			setTimeout($.prompt.close,$.prompt.options.timeout);
+		if(opts.timeout > 0)
+			setTimeout($.prompt.close,opts.timeout);
 
 		return $.prompt.jqib;
 	};
 	
 	$.prompt.defaults = {
 		prefix:'jqi',
-		classes: '',
+		classes: {
+			box: '',
+			fade: '',
+			prompt: '',
+			close: '',
+			title: '',
+			message: '',
+			buttons: '',
+			button: '',
+			defaultButton: ''
+		},
 		title: '',
 		closeText: '&times;',
 		buttons: {
@@ -398,35 +405,36 @@
 			$state = null,
 			arrow = "",
 			title = "",
+			opts = $.prompt.options,
 			$jqistates = $('.'+ $.prompt.currentPrefix +'states'),
 			k,v,i=0;
 
 		stateobj = $.extend({},$.prompt.defaults.state, {name:statename}, stateobj);
 
 		if(stateobj.position.arrow !== null)
-			arrow = '<div class="'+ $.prompt.options.prefix + 'arrow '+ $.prompt.options.prefix + 'arrow'+ stateobj.position.arrow +'"></div>';
+			arrow = '<div class="'+ opts.prefix + 'arrow '+ opts.prefix + 'arrow'+ stateobj.position.arrow +'"></div>';
 		if(stateobj.title && stateobj.title !== '')
-		    title = '<div class="lead '+ $.prompt.options.prefix + 'title">'+  stateobj.title +'</div>';
-		state += '<div id="'+ $.prompt.options.prefix +'state_'+ statename +'" class="'+ $.prompt.options.prefix + 'state" data-jqi-name="'+ statename +'" style="display:none;">'+ 
+		    title = '<div class="lead '+ opts.prefix + 'title '+ opts.classes.title +'">'+  stateobj.title +'</div>';
+		state += '<div id="'+ opts.prefix +'state_'+ statename +'" class="'+ opts.prefix + 'state" data-jqi-name="'+ statename +'" style="display:none;">'+ 
 					arrow + title +
-					'<div class="'+ $.prompt.options.prefix +'message">' + stateobj.html +'</div>'+
-					'<div class="'+ $.prompt.options.prefix +'buttons"'+ ($.isEmptyObject(stateobj.buttons)? 'style="display:none;"':'') +'>';
+					'<div class="'+ opts.prefix +'message '+ opts.classes.message +'">' + stateobj.html +'</div>'+
+					'<div class="'+ opts.prefix +'buttons '+ opts.classes.buttons +'"'+ ($.isEmptyObject(stateobj.buttons)? 'style="display:none;"':'') +'>';
 		
 		for(k in stateobj.buttons){
 			v = stateobj.buttons[k],
-			defbtn = stateobj.focus === i? ($.prompt.currentPrefix+'defaultbutton btn-primary'):'';
+			defbtn = stateobj.focus === i? ($.prompt.currentPrefix+'defaultbutton '+ opts.classes.defaultButton):'';
 
 			if(typeof v == 'object'){
-				state += '<button class="btn '+ defbtn;
+				state += '<button class="'+ opts.classes.button +' '+ defbtn;
 				
 				if(typeof v.classes !== "undefined"){
 					state += ' '+ ($.isArray(v.classes)? v.classes.join(' ') : v.classes) + ' ';
 				}
 				
-				state += '" name="' + $.prompt.options.prefix + '_' + statename + '_button' + v.title.replace(/[^a-z0-9]+/gi,'') + '" id="' + $.prompt.options.prefix + '_' + statename + '_button' + v.title.replace(/[^a-z0-9]+/gi,'') + '" value="' + v.value + '">' + v.title + '</button>';
+				state += '" name="' + opts.prefix + '_' + statename + '_button' + v.title.replace(/[^a-z0-9]+/gi,'') + '" id="' + opts.prefix + '_' + statename + '_button' + v.title.replace(/[^a-z0-9]+/gi,'') + '" value="' + v.value + '">' + v.title + '</button>';
 				
 			} else {
-				state += '<button class="btn '+ defbtn +'" name="' + $.prompt.options.prefix + '_' + statename + '_button' + k + '" id="' + $.prompt.options.prefix +  '_' + statename + '_button' + k + '" value="' + v + '">' + k + '</button>';
+				state += '<button class="'+ opts.classes.button +' '+ defbtn +'" name="' + opts.prefix + '_' + statename + '_button' + k + '" id="' + opts.prefix +  '_' + statename + '_button' + k + '" value="' + v + '">' + k + '</button>';
 				
 			}
 			i++;

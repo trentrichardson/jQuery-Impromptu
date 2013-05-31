@@ -134,7 +134,7 @@
 					<p>The message can either be an html string, or an object of "states".  Each state has the following properties:</p>
 					<dl>
 						<dt>name</dt>
-						<dd>A valid variable name to access the state by. <em>Default: State's array index or object key</dd>
+						<dd>A valid variable name to access the state by. <em>Default: State's array index or object key</em></dd>
 
 						<dt>html</dt>
 						<dd>A string of html or text for the content</dd>
@@ -171,7 +171,19 @@
 						<dd>An object containing the text and values of each button the user may click. <em>Default: { Ok : true }</em></dd>
 
 						<dt>classes</dt>
-						<dd>Add class names to the outer Impromptu shell (parent of the fade and prompt) <em>Default: ''</em></dd>
+						<dd>An object of class names for each part of a prompt for greater compatibilty with existing css frameworks.  For example if you would like to use twitter bootstrap you would include the base theme (in the themes folder), then pass the following classes:
+<pre><code>{
+	box: '',
+	fade: '',
+	prompt: '',
+	close: '',
+	title: 'lead',
+	message: '',
+	buttons: '',
+	button: 'btn',
+	defaultButton: 'btn-primary'
+}</code></pre>
+						To view a complete demo see the examples section below.</dd>
 
 						<dt>close</dt>
 						<dd>A function to be called when the prompt is closed and just before being removed from the DOM. <em>Default: function(event[, value, message, formVals]){}</em> Last three paremeters available only when button was clicked.</dd>
@@ -517,7 +529,8 @@ $.prompt(statesdemo);</pre>
 					<h3>Advanced</h3>
 					<p>The following are example demonstrations of various useful utilities with Impromptu.</p>
 					<ul>
-						<li><a href="demos/twitter_bootstrap.html" title="Twitter bootstrap theme" target="_BLANK">Twitter bootstrap theme</a></li>
+						<li><a href="demos/twitter_bootstrap.html" title="Twitter bootstrap theme" target="_BLANK">Twitter bootstrap theme</a> (<a href="http://twitter.github.io/bootstrap/" title="Twitter Bootstrap">Bootstrap</a>)</li>
+						<li><a href="demos/twitter_bootstrap.html" title="Twitter bootstrap theme" target="_BLANK">PureCSS theme</a> (<a href="http://purecss.io/" title="Pure CSS Framework">Pure</a>)</li>
 						<li><a href="demos/user_manager.html" title="User Manager Demo" target="_BLANK">User Manager</a></li>
 						<li><a href="demos/survey.html" title="Survey Demo" target="_BLANK">Survey</a></li>
 						<li><a href="demos/loan_calculator.html" title="Loan Calculator Demo" target="_BLANK">Loan Calculator</a></li>
@@ -571,7 +584,7 @@ $.prompt(statesdemo);</pre>
 		
 		<script type="text/javascript" src="http://sellfy.com/js/api_buttons.js"></script>
 		<script type="text/javascript" src="https://gumroad.com/js/gumroad.js"></script>
-		
+
 		<script type="text/javascript">
 		var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
 		document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
