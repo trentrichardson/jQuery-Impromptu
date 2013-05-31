@@ -51,44 +51,7 @@
 		</style> 
 		
 		<link rel="stylesheet" media="all" type="text/css" href="jquery-impromptu.css" />
-		
-		<script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-		<script type="text/javascript" src="jquery-impromptu.js"></script>
-		<script type="text/javascript">
-			
-			$(function(){
-				// quick routine for scrolling nav
-				var $nav = $('.header ul'),
-					navoffset = $nav.offset(),
-					$navclone = $nav.clone().addClass('scrollnav').appendTo('.header'),
-					$window = $(window);
-				$window.scroll(function(e){
-					if((navoffset.top+50) < $window.scrollTop()){
-						if(!$navclone.hasClass('scrolled'))
-							$navclone.addClass('scrolled');
-					}
-					else $navclone.removeClass('scrolled');
-				}).scroll();
-
-				// run the examples
-				$('.example-container').each(function(i,el){
-					var $ex = $(this),
-						$run = $ex.find('.run'),
-						code = $ex.find('.code').text();
-					$run.click(function(e){
-						e.preventDefault();
-						(new Function(code))();
-					});
-				});
-
-				// hotlink the tour
-				$('#TourLink').click(function(e){
-					e.preventDefault();
-					$('#TourExample button').click();
-				});
-			});
-			
-		</script>
+				
 	</head> 
 	<body> 
 		<div class="wrapper">
@@ -125,9 +88,7 @@
 						<a href="http://sellfy.com/p/IrwS" title="Impromptu From I to U"><img src="http://trentrichardson.com/wp-content/uploads/2012/12/Impromptu-FromItoU.jpg" alt="Impromptu From I to U" class="ebookimg" /></a>
 						<p>Get the ebook Impromptu From I to U. Learn about advanced functionality of Impromptu including states, forms, tours, theming, and more!</p>
 						<p class="buyp"><a href="http://sellfy.com/p/IrwS" id="IrwS" class="sellfy-buy-button sellfy-small">buy</a> on Sellfy with Paypal</p>
-						<script type="text/javascript" src="http://sellfy.com/js/api_buttons.js"></script>
 						<p class="buyp"><a href="http://gum.co/BeAh" class="gumroad-button">Impromptu - From I to U</a> on Gumroad with Credit Card</p>
-						<script type="text/javascript" src="https://gumroad.com/js/gumroad.js"></script>
 						<div class="clear"></div>
 					</div>
 
@@ -570,6 +531,47 @@ $.prompt(statesdemo);</pre>
 			</div>
 		</div>
 
+		<script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+		<script type="text/javascript" src="jquery-impromptu.js"></script>
+		<script type="text/javascript">
+			
+			$(function(){
+				// quick routine for scrolling nav
+				var $nav = $('.header ul'),
+					navoffset = $nav.offset(),
+					$navclone = $nav.clone().addClass('scrollnav').appendTo('.header'),
+					$window = $(window);
+				$window.scroll(function(e){
+					if((navoffset.top+50) < $window.scrollTop()){
+						if(!$navclone.hasClass('scrolled'))
+							$navclone.addClass('scrolled');
+					}
+					else $navclone.removeClass('scrolled');
+				}).scroll();
+
+				// run the examples
+				$('.example-container').each(function(i,el){
+					var $ex = $(this),
+						$run = $ex.find('.run'),
+						code = $ex.find('.code').text();
+					$run.click(function(e){
+						e.preventDefault();
+						(new Function(code))();
+					});
+				});
+
+				// hotlink the tour
+				$('#TourLink').click(function(e){
+					e.preventDefault();
+					$('#TourExample button').click();
+				});
+			});
+			
+		</script>
+		
+		<script type="text/javascript" src="http://sellfy.com/js/api_buttons.js"></script>
+		<script type="text/javascript" src="https://gumroad.com/js/gumroad.js"></script>
+		
 		<script type="text/javascript">
 		var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
 		document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
