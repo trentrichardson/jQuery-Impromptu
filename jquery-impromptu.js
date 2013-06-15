@@ -2,7 +2,7 @@
  * jQuery Impromptu
  * By: Trent Richardson [http://trentrichardson.com]
  * Version 4.4-dev
- * Last Modified: 05/12/2013
+ * Last Modified: 06/15/2013
  * 
  * Copyright 2013 Trent Richardson
  * You may use this project under MIT or GPL licenses.
@@ -20,6 +20,11 @@
 	* @return jQuery - container with overlay and prompt
 	*/
 	$.prompt = function(message, options) {
+		// only for backwards compat, to be removed in future version
+		if(options !== undefined && options.classes != undefined && typeof options.classes === 'string'){
+			options = { box: options.classes };
+		}
+
 		$.prompt.options = $.extend({},$.prompt.defaults,options);
 		$.prompt.currentPrefix = $.prompt.options.prefix;
 
