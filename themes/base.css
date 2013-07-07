@@ -1,6 +1,6 @@
 /*
 ------------------------------
-	Impromptu
+	Impromptu Base Styles
 ------------------------------
 */
 .jqifade{
@@ -42,9 +42,6 @@ div.jqi .jqibuttons{
 }
 div.jqi button{ 
 	margin: 0 0 0 10px;
-}
-.jqiwarning .jqi .jqibuttons{ 
-	background-color: #BF5E26;
 }
 
 .jqi .jqiarrow{ position: absolute; height: 0; width:0; line-height: 0; font-size: 0; border: solid 10px transparent;}

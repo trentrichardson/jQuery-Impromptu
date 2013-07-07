@@ -51,44 +51,7 @@
 		</style> 
 		
 		<link rel="stylesheet" media="all" type="text/css" href="jquery-impromptu.css" />
-		
-		<script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-		<script type="text/javascript" src="jquery-impromptu.js"></script>
-		<script type="text/javascript">
-			
-			$(function(){
-				// quick routine for scrolling nav
-				var $nav = $('.header ul'),
-					navoffset = $nav.offset(),
-					$navclone = $nav.clone().addClass('scrollnav').appendTo('.header'),
-					$window = $(window);
-				$window.scroll(function(e){
-					if((navoffset.top+50) < $window.scrollTop()){
-						if(!$navclone.hasClass('scrolled'))
-							$navclone.addClass('scrolled');
-					}
-					else $navclone.removeClass('scrolled');
-				}).scroll();
-
-				// run the examples
-				$('.example-container').each(function(i,el){
-					var $ex = $(this),
-						$run = $ex.find('.run'),
-						code = $ex.find('.code').text();
-					$run.click(function(e){
-						e.preventDefault();
-						(new Function(code))();
-					});
-				});
-
-				// hotlink the tour
-				$('#TourLink').click(function(e){
-					e.preventDefault();
-					$('#TourExample button').click();
-				});
-			});
-			
-		</script>
+				
 	</head> 
 	<body> 
 		<div class="wrapper">
@@ -150,8 +113,8 @@
 					</ul>
 
 					<h3>Version</h3>
-					<p>Version 4.3</p>
-					<p>Last updated on 05/12/2013</p>
+					<p>Version 4.4</p>
+					<p>Last updated on 07/07/2013</p>
 
 					<p>jQuery Impromptu is currently available for use in all personal or commercial projects under both MIT and GPL licenses. This means that you can choose the license that best suits your project, and use it accordingly. </p>
 					<ul>
@@ -172,7 +135,7 @@
 					<p>The message can either be an html string, or an object of "states".  Each state has the following properties:</p>
 					<dl>
 						<dt>name</dt>
-						<dd>A valid variable name to access the state by. <em>Default: State's array index or object key</dd>
+						<dd>A valid variable name to access the state by. <em>Default: State's array index or object key</em></dd>
 
 						<dt>html</dt>
 						<dd>A string of html or text for the content</dd>
@@ -209,7 +172,19 @@
 						<dd>An object containing the text and values of each button the user may click. <em>Default: { Ok : true }</em></dd>
 
 						<dt>classes</dt>
-						<dd>Add class names to the outer Impromptu shell (parent of the fade and prompt) <em>Default: ''</em></dd>
+						<dd>An object of class names for each part of a prompt for greater compatibilty with existing css frameworks.  For example if you would like to use twitter bootstrap you would include the base theme (in the themes folder), then pass the following classes:
+<pre><code>{
+	box: '',
+	fade: '',
+	prompt: '',
+	close: '',
+	title: 'lead',
+	message: '',
+	buttons: '',
+	button: 'btn',
+	defaultButton: 'btn-primary'
+}</code></pre>
+						Use the base theme in place of the default css file since it has minimal styling, allowing other css frameworks to work their magic.  To view a complete demo see the examples section below.</dd>
 
 						<dt>close</dt>
 						<dd>A function to be called when the prompt is closed and just before being removed from the DOM. <em>Default: function(event[, value, message, formVals]){}</em> Last three paremeters available only when button was clicked.</dd>
@@ -230,7 +205,7 @@
 						<dd>If the prompt should close when the fade is clicked (true doesn't close). <em>Default: true</em></dd>
 						
 						<dt>prefix</dt>
-						<dd>A prefix to be used for all css classes and html object id's. <em>Default: 'jqi'</em></dd>
+						<dd>A prefix to be used for all css classes and html object id's.  Use this option when you want to change themes. <em>Default: 'jqi'</em></dd>
 						
 						<dt>promptspeed</dt>
 						<dd>The prefered opacity of the showing of the prompt ("slow", "fast", number). <em>Default: "fast"</em></dd>
@@ -555,7 +530,8 @@ $.prompt(statesdemo);</pre>
 					<h3>Advanced</h3>
 					<p>The following are example demonstrations of various useful utilities with Impromptu.</p>
 					<ul>
-						<li><a href="demos/twitter_bootstrap.html" title="Twitter bootstrap theme" target="_BLANK">Twitter bootstrap theme</a></li>
+						<li><a href="demos/twitter_bootstrap.html" title="Twitter bootstrap theme" target="_BLANK">Twitter bootstrap theme</a> (<a href="http://twitter.github.io/bootstrap/" title="Twitter Bootstrap">Bootstrap</a>)</li>
+						<li><a href="demos/purecss.html" title="YUI Pure CSS theme" target="_BLANK">PureCSS theme</a> (<a href="http://purecss.io/" title="Pure CSS Framework">Pure</a>)</li>
 						<li><a href="demos/user_manager.html" title="User Manager Demo" target="_BLANK">User Manager</a></li>
 						<li><a href="demos/survey.html" title="Survey Demo" target="_BLANK">Survey</a></li>
 						<li><a href="demos/loan_calculator.html" title="Loan Calculator Demo" target="_BLANK">Loan Calculator</a></li>
@@ -569,9 +545,50 @@ $.prompt(statesdemo);</pre>
 			</div>
 		</div>
 
+		<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 		<script type="text/javascript" src="http://sellfy.com/js/api_buttons.js"></script>
 		<script type="text/javascript" src="https://gumroad.com/js/gumroad.js"></script>
+
+		<script type="text/javascript" src="jquery-impromptu.js"></script>
+		<script type="text/javascript">
+			
+			$(function(){
+				// quick routine for scrolling nav
+				var $nav = $('.header ul'),
+					navoffset = $nav.offset(),
+					$navclone = $nav.clone().addClass('scrollnav').appendTo('.header'),
+					$window = $(window);
+				$window.scroll(function(e){
+					if((navoffset.top+50) < $window.scrollTop()){
+						if(!$navclone.hasClass('scrolled'))
+							$navclone.addClass('scrolled');
+					}
+					else $navclone.removeClass('scrolled');
+				}).scroll();
+
+				// run the examples
+				$('.example-container').each(function(i,el){
+					var $ex = $(this),
+						$run = $ex.find('.run'),
+						code = $ex.find('.code').text();
+					$run.click(function(e){
+						e.preventDefault();
+						(new Function(code))();
+					});
+				});
+
+				// hotlink the tour
+				$('#TourLink').click(function(e){
+					e.preventDefault();
+					$('#TourExample button').click();
+				});
+			});
+			
+		</script>
 		
+		<script type="text/javascript" src="http://sellfy.com/js/api_buttons.js"></script>
+		<script type="text/javascript" src="https://gumroad.com/js/gumroad.js"></script>
+
 		<script type="text/javascript">
 		var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
 		document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
