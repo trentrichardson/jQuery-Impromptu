@@ -1,8 +1,8 @@
 /*
  * jQuery Impromptu
  * By: Trent Richardson [http://trentrichardson.com]
- * Version 4.4-dev
- * Last Modified: 06/15/2013
+ * Version 4.4
+ * Last Modified: 07/07/2013
  * 
  * Copyright 2013 Trent Richardson
  * You may use this project under MIT or GPL licenses.
