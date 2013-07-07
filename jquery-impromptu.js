@@ -1,7 +1,7 @@
 /*
  * jQuery Impromptu
  * By: Trent Richardson [http://trentrichardson.com]
- * Version 4.4
+ * Version 4.5
  * Last Modified: 07/07/2013
  * 
  * Copyright 2013 Trent Richardson
