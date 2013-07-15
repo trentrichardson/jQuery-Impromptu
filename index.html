@@ -37,7 +37,7 @@
 			.header ul li a:hover{ color: #555; }
 			.header .tour{ color: #fff; background-color: #9ec45f; padding: 4px 10px; margin: 10px 0; font-size: 18px; line-height: 18px; text-decoration: none;border-radius: 4px; -moz-border-radius: 4px;-webkit-border-radius: 4px;}
 			.header .tour:hover{ background-color: #8eb44f; }
-			.header ul.scrollnav{ position: fixed; top: 0px; left: 50%; background-color: #777; display: none; margin: 0 0 0 -185px; border-radius: 0 0 0 6px; -moz-border-radius: 0 0 0 6px;-webkit-border-radius: 0 0 0 6px;}
+			.header ul.scrollnav{ position: fixed; top: 0px; left: 50%; z-index: 9999999; background-color: #777; display: none; margin: 0 0 0 -185px; border-radius: 0 0 0 6px; -moz-border-radius: 0 0 0 6px;-webkit-border-radius: 0 0 0 6px;}
 			.header ul.scrollnav li a{ color: #fff; }
 			.header ul.scrollnav.scrolled{ display: inline; }
 			.clear{ clear: both; }
@@ -479,7 +479,7 @@ $.prompt(tourStates);</pre>
 		html:'&lt;label&gt;First &lt;input type="text" name="fname" value=""&gt;&lt;/label&gt;&lt;br /&gt;'+
 			'&lt;label&gt;Last &lt;input type="text" name="lname" value=""&gt;&lt;/label&gt;&lt;br /&gt;',
 		buttons: { Next: 1 },
-		focus: "input[name='fname']",
+		//focus: "input[name='fname']",
 		submit:function(e,v,m,f){ 
 			console.log(f);
 
@@ -492,7 +492,7 @@ $.prompt(tourStates);</pre>
 		html:'&lt;label&gt;&lt;input type="radio" name="gender" value="Male"&gt; Male&lt;/label&gt;&lt;br /&gt;'+
 			'&lt;label&gt;&lt;input type="radio" name="gender" value="Female"&gt; Female&lt;/label&gt;',
 		buttons: { Back: -1, Next: 1 },
-		focus: ":input:first",
+		//focus: ":input:first",
 		submit:function(e,v,m,f){ 
 			console.log(f);
 
@@ -545,7 +545,8 @@ $.prompt(statesdemo);</pre>
 			</div>
 		</div>
 
-		<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+		<!-- <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script> -->
+		<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/zepto/1.0/zepto.min.js"></script>
 		<script type="text/javascript" src="http://sellfy.com/js/api_buttons.js"></script>
 		<script type="text/javascript" src="https://gumroad.com/js/gumroad.js"></script>
 
