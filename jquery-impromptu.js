@@ -602,7 +602,7 @@
 			}
 			$.prompt.jqib.remove();
 			
-			$('window').unbind('resize',$.prompt.position);
+			$(window).unbind('resize',$.prompt.position);
 			
 		});
 	};
