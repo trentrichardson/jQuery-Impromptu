@@ -637,7 +637,7 @@
 			}
 			$.prompt.jqib.remove();
 			
-			$('window').off('resize',$.prompt.position);
+			$(window).off('resize',$.prompt.position);
 			
 		});
 	};
