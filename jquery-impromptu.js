@@ -325,7 +325,7 @@
 			stateObj = $.prompt.options.states[$state.data('jqi-name')],
 			pos = stateObj? stateObj.position : undefined,
 			$window = $(window),
-			bodyHeight = $.prompt.outerSize($(document.body), true).h,
+			bodyHeight = document.body.scrollHeight, //$.prompt.outerSize($(document.body), true).h,
 			windowHeight = $(window).height(),
 			documentHeight = $(document).height(),
 			height = bodyHeight > windowHeight ? bodyHeight : windowHeight,
