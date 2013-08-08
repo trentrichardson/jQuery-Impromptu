@@ -322,7 +322,8 @@
 	$.prompt.position = function(e){
 		var restoreFx = $.fx.off,
 			$state = $.prompt.getCurrentState(),
-			pos = $.prompt.options.states[$state.data('jqi-name')].position,
+			stateObj = $.prompt.options.states[$state.data('jqi-name')],
+			pos = stateObj? stateObj.position : undefined,
 			$window = $(window),
 			bodyHeight = $.prompt.outerSize($(document.body), true).h,
 			windowHeight = $(window).height(),

@@ -298,25 +298,25 @@
 
 					<p>If you like to bind events manually you can do so with the following:</p>
 					<dl class="methoddl">
-						<dt>promptloaded</dt>
+						<dt>impromptu:loaded</dt>
 						<dd>Same as loaded option. Scope is the entire prompt and fade container.
 <pre>var myPrompt = jQuery.prompt(/*...*/);
 myPrompt.bind('promptloaded', function(e){});</pre>
 						</dd>
 						
-						<dt>promptsubmit</dt>
+						<dt>impromptu:submit</dt>
 						<dd>Same as submit option. Scope is the state element.  These events are per state, so you must attach it directly to a state.
 <pre>var myPrompt = jQuery.prompt(/*...*/);
 $.prompt.getStateContent('state2')
 	.bind('promptsubmit', function(e,v,m,f){});</pre></dd>
 						
-						<dt>promptclose</dt>
+						<dt>impromptu:close</dt>
 						<dd>Same as close option. Scope is entire prompt and fade container</dd>
 						
-						<dt>promptstatechanging</dt>
+						<dt>impromptu:statechanging</dt>
 						<dd>Same as statechangin option. Scope is the entire prompt and fade container. This fires before the state changes, so you may return false or use e.preventDefault() prevent the state change.</dd>
 						
-						<dt>promptstatechanged</dt>
+						<dt>impromptu:statechanged</dt>
 						<dd>Same as statechanged option.  Scope is the entire prompt and fade container. This fires after the state has successfully changed.</dd>
 					</dl>
 
