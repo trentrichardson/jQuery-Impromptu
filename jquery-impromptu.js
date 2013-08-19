@@ -40,7 +40,7 @@
 			msgbox +='<div class="'+ opts.prefix +'fade '+ opts.classes.fade +'"></div>';
 		}
 		msgbox += '<div class="'+ opts.prefix +' '+ opts.classes.prompt +'">'+
-					'<form action="javascript:false;" class="'+ opts.prefix +'form">'+
+					'<form action="javascript:false;" onsubmit="return false;" class="'+ opts.prefix +'form">'+
 						'<div class="'+ opts.prefix +'close '+ opts.classes.close +'">'+ opts.closeText +'</div>'+
 						'<div class="'+ opts.prefix +'states"></div>'+
 					'</form>'+
@@ -185,7 +185,7 @@
 					.on('impromptu:statechanged', opts.statechanged);
 
 		//Show it
-		$.prompt.jqif.impShow(opts.overlayspeed);
+		$.prompt.jqif[opts.show](opts.overlayspeed);
 		$.prompt.jqi[opts.show](opts.promptspeed, function(){
 			$.prompt.jqib.trigger('impromptu:loaded');
 		});
@@ -223,7 +223,7 @@
 	 	zIndex: 999,
 	  	overlayspeed: 'slow',
 	   	promptspeed: 'fast',
-   		show: 'impShow',
+   		show: 'fadeIn',
 	   	focus: 0,
 	   	useiframe: false,
 	 	top: '15%',
@@ -289,33 +289,6 @@
 	};
 
 	/**
-	* outerSize - Utility for getting the outerWidth/Height. Zepto doesn't provide this
-	* @param $el jQuery - Element to detect width/height of.
-	* @param $includeMargin Bool - Whether to include the margin to the width/height
-	* @return Object - { w: 123, h: 234 }
-	*/
-	$.prompt.outerSize = function($el, includeMargin){
-		var bm = $el.css('box-sizing'),
-			size = { 
-				w: $el.width(), 
-				h: $el.height() 
-			};
-
-		// border-box includes the padding and border in width, height, others don't
-		if(bm !== undefined || bm !== 'border-box'){
-			size.w += ($el.css('padding-left').replace('px','')*1 + $el.css('padding-right').replace('px','')*1 + $el.css('border-left-width').replace('px','')*1 + $el.css('border-right-width').replace('px','')*1);
-			size.h += ($el.css('padding-top').replace('px','')*1 + $el.css('padding-bottom').replace('px','')*1 + $el.css('border-top-width').replace('px','')*1 + $el.css('border-bottom-width').replace('px','')*1);
-		}
-
-		if(includeMargin !== undefined && includeMargin === true){
-			size.w += ($el.css('margin-left').replace('px','')*1 + $el.css('margin-right').replace('px','')*1);
-			size.h += ($el.css('margin-top').replace('px','')*1 + $el.css('margin-bottom').replace('px','')*1);
-		}
-
-		return size;
-	};
-
-	/**
 	* position - Repositions the prompt (Used internally)
 	* @return void
 	*/
@@ -325,7 +298,7 @@
 			stateObj = $.prompt.options.states[$state.data('jqi-name')],
 			pos = stateObj? stateObj.position : undefined,
 			$window = $(window),
-			bodyHeight = document.body.scrollHeight, //$.prompt.outerSize($(document.body), true).h,
+			bodyHeight = document.body.scrollHeight, //$(document.body).outerHeight(true),
 			windowHeight = $(window).height(),
 			documentHeight = $(document).height(),
 			height = bodyHeight > windowHeight ? bodyHeight : windowHeight,
@@ -374,7 +347,7 @@
 					width: (pos.width !== undefined)? pos.width : null
 				});
 				top = (offset.top + pos.y) - ($.prompt.options.top.toString().indexOf('%') >= 0? (windowHeight*(parseInt($.prompt.options.top,10)/100)) : parseInt($.prompt.options.top,10));
-				$('html,body').animate({ scrollTop: top }, 'slow', 'swing', function(){}); // TODO: Fix animation
+				$('html,body').animate({ scrollTop: top }, 'slow', 'swing', function(){});
 			}
 		}
 		// custom state width animation
@@ -396,7 +369,7 @@
 				position: "absolute",
 				top: top,
 				left: '50%',//$window.width()/2,
-				marginLeft: (($.prompt.outerSize($.prompt.jqi,false).w /2)*-1)
+				marginLeft: (($.prompt.jqi.outerWidth()/2)*-1)
 			});
 		}
 
@@ -519,7 +492,7 @@
 			}
 		}
 		else{
-			$state.impTranOut('slow', rm);
+			$state.slideUp('slow', rm);
 		}
 
 		return true;
@@ -556,26 +529,49 @@
 	/**
 	* goToState - Goto the specified state
 	* @param state String - name of the state to transition to
+	* @param subState Boolean - true to be a sub state within the currently open state
 	* @param callback Function - called when the transition is complete
 	* @return jQuery - the newly active state
 	*/	
-	$.prompt.goToState = function(state, callback) {
+	$.prompt.goToState = function(state, subState, callback) {
 		var $jqi = $.prompt.get(),
 			jqiopts = $.prompt.options,
 			$state = $.prompt.getState(state),
 			stateobj = jqiopts.states[$state.data('jqi-name')],
 			promptstatechanginge = new $.Event('impromptu:statechanging');
 
+		// subState can be ommitted
+		if(typeof subState === 'function'){
+			callback = subState;
+			subState = false;
+		}
+
 		$.prompt.jqib.trigger(promptstatechanginge, [$.prompt.getCurrentStateName(), state]);
 		
 		if(!promptstatechanginge.isDefaultPrevented() && $state.length > 0){
-			
-			$('.'+ $.prompt.currentPrefix +'state').not($state).impTranOut(jqiopts.promptspeed)
-				.find('.'+ $.prompt.currentPrefix +'arrow').hide();
-			
+			$.prompt.jqi.find('.'+ $.prompt.currentPrefix +'parentstate').removeClass($.prompt.currentPrefix +'parentstate');
+
+			if(subState){ // hide any open substates
+				// get rid of any substates
+				$.prompt.jqi.find('.'+ $.prompt.currentPrefix +'substate').not($state)
+					.slideUp(jqiopts.promptspeed)
+					.removeClass('.'+ $.prompt.currentPrefix +'substate')
+					.find('.'+ $.prompt.currentPrefix +'arrow').hide();
+
+				// add parent state class so it can be visible, but blocked
+				$.prompt.jqi.find('.'+ $.prompt.currentPrefix +'state:visible').addClass($.prompt.currentPrefix +'parentstate');
+
+				// add substate class so we know it will be smaller
+				$state.addClass($.prompt.currentPrefix +'substate');
+			}
+			else{ // hide any open states
+				$.prompt.jqi.find('.'+ $.prompt.currentPrefix +'state').not($state)
+					.slideUp(jqiopts.promptspeed)
+					.find('.'+ $.prompt.currentPrefix +'arrow').hide();
+			}
 			$.prompt.currentStateName = stateobj.name;
 
-			$state.impTranIn(jqiopts.promptspeed,function(){
+			$state.slideDown(jqiopts.promptspeed,function(){
 				var $t = $(this);
 
 				// if focus is a selector, find it, else its button index
@@ -596,8 +592,9 @@
 					$.prompt.jqib.off('impromptu:statechanged', callback);
 				}
 			});
-		
-			$.prompt.position();		
+			if(!subState){
+				$.prompt.position();
+			}
 		}
 		return $state;
 	};
@@ -631,15 +628,14 @@
 	* @return jQuery - the newly active state
 	*/	
 	$.prompt.close = function(callCallback, clicked, msg, formvals){
-		$.prompt.jqib.impHide('fast',function(){
+		$.prompt.jqib.fadeOut('fast',function(){
 
 			if(callCallback) {
 				$.prompt.jqib.trigger('impromptu:close', [clicked,msg,formvals]);
 			}
 			$.prompt.jqib.remove();
 			
-			$(window).off('resize',$.prompt.position);
-			
+			$(window).off('resize',$.prompt.position);			
 		});
 	};
 	
@@ -655,58 +651,5 @@
 		
 		$.prompt($(this).clone(options.withDataAndEvents).html(),options);
 	};
-
-	/**
-	* Since Zepto only supports animate, we'll make our own
-	*/
-	$.fn.impShow = function(duration, callback){ // impShow
-		var $t = $(this),
-			currOpacity = $t.css('opacity') || 1;
-		$t.css({display:'block', visibility:'visible', opacity:0}).animate({opacity: currOpacity}, { duration: duration, complete: callback });
-		return $t;
-	};
-	$.fn.impHide = function(duration, callback){// impHide
-		var $t = $(this);
-		$t.css({ opacity: 1 }).animate({opacity: 0}, { duration: duration, complete: function(){
-			$t.css({display: 'none', visibility: 'hidden'});
-			if(callback){
-				callback.apply($t);
-			}
-		}});
-		return $t;
-	};
-	$.fn.impTranIn = function(duration, callback){ // slideDown
-		// TODO: Fix animation
-		// var position = this.css('position');
-		// this.show();
-		// this.css({ position: 'absolute', visibility: 'hidden' });
-		// var height = this.height();
-		// this.css({ position: position, visibility: 'visible', overflow: 'hidden', height: 0 });
-		// return this.animate({ height: height }, { duration: duration, complete: callback });
-
-		var $t = $(this);
-		$t.show();
-		if(callback){
-			callback.apply($t);
-		}
-		return $t;
-	};
-	$.fn.impTranOut = function(speed, callback){ // slideUp
-		var $t = $(this);
-		$t.hide();
-		if(callback){
-			callback.apply($t);
-		}
-		return $t;
-		// TODO: Fix animation
-		// var $t = $(this);
-		// $t.animate({height: 0}, { duration: speed, complete: function(){
-		// 	$t.css({ display: 'none', visibility: 'visible' });
-		// 	if(callback){
-		// 		callback.apply($t);
-		// 	}
-		// }});
-		// return $t;
-	}
 	
-})(window.jQuery || window.Zepto || window.$);
+})(jQuery);

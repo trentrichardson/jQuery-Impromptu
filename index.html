@@ -276,8 +276,8 @@
 						<dt>jQuery.prompt.removeState(stateName)</dt>
 						<dd>Removes the state. Returns true on success, false on failure.</dd>
 						
-						<dt>jQuery.prompt.goToState(stateName, callback)</dt>
-						<dd>Transitions to the specified state. Callback represents a statechanged event.</dd>
+						<dt>jQuery.prompt.goToState(stateName, subState, callback)</dt>
+						<dd>Transitions to the specified state. subState is a Boolean to use substate functionality.  Callback represents a statechanged event.</dd>
 						
 						<dt>jQuery.prompt.nextState(callback)</dt>
 						<dd>Transitions to the next state. Callback represents a statechanged event.</dd>
@@ -378,8 +378,9 @@ $.prompt.getStateContent('state2')
 			if(v){
 				e.preventDefault();
 				$.prompt.goToState('state1');
+				return false;
 			}
-			return false; 
+			$.prompt.close();
 		}
 	},
 	state1: {
@@ -387,10 +388,11 @@ $.prompt.getStateContent('state2')
 		buttons: { Back: -1, Exit: 0 },
 		focus: 1,
 		submit:function(e,v,m,f){
-			if(v==0) $.prompt.close()
+			e.preventDefault();
+			if(v==0)
+				$.prompt.close();
 			else if(v==-1)
 				$.prompt.goToState('state0');
-			e.preventDefault();
 		}
 	}
 };
@@ -400,6 +402,51 @@ $.prompt(statesdemo);</pre>
 		<button class="run">Run It!</button>
 	</div>
 </div>
+
+
+<div class="example-container">
+	<p>To use a substate create your states as normal, but use the subState option.</p>
+<pre class="code">var statesdemo = {
+	state0: {
+		title: 'Terms of Use',
+		html:'&lt;p&gt;These are the terms of use.  You should agree to these terms before proceeding.&lt;/p&gt;&lt;p&gt;(This is just an example)&lt;/p&gt;',
+		buttons: { Cancel: false, Agree: true },
+		focus: 1,
+		submit:function(e,v,m,f){
+			if(v){
+				e.preventDefault();
+				$.prompt.goToState('state1', true);
+				return false;
+			}
+			$.prompt.close();
+		}
+	},
+	state1: {
+		html:'Are you sure?',
+		buttons: { No: -1, Yes: 0 },
+		focus: 1,
+		submit:function(e,v,m,f){
+			e.preventDefault();
+			if(v==0) 
+				$.prompt.goToState('state2');
+			else if(v==-1)
+				$.prompt.goToState('state0');
+		}
+	},
+	state2: {
+		title: "You're Done!",
+		html: "Congratulations, you've finished this example!",
+		buttons: { Close: 0 },
+		focus: 0
+	}
+};
+
+$.prompt(statesdemo);</pre>
+	<div class="buttons">
+		<button class="run">Run It!</button>
+	</div>
+</div>
+
 
 <div class="example-container" id="TourExample">
 	<p>To use states pass in a collection (array or object) of objects with common properties (html, buttons, focus, submit, position..).</p>
@@ -546,10 +593,6 @@ $.prompt(statesdemo);</pre>
 		</div>
 
 		<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
-		<!-- <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/zepto/1.0/zepto.min.js"></script> -->
-		<script type="text/javascript" src="http://sellfy.com/js/api_buttons.js"></script>
-		<script type="text/javascript" src="https://gumroad.com/js/gumroad.js"></script>
-
 		<script type="text/javascript" src="jquery-impromptu.js"></script>
 		<script type="text/javascript">
 			
@@ -589,7 +632,7 @@ $.prompt(statesdemo);</pre>
 		
 		<script type="text/javascript" src="http://sellfy.com/js/api_buttons.js"></script>
 		<script type="text/javascript" src="https://gumroad.com/js/gumroad.js"></script>
-
+		<!-- 
 		<script type="text/javascript">
 		var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
 		document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
@@ -599,6 +642,6 @@ $.prompt(statesdemo);</pre>
 		var pageTracker = _gat._getTracker("UA-7602218-1");
 		pageTracker._trackPageview();
 		} catch(err) {}</script>
-
+		-->
 	</body>
 </html>
