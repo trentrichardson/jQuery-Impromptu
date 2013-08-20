@@ -20,14 +20,14 @@
 			function openLoanCalculatorPrompt(o){
 				o = jQuery.extend({},{ amount:100000, down: 1500, years:15, rate:5 },o);
 				
-				var formstr = '<p>Calculate monthly payments:</p>'+
-					'<div class="field"><label for="intamount">Amount</label><input type="text" name="intamount" id="intamount" value="'+ o.amount +'" /></div>'+
+				var formstr = '<div class="field"><label for="intamount">Amount</label><input type="text" name="intamount" id="intamount" value="'+ o.amount +'" /></div>'+
 					'<div class="field"><label for="intdown">Down Payment</label><input type="text" name="intdown" id="intdown" value="'+ o.down +'" /></div>'+
 					'<div class="field"><label for="intyears">Years</label><input type="text" name="intyears" id="intyears" value="'+ o.years +'" /></div>'+
 					'<div class="field"><label for="intrate">Rate</label><input type="text" name="intrate" id="intrate" value="'+ o.rate +'" /></div>';
 					
 				jqistates = {
 					state0: {
+						title: 'Calculate Monthly Payment',
 						html: formstr,
 						focus: 1,
 						buttons: { Cancel: false, Calculate: true },
@@ -68,7 +68,7 @@
 									}
 																		
 									jQuery.prompt.getStateContent('state1').find('#intmonthlypayment').text(m);									
-									jQuery.prompt.goToState('state1');
+									jQuery.prompt.goToState('state1',true);
 									
 								}
 								else{
