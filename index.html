@@ -40,14 +40,16 @@
 			.header ul.scrollnav{ position: fixed; top: 0px; left: 50%; z-index: 9999999; background-color: #777; display: none; margin: 0 0 0 -185px; border-radius: 0 0 0 6px; -moz-border-radius: 0 0 0 6px;-webkit-border-radius: 0 0 0 6px;}
 			.header ul.scrollnav li a{ color: #fff; }
 			.header ul.scrollnav.scrolled{ display: inline; }
+			.footer{ color: #777; margin: 20px 0 0 0; border-top: double 3px #ccc; font-size: 11px; }
 			.clear{ clear: both; }
 			
 			.methoddl dd{ margin-top: 0; }
 			.example-container{ border-bottom: double 3px #ccc; margin: 0 0 20px 0; padding: 0 0 20px 0; }
 			.example-container button{ border: none; color: #fff; padding: 4px 8px; background-color: #9ec45f; border-radius: 4px; -moz-border-radius: 4px;-webkit-border-radius: 4px; }
-			.ebook{}
-			.ebook img.ebookimg{ float: left; margin: 0 15px 15px 0; width: 100px; }
-			.ebook .buyp a iframe{ margin-bottom: -5px; }
+
+			.ebook{ background: #333 url(http://trentrichardson.com/wp-content/uploads/2013/08/Impromptu-ItoU.png) 20px bottom no-repeat; border-top: solid 4px #ddd; border-bottom: solid 4px #ddd; height: 210px; color: #eee; margin: 0 -20px 0 -40px; padding: 20px 20px 20px 200px; }
+			.ebook h3{ color: #fff; margin: 10px 0; font-size: 28px; }
+			.ebook .buyp a iframe{ margin-bottom: -10px; }
 		</style> 
 		
 		<link rel="stylesheet" media="all" type="text/css" href="jquery-impromptu.css" />
@@ -84,12 +86,12 @@
 					
 					<h3>Highly Recommended</h3>
 					<p>Subscribe to <a href="http://trentrichardson.com/category/impromptu/" title="TrentRichardson.com">my newsletter</a> and follow me <a href="http://twitter.com/practicalweb" title="Follow me on Twitter">@practicalweb</a>.</p>
+					
 					<div class="ebook">
-						<a href="http://sellfy.com/p/IrwS" title="Impromptu From I to U"><img src="http://trentrichardson.com/wp-content/uploads/2012/12/Impromptu-FromItoU.jpg" alt="Impromptu From I to U" class="ebookimg" /></a>
-						<p>Get the ebook Impromptu From I to U. Learn about advanced functionality of Impromptu including states, forms, tours, theming, and more!</p>
+						<h3>eBook: Impromptu From I to U</h3>
+						<p>Get the ebook to learn about advanced functionality of Impromptu including states, forms, tours, theming, and more!</p>
 						<p class="buyp"><a href="http://sellfy.com/p/IrwS" id="IrwS" class="sellfy-buy-button sellfy-small">buy</a> eBook + Example code</p>
 						<p class="buyp"><a href="https://sellfy.com/p/e14I" id="e14I" class="sellfy-buy-button">buy</a> eBook</p>
-						<p class="buyp"><a href="http://gum.co/BeAh" class="gumroad-button">Impromptu - From I to U</a></p>
 						<div class="clear"></div>
 					</div>
 
@@ -506,10 +508,10 @@ tourStates = [
 	},
 	{
 		title: 'Learn More',
-		html: 'If you would like to learn more please consider purchasing a copy of Impromptu From I to U. If you found Impromptu helpful, please see the links to the left. If not, thanks for stopping by!',
+		html: 'If you would like to learn more please consider purchasing a copy of Impromptu From I to U. If you found Impromptu helpful you can also donate to help fund development.  If not, thanks for stopping by!',
 		buttons: { Done: 2 },
 		focus: 0,
-		position: { container: '.ebook', x: 280, y: 50, width: 300, arrow: 'lt' },
+		position: { container: '.ebook', x: 370, y: 120, width: 275, arrow: 'lt' },
 		submit: tourSubmitFunc
 	}
 ];
@@ -591,7 +593,7 @@ $.prompt(statesdemo);</pre>
 			</div>
 
 			<div class="footer">
-
+				<p>Microphone artwork by: <a href="www.vectoropenstock.com" rel="nofollow">Vector Open Stock</a></p>
 			</div>
 		</div>
 
@@ -634,7 +636,6 @@ $.prompt(statesdemo);</pre>
 		</script>
 		
 		<script type="text/javascript" src="http://sellfy.com/js/api_buttons.js"></script>
-		<script type="text/javascript" src="https://gumroad.com/js/gumroad.js"></script>
 		<!-- 
 		<script type="text/javascript">
 		var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
