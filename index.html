@@ -376,7 +376,7 @@ $.prompt.getStateContent('state2')
 	<p>To use states pass in a collection (array or object) of objects with common properties (html, buttons, focus, submit, position..).</p>
 <pre class="code">var statesdemo = {
 	state0: {
-		html:'test 1.&lt;br /&gt;test 1..&lt;br /&gt;test 1...',
+		html:'Something really cool will happen when you click Next.  Prepare yourself for amazement!...',
 		buttons: { Cancel: false, Next: true },
 		focus: 1,
 		submit:function(e,v,m,f){
@@ -389,7 +389,7 @@ $.prompt.getStateContent('state2')
 		}
 	},
 	state1: {
-		html:'test 2',
+		html:'Was that awesome or what!?',
 		buttons: { Back: -1, Exit: 0 },
 		focus: 1,
 		submit:function(e,v,m,f){
