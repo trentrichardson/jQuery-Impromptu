@@ -305,10 +305,6 @@
 			top = parseInt($window.scrollTop(),10) + ($.prompt.options.top.toString().indexOf('%') >= 0? 
 					(windowHeight*(parseInt($.prompt.options.top,10)/100)) : parseInt($.prompt.options.top,10));
 
-		// This fixes the whitespace at the bottom of the fade, but it is 
-		// inconsistant and can cause an unneeded scrollbar, making the page jump
-		//height = height > documentHeight? height : documentHeight;
-
 		// when resizing the window turn off animation
 		if(e !== undefined && e.data.animate === false)
 			$.fx.off = true;
@@ -369,7 +365,7 @@
 				position: "absolute",
 				top: top,
 				left: '50%',//$window.width()/2,
-				marginLeft: (($.prompt.jqi.outerWidth()/2)*-1)
+				marginLeft: (($.prompt.jqi.outerWidth(false)/2)*-1)
 			});
 		}
 
