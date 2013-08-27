@@ -27,6 +27,12 @@
 
 		$.prompt.options = $.extend({},$.prompt.defaults,options);
 		$.prompt.currentPrefix = $.prompt.options.prefix;
+		
+		// Be sure any previous timeouts are destroyed
+		if($.prompt.timeout){
+			clearTimeout($.prompt.timeout);
+		}
+		$.prompt.timeout = false;
 
 		var opts = $.prompt.options,
 			$body = $(document.body),
@@ -184,14 +190,16 @@
 					.on('impromptu:statechanging', opts.statechanging)
 					.on('impromptu:statechanged', opts.statechanged);
 
-		//Show it
+		// Show it
 		$.prompt.jqif[opts.show](opts.overlayspeed);
 		$.prompt.jqi[opts.show](opts.promptspeed, function(){
 			$.prompt.jqib.trigger('impromptu:loaded');
 		});
 		
-		if(opts.timeout > 0)
-			setTimeout($.prompt.close,opts.timeout);
+		// Timeout
+		if(opts.timeout > 0){
+			$.prompt.timeout = setTimeout(function(){ $.prompt.close(true); },opts.timeout);
+		}
 
 		return $.prompt.jqib;
 	};
@@ -624,6 +632,11 @@
 	* @return jQuery - the newly active state
 	*/	
 	$.prompt.close = function(callCallback, clicked, msg, formvals){
+		if($.prompt.timeout){
+			clearTimeout($.prompt.timeout);
+			$.prompt.timeout = false;
+		}
+
 		$.prompt.jqib.fadeOut('fast',function(){
 
 			if(callCallback) {
