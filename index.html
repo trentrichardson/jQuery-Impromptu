@@ -27,7 +27,7 @@
 			dl{ margin: 10px 0; }
 			dl dt{ font-weight: bold; line-height: 20px; margin: 10px 0 0 0; }
 			dl dd{ margin: -20px 0 10px 120px; padding-bottom: 10px; border-bottom: solid 1px #eee;}
-			pre{ font-size: 12px; line-height: 16px; padding: 5px 5px 5px 10px; margin: 10px 0; background-color: #e4f4d4; border-left: solid 5px #9EC45F; overflow: auto; }
+			pre{ font-size: 12px; line-height: 16px; padding: 5px 5px 5px 10px; margin: 10px 0; background-color: #e4f4d4; border-left: solid 5px #9EC45F; overflow: auto; tab-size: 4; -moz-tab-size: 4; -o-tab-size: 4; -webkit-tab-size: 4; }
 
 			.wrapper{ background-color: #ffffff; width: 600px; border: solid 1px #eeeeee; padding: 20px 20px 20px 40px; margin: 0 auto; border-radius: 6px; -moz-border-radius: 6px;-webkit-border-radius: 6px; }
 			.header{ text-align: center;position: relative; margin: 0 -20px 0 -40px; }
@@ -306,14 +306,14 @@
 						<dt>impromptu:loaded</dt>
 						<dd>Same as loaded option. Scope is the entire prompt and fade container.
 <pre>var myPrompt = jQuery.prompt(/*...*/);
-myPrompt.bind('promptloaded', function(e){});</pre>
+myPrompt.on('impromptu:loaded', function(e){});</pre>
 						</dd>
 						
 						<dt>impromptu:submit</dt>
 						<dd>Same as submit option. Scope is the state element.  These events are per state, so you must attach it directly to a state.
 <pre>var myPrompt = jQuery.prompt(/*...*/);
 $.prompt.getStateContent('state2')
-	.bind('promptsubmit', function(e,v,m,f){});</pre></dd>
+	.on('impromptu:submit', function(e,v,m,f){});</pre></dd>
 						
 						<dt>impromptu:close</dt>
 						<dd>Same as close option. Scope is entire prompt and fade container</dd>
