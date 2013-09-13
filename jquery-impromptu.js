@@ -327,7 +327,7 @@
 			bottom: 0
 		});
 		$.prompt.jqif.css({
-			position: "absolute",
+			position: "fixed",
 			height: height,
 			width: "100%",
 			top: 0,
