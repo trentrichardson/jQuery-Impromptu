@@ -245,6 +245,7 @@
 		 		Ok: true
 		 	},
 		  	focus: 0,
+			defaultButton: 0,
 		  	position: { 
 		  		container: null, 
 		  		x: null, 
@@ -434,7 +435,7 @@
 		
 		for(k in stateobj.buttons){
 			v = stateobj.buttons[k],
-			defbtn = stateobj.focus === i? ($.prompt.currentPrefix+'defaultbutton '+ opts.classes.defaultButton):'';
+			defbtn = stateobj.focus === i || stateobj.defaultButton === i ? ($.prompt.currentPrefix + 'defaultbutton ' + opts.classes.defaultButton) : '';
 
 			if(typeof v == 'object'){
 				state += '<button class="'+ opts.classes.button +' '+ defbtn;
