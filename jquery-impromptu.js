@@ -233,6 +233,7 @@
 	   	promptspeed: 'fast',
    		show: 'fadeIn',
 	   	focus: 0,
+	   	defaultButton: 0,
 	   	useiframe: false,
 	 	top: '15%',
 		position: { 
@@ -253,6 +254,7 @@
 		 		Ok: true
 		 	},
 		  	focus: 0,
+		  	defaultButton: 0,
 		  	position: { 
 		  		container: null, 
 		  		x: null, 
@@ -423,7 +425,7 @@
 			title = "",
 			opts = $.prompt.options,
 			$jqistates = $('.'+ $.prompt.currentPrefix +'states'),
-			k,v,i=0;
+			defbtn,k,v,i=0;
 
 		stateobj = $.extend({},$.prompt.defaults.state, {name:statename}, stateobj);
 
@@ -438,7 +440,7 @@
 		
 		for(k in stateobj.buttons){
 			v = stateobj.buttons[k],
-			defbtn = stateobj.focus === i? ($.prompt.currentPrefix+'defaultbutton '+ opts.classes.defaultButton):'';
+			defbtn = stateobj.focus === i || stateobj.defaultButton === i ? ($.prompt.currentPrefix + 'defaultbutton ' + opts.classes.defaultButton) : '';
 
 			if(typeof v == 'object'){
 				state += '<button class="'+ opts.classes.button +' '+ defbtn;
