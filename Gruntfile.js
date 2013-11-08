@@ -13,7 +13,7 @@ module.exports = function(grunt) {
 			'* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
 			' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */\n',
 		// Task configuration.
-		concat: {	
+		/*concat: {	
 			dist: {
 				options: {
 					banner: '<%= banner %>',
@@ -22,13 +22,13 @@ module.exports = function(grunt) {
 				src: ['<%= pkg.name %>.js'],
 				dest: '<%= pkg.name %>.js'
 			}
-		},
+		},*/
 		uglify: {
 			options: {
 				banner: '<%= banner %>'
 			},
 			dist: {
-				src: '<%= concat.dist.dest %>',
+				src: '<%= pkg.name %>.js',
 				dest: '<%= pkg.name %>.min.js'
 			}
 		},
@@ -62,7 +62,7 @@ module.exports = function(grunt) {
 			},
 			dist: {
 				files: ['<%=pkg.name %>.js','<%=pkg.name %>.css'],
-				tasks: ['jshint:dist', 'concat', 'uglify', 'cssmin']
+				tasks: ['jshint:dist', 'uglify', 'cssmin']
 			}
 		}
 	});

@@ -1,7 +1,5 @@
-/*! jQuery-Impromptu - v5.1.0 - 2013-11-08
+/*! jQuery-Impromptu - DEV
 * http://trentrichardson.com/Impromptu
-* Copyright (c) 2013 Trent Richardson; Licensed MIT */
-/*! jQuery-Impromptu - v5.1.0* http://trentrichardson.com/Impromptu
 * Copyright (c) 2013 Trent Richardson; Licensed MIT */
 (function($) {
 	"use strict";
@@ -10,7 +8,7 @@
 	* setDefaults - Sets the default options
 	* @param message String/Object - String of html or Object of states
 	* @param options Object - Options to set the prompt
-	* @return jQuery - container with overlay and prompt
+	* @return jQuery - container with overlay and prompt 
 	*/
 	$.prompt = function(message, options) {
 		// only for backwards compat, to be removed in future version
