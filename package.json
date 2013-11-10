@@ -1,0 +1,15 @@
+{
+	"name": "jQuery-Impromptu",
+	"version": "0.0.0-ignored",
+	"engines": {
+		"node": ">= 0.8.0"
+	},
+	"devDependencies": {
+		"grunt-contrib-concat": "~0.1.2",
+		"grunt-contrib-jshint": "~0.1.1",
+		"grunt-contrib-uglify": "~0.1.1",
+		"grunt-contrib-watch": "~0.2.0",
+		"grunt-contrib-cssmin": "~0.6.0",
+		"grunt": "~0.4.1"
+	}
+}

@@ -27,7 +27,7 @@
 			dl{ margin: 10px 0; }
 			dl dt{ font-weight: bold; line-height: 20px; margin: 10px 0 0 0; }
 			dl dd{ margin: -20px 0 10px 120px; padding-bottom: 10px; border-bottom: solid 1px #eee;}
-			pre{ font-size: 12px; line-height: 16px; padding: 5px 5px 5px 10px; margin: 10px 0; background-color: #e4f4d4; border-left: solid 5px #9EC45F; overflow: auto; }
+			pre{ font-size: 12px; line-height: 16px; padding: 5px 5px 5px 10px; margin: 10px 0; background-color: #e4f4d4; border-left: solid 5px #9EC45F; overflow: auto; tab-size: 4; -moz-tab-size: 4; -o-tab-size: 4; -webkit-tab-size: 4; }
 
 			.wrapper{ background-color: #ffffff; width: 600px; border: solid 1px #eeeeee; padding: 20px 20px 20px 40px; margin: 0 auto; border-radius: 6px; -moz-border-radius: 6px;-webkit-border-radius: 6px; }
 			.header{ text-align: center;position: relative; margin: 0 -20px 0 -40px; }
@@ -115,14 +115,10 @@
 					</ul>
 
 					<h3>Version</h3>
-					<p>Version 5.0</p>
+					<p>Version 5.1.0</p>
 					<p>Last updated on 08/24/2013</p>
 
-					<p>jQuery Impromptu is currently available for use in all personal or commercial projects under both MIT and GPL licenses. This means that you can choose the license that best suits your project, and use it accordingly. </p>
-					<ul>
-						<li><a href="GPL-LICENSE.txt" title="GPL License">GPL License</a></li>
-						<li><a href="MIT-LICENSE.txt" title="MIT License">MIT License</a></li>
-					</ul>
+					<p>jQuery Impromptu is currently available for use in all personal or commercial projects under the <a href="MIT-LICENSE.txt" title="MIT License">MIT License</a>.</p>
 					
 
 
@@ -150,6 +146,9 @@
 						
 						<dt>focus</dt>
 						<dd>Index of the button to focus or selector to element to focus. <em>Default: 0</em></dd>
+
+						<dt>defaultButton</dt>
+						<dd>Index of the button to focus.  Similar to the focus option, but if focus is a selector this can still style the button as the default. <em>Default: 0</em></dd>
 											
 						<dt>submit</dt>
 						<dd>A function to be called when the prompt is submitted. <em>Default: function(event, value, message, formVals){}</em> Return false or event.preventDefault() to keep the prompt open. Event object also has properties event.state and event.stateName.</dd>
@@ -306,14 +305,14 @@
 						<dt>impromptu:loaded</dt>
 						<dd>Same as loaded option. Scope is the entire prompt and fade container.
 <pre>var myPrompt = jQuery.prompt(/*...*/);
-myPrompt.bind('promptloaded', function(e){});</pre>
+myPrompt.on('impromptu:loaded', function(e){});</pre>
 						</dd>
 						
 						<dt>impromptu:submit</dt>
 						<dd>Same as submit option. Scope is the state element.  These events are per state, so you must attach it directly to a state.
 <pre>var myPrompt = jQuery.prompt(/*...*/);
 $.prompt.getStateContent('state2')
-	.bind('promptsubmit', function(e,v,m,f){});</pre></dd>
+	.on('impromptu:submit', function(e,v,m,f){});</pre></dd>
 						
 						<dt>impromptu:close</dt>
 						<dd>Same as close option. Scope is entire prompt and fade container</dd>
@@ -598,7 +597,7 @@ $.prompt(statesdemo);</pre>
 		</div>
 
 		<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
-		<script type="text/javascript" src="jquery-impromptu.js"></script>
+		<script type="text/javascript" src="jquery-impromptu.min.js"></script>
 		<script type="text/javascript">
 			
 			$(function(){

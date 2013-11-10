@@ -1,32 +1,29 @@
-/*
- * jQuery Impromptu
- * By: Trent Richardson [http://trentrichardson.com]
- * Version 5.0
- * Last Modified: 08/24/2013
- * 
- * Copyright 2013 Trent Richardson
- * You may use this project under MIT or GPL licenses.
- * http://trentrichardson.com/Impromptu/GPL-LICENSE.txt
- * http://trentrichardson.com/Impromptu/MIT-LICENSE.txt
- * 
- */
- 
+/*! jQuery-Impromptu - v5.1.0
+* http://trentrichardson.com/Impromptu
+* Copyright (c) 2013 Trent Richardson; Licensed MIT */
 (function($) {
+	"use strict";
 
 	/**
 	* setDefaults - Sets the default options
 	* @param message String/Object - String of html or Object of states
 	* @param options Object - Options to set the prompt
-	* @return jQuery - container with overlay and prompt
+	* @return jQuery - container with overlay and prompt 
 	*/
 	$.prompt = function(message, options) {
 		// only for backwards compat, to be removed in future version
-		if(options !== undefined && options.classes != undefined && typeof options.classes === 'string'){
+		if(options !== undefined && options.classes !== undefined && typeof options.classes === 'string'){
 			options = { box: options.classes };
 		}
 
 		$.prompt.options = $.extend({},$.prompt.defaults,options);
 		$.prompt.currentPrefix = $.prompt.options.prefix;
+		
+		// Be sure any previous timeouts are destroyed
+		if($.prompt.timeout){
+			clearTimeout($.prompt.timeout);
+		}
+		$.prompt.timeout = false;
 
 		var opts = $.prompt.options,
 			$body = $(document.body),
@@ -52,17 +49,17 @@
 		$.prompt.jqif = $.prompt.jqib.children('.'+ opts.prefix +'fade');
 
 		//if a string was passed, convert to a single state
-		if(message.constructor == String){
+		if(message.constructor === String){
 			message = {
 				state0: {
 					title: opts.title,
 					html: message,
-				 	buttons: opts.buttons,
-				 	position: opts.position,
-				 	focus: opts.focus,
-				 	submit: opts.submit
-			 	}
-		 	};
+					buttons: opts.buttons,
+					position: opts.position,
+					focus: opts.focus,
+					submit: opts.submit
+				}
+			};
 		}
 
 		//build the states
@@ -72,8 +69,9 @@
 			v = $.extend({},$.prompt.defaults.state,{name:k},message[k]);
 			$.prompt.addState(v.name, v);
 
-			if($.prompt.currentStateName === '')
+			if($.prompt.currentStateName === ''){
 				$.prompt.currentStateName = v.name;
+			}
 		}
 
 		// Go ahead and transition to the first state. It won't be visible just yet though until we show the prompt
@@ -90,9 +88,9 @@
 				forminputs = {};
 
 			// if for some reason we couldn't get the value
-			if(clicked == undefined){
+			if(clicked === undefined){
 				for(var i in stateobj.buttons){
-					if(stateobj.buttons[i].title == $t.text() || stateobj.buttons[i].title == $t.html()){
+					if(stateobj.buttons[i].title === $t.text() || stateobj.buttons[i].title === $t.html()){
 						clicked = stateobj.buttons[i].value;
 					}
 				}
@@ -102,7 +100,7 @@
 			$.each($.prompt.jqi.children('form').serializeArray(),function(i,obj){
 				if (forminputs[obj.name] === undefined) {
 					forminputs[obj.name] = obj.value;
-				} else if (typeof forminputs[obj.name] == Array || typeof forminputs[obj.name] == 'object') {
+				} else if (typeof forminputs[obj.name] === Array || typeof forminputs[obj.name] === 'object') {
 					forminputs[obj.name].push(obj.value);
 				} else {
 					forminputs[obj.name] = [forminputs[obj.name],obj.value];	
@@ -149,23 +147,25 @@
 			var key = (window.event) ? event.keyCode : e.keyCode;
 			
 			//escape key closes
-			if(key==27) {
+			if(key===27) {
 				fadeClicked();	
 			}
 			
 			//constrain tabs, tabs should iterate through the state and not leave
-			if (key == 9){
+			if (key === 9){
 				var $inputels = $('input,select,textarea,button',$.prompt.getCurrentState());
-				var fwd = !e.shiftKey && e.target == $inputels[$inputels.length-1];
-				var back = e.shiftKey && e.target == $inputels[0];
+				var fwd = !e.shiftKey && e.target === $inputels[$inputels.length-1];
+				var back = e.shiftKey && e.target === $inputels[0];
 				if (fwd || back) {
 					setTimeout(function(){ 
-						if (!$inputels)
+						if (!$inputels){
 							return;
+						}
 						var el = $inputels[back===true ? $inputels.length-1 : 0];
 
-						if (el)
-							el.focus();						
+						if (el){
+							el.focus();
+						}
 					},10);
 					return false;
 				}
@@ -184,14 +184,16 @@
 					.on('impromptu:statechanging', opts.statechanging)
 					.on('impromptu:statechanged', opts.statechanged);
 
-		//Show it
+		// Show it
 		$.prompt.jqif[opts.show](opts.overlayspeed);
 		$.prompt.jqi[opts.show](opts.promptspeed, function(){
 			$.prompt.jqib.trigger('impromptu:loaded');
 		});
 		
-		if(opts.timeout > 0)
-			setTimeout($.prompt.close,opts.timeout);
+		// Timeout
+		if(opts.timeout > 0){
+			$.prompt.timeout = setTimeout(function(){ $.prompt.close(true); },opts.timeout);
+		}
 
 		return $.prompt.jqib;
 	};
@@ -214,19 +216,20 @@
 		buttons: {
 			Ok: true
 		},
-	 	loaded: function(e){},
-	  	submit: function(e,v,m,f){},
-	 	close: function(e,v,m,f){},
-	 	statechanging: function(e, from, to){},
-	 	statechanged: function(e, to){},
+		loaded: function(e){},
+		submit: function(e,v,m,f){},
+		close: function(e,v,m,f){},
+		statechanging: function(e, from, to){},
+		statechanged: function(e, to){},
 		opacity: 0.6,
-	 	zIndex: 999,
-	  	overlayspeed: 'slow',
-	   	promptspeed: 'fast',
-   		show: 'fadeIn',
-	   	focus: 0,
-	   	useiframe: false,
-	 	top: '15%',
+		zIndex: 999,
+		overlayspeed: 'slow',
+		promptspeed: 'fast',
+		show: 'fadeIn',
+		focus: 0,
+		defaultButton: 0,
+		useiframe: false,
+		top: '15%',
 		position: { 
 			container: null, 
 			x: null, 
@@ -234,28 +237,29 @@
 			arrow: null,
 			width: null
 		},
-	  	persistent: true,
-	  	timeout: 0,
-	  	states: {},
-	  	state: {
-	  		name: null,
-	  		title: '',
+		persistent: true,
+		timeout: 0,
+		states: {},
+		state: {
+			name: null,
+			title: '',
 			html: '',
-		 	buttons: {
-		 		Ok: true
-		 	},
-		  	focus: 0,
-		  	position: { 
-		  		container: null, 
-		  		x: null, 
-		  		y: null,
-		  		arrow: null,
-		  		width: null
-		  	},
-		   	submit: function(e,v,m,f){
-		   		return true;
-		   }
-	  	}
+			buttons: {
+				Ok: true
+			},
+			focus: 0,
+			defaultButton: 0,
+			position: { 
+				container: null, 
+				x: null, 
+				y: null,
+				arrow: null,
+				width: null
+			},
+			submit: function(e,v,m,f){
+				return true;
+			}
+		}
 	};
 	
 	/**
@@ -305,13 +309,10 @@
 			top = parseInt($window.scrollTop(),10) + ($.prompt.options.top.toString().indexOf('%') >= 0? 
 					(windowHeight*(parseInt($.prompt.options.top,10)/100)) : parseInt($.prompt.options.top,10));
 
-		// This fixes the whitespace at the bottom of the fade, but it is 
-		// inconsistant and can cause an unneeded scrollbar, making the page jump
-		//height = height > documentHeight? height : documentHeight;
-
 		// when resizing the window turn off animation
-		if(e !== undefined && e.data.animate === false)
+		if(e !== undefined && e.data.animate === false){
 			$.fx.off = true;
+		}
 		
 		$.prompt.jqib.css({
 			position: "absolute",
@@ -323,7 +324,7 @@
 			bottom: 0
 		});
 		$.prompt.jqif.css({
-			position: "absolute",
+			position: "fixed",
 			height: height,
 			width: "100%",
 			top: 0,
@@ -369,13 +370,14 @@
 				position: "absolute",
 				top: top,
 				left: '50%',//$window.width()/2,
-				marginLeft: (($.prompt.jqi.outerWidth()/2)*-1)
+				marginLeft: (($.prompt.jqi.outerWidth(false)/2)*-1)
 			});
 		}
 
 		// restore fx settings
-		if(e !== undefined && e.data.animate === false)
+		if(e !== undefined && e.data.animate === false){
 			$.fx.off = restoreFx;
+		}
 	};
 	
 	/**
@@ -419,14 +421,16 @@
 			title = "",
 			opts = $.prompt.options,
 			$jqistates = $('.'+ $.prompt.currentPrefix +'states'),
-			k,v,i=0;
+			defbtn,k,v,i=0;
 
 		stateobj = $.extend({},$.prompt.defaults.state, {name:statename}, stateobj);
 
-		if(stateobj.position.arrow !== null)
+		if(stateobj.position.arrow !== null){
 			arrow = '<div class="'+ opts.prefix + 'arrow '+ opts.prefix + 'arrow'+ stateobj.position.arrow +'"></div>';
-		if(stateobj.title && stateobj.title !== '')
-		    title = '<div class="lead '+ opts.prefix + 'title '+ opts.classes.title +'">'+  stateobj.title +'</div>';
+		}
+		if(stateobj.title && stateobj.title !== ''){
+			title = '<div class="lead '+ opts.prefix + 'title '+ opts.classes.title +'">'+  stateobj.title +'</div>';
+		}
 		state += '<div id="'+ opts.prefix +'state_'+ statename +'" class="'+ opts.prefix + 'state" data-jqi-name="'+ statename +'" style="display:none;">'+ 
 					arrow + title +
 					'<div class="'+ opts.prefix +'message '+ opts.classes.message +'">' + stateobj.html +'</div>'+
@@ -434,9 +438,9 @@
 		
 		for(k in stateobj.buttons){
 			v = stateobj.buttons[k],
-			defbtn = stateobj.focus === i? ($.prompt.currentPrefix+'defaultbutton '+ opts.classes.defaultButton):'';
+			defbtn = stateobj.focus === i || stateobj.defaultButton === i ? ($.prompt.currentPrefix + 'defaultbutton ' + opts.classes.defaultButton) : '';
 
-			if(typeof v == 'object'){
+			if(typeof v === 'object'){
 				state += '<button class="'+ opts.classes.button +' '+ defbtn;
 				
 				if(typeof v.classes !== "undefined"){
@@ -584,11 +588,11 @@
 
 				$t.find('.'+ $.prompt.currentPrefix +'arrow').show(jqiopts.promptspeed);
 				
-				if (typeof callback == 'function'){
+				if (typeof callback === 'function'){
 					$.prompt.jqib.on('impromptu:statechanged', callback);
 				}
 				$.prompt.jqib.trigger('impromptu:statechanged', [state]);
-				if (typeof callback == 'function'){
+				if (typeof callback === 'function'){
 					$.prompt.jqib.off('impromptu:statechanged', callback);
 				}
 			});
@@ -628,6 +632,11 @@
 	* @return jQuery - the newly active state
 	*/	
 	$.prompt.close = function(callCallback, clicked, msg, formvals){
+		if($.prompt.timeout){
+			clearTimeout($.prompt.timeout);
+			$.prompt.timeout = false;
+		}
+
 		$.prompt.jqib.fadeOut('fast',function(){
 
 			if(callCallback) {
@@ -635,7 +644,7 @@
 			}
 			$.prompt.jqib.remove();
 			
-			$(window).off('resize',$.prompt.position);			
+			$(window).off('resize',$.prompt.position);
 		});
 	};
 	
@@ -644,10 +653,12 @@
 	* This will grab the html within the prompt as the prompt message
 	*/
 	$.fn.prompt = function(options){
-		if(options == undefined) 
+		if(options === undefined){
 			options = {};
-		if(options.withDataAndEvents == undefined)
+		}
+		if(options.withDataAndEvents === undefined){
 			options.withDataAndEvents = false;
+		}
 		
 		$.prompt($(this).clone(options.withDataAndEvents).html(),options);
 	};

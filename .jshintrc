@@ -1,0 +1,21 @@
+{
+  "curly": true,
+  "eqeqeq": true,
+  "immed": true,
+  "latedef": true,
+  "newcap": true,
+  "noarg": true,
+  "sub": true,
+  "undef": true,
+  "unused": false,
+  "loopfunc": true,
+  "boss": true,
+  "eqnull": true,
+  "browser": true,
+  "node": true,
+  "predef": [
+    "jQuery",
+    "module",
+    "grunt"
+  ]
+}
