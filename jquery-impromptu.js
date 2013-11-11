@@ -1,4 +1,4 @@
-/*! jQuery-Impromptu - v5.2.0
+/*! jQuery-Impromptu - v5.1.1
 * http://trentrichardson.com/Impromptu
 * Copyright (c) 2013 Trent Richardson; Licensed MIT */
 (function($) {
@@ -438,7 +438,7 @@
 		
 		for(k in stateobj.buttons){
 			v = stateobj.buttons[k],
-			defbtn = stateobj.focus === i || stateobj.defaultButton === i ? ($.prompt.currentPrefix + 'defaultbutton ' + opts.classes.defaultButton) : '';
+			defbtn = stateobj.focus === i || (isNaN(stateobj.focus) && stateobj.defaultButton === i) ? ($.prompt.currentPrefix + 'defaultbutton ' + opts.classes.defaultButton) : '';
 
 			if(typeof v === 'object'){
 				state += '<button class="'+ opts.classes.button +' '+ defbtn;
