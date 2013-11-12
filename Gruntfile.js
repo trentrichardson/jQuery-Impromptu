@@ -4,6 +4,7 @@ module.exports = function(grunt) {
 
 	// Project configuration.
 	grunt.initConfig({
+
 		// Metadata.
 		pkg: grunt.file.readJSON('jquery-impromptu.jquery.json'),
 		banner: '/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %>' +
@@ -12,34 +13,68 @@ module.exports = function(grunt) {
 			'<%= pkg.homepage ? "* " + pkg.homepage + "\\n" : "" %>' +
 			'* Copyright (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %>;' +
 			' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */\n',
+
 		// Task configuration.
-		/*concat: {	
+		clean: {
+			files: ['dist']
+		},
+		copy: {
+			dist: {
+				files: [
+					{ src: 'src/index.html', dest: 'dist/index.html' },
+					{ src: 'src/demos/*', dest: 'dist/demos/', expand:true, flatten: true },
+					{ src: 'src/themes/*', dest: 'dist/themes/', expand:true, flatten: true }
+				]
+			}
+		},
+		concat: {	
 			dist: {
 				options: {
 					banner: '<%= banner %>',
 					stripBanners: true
 				},
-				src: ['<%= pkg.name %>.js'],
-				dest: '<%= pkg.name %>.js'
+				files: [
+					{ src: 'src/<%= pkg.name %>.js', dest: 'dist/<%= pkg.name %>.js' },
+					{ src: 'src/<%= pkg.name %>.css', dest: 'dist/<%= pkg.name %>.css' }
+				]
 			}
-		},*/
+		},
 		uglify: {
 			options: {
 				banner: '<%= banner %>'
 			},
 			dist: {
-				src: '<%= pkg.name %>.js',
-				dest: '<%= pkg.name %>.min.js'
-			}
+				src: 'dist/<%= pkg.name %>.js',
+				dest: 'dist/<%= pkg.name %>.min.js'
+			},
 		},
 		cssmin: {
 			options: {
-				banner: '<%= banner %>'
+				//banner: '<%= banner %>'
 			},
 			dist: {
-				src: '<%= pkg.name %>.css',
-				dest: '<%= pkg.name %>.min.css'
+				src: 'dist/<%= pkg.name %>.css',
+				dest: 'dist/<%= pkg.name %>.min.css'
+			},
+		},
+		replace: {
+			dist: {
+				options: {
+					variables: {
+						version: '<%= pkg.version %>',
+						timestamp: '<%= pkg.modified %>'
+					},
+					prefix: '@@'
+				},
+				files: [
+					//{ src: 'dist/<%= pkg.name %>.js', dest: 'dist/<%= pkg.name %>.js' },
+					//{ src: 'dist/<%= pkg.name %>.css', dest: 'dist/<%= pkg.name %>.css' },
+					{ src: 'dist/index.html', dest: 'dist/index.html' }
+				]
 			}
+		},
+		qunit: {
+			files: ['test/**/*.html']
 		},
 		jshint: {
 			gruntfile: {
@@ -48,11 +83,11 @@ module.exports = function(grunt) {
 				},
 				src: 'Gruntfile.js'
 			},
-			dist: {
+			src: {
 				options: {
-					jshintrc: '.jshintrc'
+					jshintrc: 'src/.jshintrc'
 				},
-				src: ['<%=pkg.name %>.js']
+				src: ['src/**/*.js']
 			}
 		},
 		watch: {
@@ -60,21 +95,24 @@ module.exports = function(grunt) {
 				files: '<%= jshint.gruntfile.src %>',
 				tasks: ['jshint:gruntfile']
 			},
-			dist: {
-				files: ['<%=pkg.name %>.js','<%=pkg.name %>.css'],
-				tasks: ['jshint:dist', 'uglify', 'cssmin']
+			src: {
+				files: 'src/**',//'<%= jshint.src.src %>',
+				tasks: ['jshint:src', 'clean', 'copy', 'concat', 'replace', 'uglify', 'cssmin']
 			}
-		}
+		},
 	});
 
 	// These plugins provide necessary tasks.
+	grunt.loadNpmTasks('grunt-contrib-clean');
 	grunt.loadNpmTasks('grunt-contrib-concat');
+	grunt.loadNpmTasks('grunt-contrib-copy');
+	grunt.loadNpmTasks('grunt-replace');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-cssmin');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 
 	// Default task.
-	grunt.registerTask('default', ['jshint', 'uglify', 'cssmin']);
+	grunt.registerTask('default', ['jshint', 'clean', 'copy', 'concat', 'replace', 'uglify', 'cssmin']);
 
 };
