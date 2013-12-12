@@ -144,10 +144,21 @@
 			var key = (window.event) ? event.keyCode : e.keyCode;
 			
 			//escape key closes
-			if(key===27) {
+			if(key === 27) {
 				fadeClicked();	
 			}
 			
+			//enter key pressed trigger the default button if its not on it, ignore if it is a textarea
+			if(key === 13){
+				var $defBtn = $.prompt.getCurrentState().find('.'+ opts.prefix +'defaultbutton');
+				var $tgt = $(e.target);
+				
+				if($tgt.is('textarea,.'+opts.prefix+'button') === false && $defBtn.length > 0){
+					e.preventDefault();
+					$defBtn.click();
+				}
+			}
+
 			//constrain tabs, tabs should iterate through the state and not leave
 			if (key === 9){
 				var $inputels = $('input,select,textarea,button',$.prompt.getCurrentState());
@@ -438,7 +449,7 @@
 			defbtn = stateobj.focus === i || (isNaN(stateobj.focus) && stateobj.defaultButton === i) ? ($.prompt.currentPrefix + 'defaultbutton ' + opts.classes.defaultButton) : '';
 
 			if(typeof v === 'object'){
-				state += '<button class="'+ opts.classes.button +' '+ defbtn;
+				state += '<button class="'+ opts.classes.button +' '+ $.prompt.currentPrefix + 'button '+ defbtn;
 				
 				if(typeof v.classes !== "undefined"){
 					state += ' '+ ($.isArray(v.classes)? v.classes.join(' ') : v.classes) + ' ';
@@ -447,7 +458,7 @@
 				state += '" name="' + opts.prefix + '_' + statename + '_button' + v.title.replace(/[^a-z0-9]+/gi,'') + '" id="' + opts.prefix + '_' + statename + '_button' + v.title.replace(/[^a-z0-9]+/gi,'') + '" value="' + v.value + '">' + v.title + '</button>';
 				
 			} else {
-				state += '<button class="'+ opts.classes.button +' '+ defbtn +'" name="' + opts.prefix + '_' + statename + '_button' + k + '" id="' + opts.prefix +  '_' + statename + '_button' + k + '" value="' + v + '">' + k + '</button>';
+				state += '<button class="'+ $.prompt.currentPrefix + 'button '+ opts.classes.button +' '+ defbtn +'" name="' + opts.prefix + '_' + statename + '_button' + k + '" id="' + opts.prefix +  '_' + statename + '_button' + k + '" value="' + v + '">' + k + '</button>';
 				
 			}
 			i++;

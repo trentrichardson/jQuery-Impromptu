@@ -425,10 +425,24 @@ $.prompt(statesdemo);</pre>
 			$.prompt.close();
 		}
 	},
+	/*
 	state1: {
 		html:'Are you sure?',
 		buttons: { No: -1, Yes: 0 },
 		focus: 1,
+		submit:function(e,v,m,f){
+			e.preventDefault();
+			if(v==0) 
+				$.prompt.goToState('state2');
+			else if(v==-1)
+				$.prompt.goToState('state0');
+		}
+	},
+	*/
+	state1: {
+		html:'Are you sure? &lt;input type="text" name="email" /&gt;',
+		buttons: { No: -1, Yes: 0 },
+		focus: "input[name='email']",
 		submit:function(e,v,m,f){
 			e.preventDefault();
 			if(v==0) 
