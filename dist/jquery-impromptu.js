@@ -74,10 +74,6 @@
 			}
 		}
 
-		// Go ahead and transition to the first state. It won't be visible just yet though until we show the prompt
-		var $firstState = $.prompt.jqi.find('.'+ opts.prefix +'states .'+ opts.prefix +'state').eq(0);
-		$.prompt.goToState($firstState.data('jqi-name'));
-
 		//Events
 		$.prompt.jqi.on('click', '.'+ opts.prefix +'buttons button', function(e){
 			var $t = $(this),
@@ -198,6 +194,10 @@
 		// Show it
 		$.prompt.jqif[opts.show](opts.overlayspeed);
 		$.prompt.jqi[opts.show](opts.promptspeed, function(){
+
+			var $firstState = $.prompt.jqi.find('.'+ opts.prefix +'states .'+ opts.prefix +'state').eq(0);
+			$.prompt.goToState($firstState.data('jqi-name'));
+
 			$.prompt.jqib.trigger('impromptu:loaded');
 		});
 		
