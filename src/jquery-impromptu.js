@@ -1,6 +1,3 @@
-/*! jQuery-Impromptu - v5.1.1
-* http://trentrichardson.com/Impromptu
-* Copyright (c) 2013 Trent Richardson; Licensed MIT */
 (function($) {
 	"use strict";
 
@@ -74,10 +71,6 @@
 			}
 		}
 
-		// Go ahead and transition to the first state. It won't be visible just yet though until we show the prompt
-		var $firstState = $.prompt.jqi.find('.'+ opts.prefix +'states .'+ opts.prefix +'state').eq(0);
-		$.prompt.goToState($firstState.data('jqi-name'));
-
 		//Events
 		$.prompt.jqi.on('click', '.'+ opts.prefix +'buttons button', function(e){
 			var $t = $(this),
@@ -147,10 +140,21 @@
 			var key = (window.event) ? event.keyCode : e.keyCode;
 			
 			//escape key closes
-			if(key===27) {
+			if(key === 27) {
 				fadeClicked();	
 			}
 			
+			//enter key pressed trigger the default button if its not on it, ignore if it is a textarea
+			if(key === 13){
+				var $defBtn = $.prompt.getCurrentState().find('.'+ opts.prefix +'defaultbutton');
+				var $tgt = $(e.target);
+				
+				if($tgt.is('textarea,.'+opts.prefix+'button') === false && $defBtn.length > 0){
+					e.preventDefault();
+					$defBtn.click();
+				}
+			}
+
 			//constrain tabs, tabs should iterate through the state and not leave
 			if (key === 9){
 				var $inputels = $('input,select,textarea,button',$.prompt.getCurrentState());
@@ -187,6 +191,10 @@
 		// Show it
 		$.prompt.jqif[opts.show](opts.overlayspeed);
 		$.prompt.jqi[opts.show](opts.promptspeed, function(){
+
+			var $firstState = $.prompt.jqi.find('.'+ opts.prefix +'states .'+ opts.prefix +'state').eq(0);
+			$.prompt.goToState($firstState.data('jqi-name'));
+
 			$.prompt.jqib.trigger('impromptu:loaded');
 		});
 		
@@ -441,7 +449,7 @@
 			defbtn = stateobj.focus === i || (isNaN(stateobj.focus) && stateobj.defaultButton === i) ? ($.prompt.currentPrefix + 'defaultbutton ' + opts.classes.defaultButton) : '';
 
 			if(typeof v === 'object'){
-				state += '<button class="'+ opts.classes.button +' '+ defbtn;
+				state += '<button class="'+ opts.classes.button +' '+ $.prompt.currentPrefix + 'button '+ defbtn;
 				
 				if(typeof v.classes !== "undefined"){
 					state += ' '+ ($.isArray(v.classes)? v.classes.join(' ') : v.classes) + ' ';
@@ -450,7 +458,7 @@
 				state += '" name="' + opts.prefix + '_' + statename + '_button' + v.title.replace(/[^a-z0-9]+/gi,'') + '" id="' + opts.prefix + '_' + statename + '_button' + v.title.replace(/[^a-z0-9]+/gi,'') + '" value="' + v.value + '">' + v.title + '</button>';
 				
 			} else {
-				state += '<button class="'+ opts.classes.button +' '+ defbtn +'" name="' + opts.prefix + '_' + statename + '_button' + k + '" id="' + opts.prefix +  '_' + statename + '_button' + k + '" value="' + v + '">' + k + '</button>';
+				state += '<button class="'+ $.prompt.currentPrefix + 'button '+ opts.classes.button +' '+ defbtn +'" name="' + opts.prefix + '_' + statename + '_button' + k + '" id="' + opts.prefix +  '_' + statename + '_button' + k + '" value="' + v + '">' + k + '</button>';
 				
 			}
 			i++;
