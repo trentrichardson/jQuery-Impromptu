@@ -73,6 +73,15 @@ module.exports = function(grunt) {
 				]
 			}
 		},
+		jasmine: {
+			src: 'src/<%= pkg.name %>.js',
+			options: {
+				specs: 'test/*_spec.js',
+				vendor: [
+						'http://code.jquery.com/jquery-1.10.2.min.js'
+					]
+			}
+		},
 		qunit: {
 			files: ['test/**/*.html']
 		},
@@ -88,6 +97,12 @@ module.exports = function(grunt) {
 					jshintrc: 'src/.jshintrc'
 				},
 				src: ['src/**/*.js']
+			},
+			test: {
+				options: {
+					jshintrc: 'test/.jshintrc'
+				},
+				src: ['test/*_spec.js']
 			}
 		},
 		watch: {
@@ -97,7 +112,11 @@ module.exports = function(grunt) {
 			},
 			src: {
 				files: 'src/**',//'<%= jshint.src.src %>',
-				tasks: ['jshint:src', 'clean', 'copy', 'concat', 'replace', 'uglify', 'cssmin']
+				tasks: ['jshint:src', 'jasmine', 'clean', 'copy', 'concat', 'replace', 'uglify', 'cssmin']
+			},
+			test: {
+				files: '<%= jshint.test.src %>',
+				tasks: ['jshint:test', 'jasmine']
 			}
 		},
 	});
@@ -109,10 +128,14 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-replace');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-cssmin');
+	grunt.loadNpmTasks('grunt-contrib-jasmine');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 
 	// Default task.
-	grunt.registerTask('default', ['jshint', 'clean', 'copy', 'concat', 'replace', 'uglify', 'cssmin']);
+	grunt.registerTask('default', ['jshint', 'jasmine', 'clean', 'copy', 'concat', 'replace', 'uglify', 'cssmin']);
+
+	// test task.
+	grunt.registerTask('test', ['jshint', 'jasmine']);
 
 };

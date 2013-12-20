@@ -54,6 +54,7 @@
 					buttons: opts.buttons,
 					position: opts.position,
 					focus: opts.focus,
+					defaultButton: opts.defaultButton,
 					submit: opts.submit
 				}
 			};
@@ -458,7 +459,7 @@
 				state += '" name="' + opts.prefix + '_' + statename + '_button' + v.title.replace(/[^a-z0-9]+/gi,'') + '" id="' + opts.prefix + '_' + statename + '_button' + v.title.replace(/[^a-z0-9]+/gi,'') + '" value="' + v.value + '">' + v.title + '</button>';
 				
 			} else {
-				state += '<button class="'+ $.prompt.currentPrefix + 'button '+ opts.classes.button +' '+ defbtn +'" name="' + opts.prefix + '_' + statename + '_button' + k + '" id="' + opts.prefix +  '_' + statename + '_button' + k + '" value="' + v + '">' + k + '</button>';
+				state += '<button class="'+ $.prompt.currentPrefix + 'button '+ opts.classes.button +' '+ defbtn +'" name="' + opts.prefix + '_' + statename + '_button' + k.replace(/[^a-z0-9]+/gi,'') + '" id="' + opts.prefix +  '_' + statename + '_button' + k.replace(/[^a-z0-9]+/gi,'') + '" value="' + v + '">' + k + '</button>';
 				
 			}
 			i++;
@@ -618,7 +619,10 @@
 	*/	
 	$.prompt.nextState = function(callback) {
 		var $next = $('#'+ $.prompt.currentPrefix +'state_'+ $.prompt.getCurrentStateName()).next();
-		return $.prompt.goToState( $next.attr('id').replace($.prompt.currentPrefix +'state_',''), callback );
+		if($next.length > 0){
+			$.prompt.goToState( $next.attr('id').replace($.prompt.currentPrefix +'state_',''), callback );
+		}
+		return $next;
 	};
 	
 	/**
@@ -628,7 +632,10 @@
 	*/	
 	$.prompt.prevState = function(callback) {
 		var $prev = $('#'+ $.prompt.currentPrefix +'state_'+ $.prompt.getCurrentStateName()).prev();
-		$.prompt.goToState( $prev.attr('id').replace($.prompt.currentPrefix +'state_',''), callback );
+		if($prev.length > 0){
+			$.prompt.goToState( $prev.attr('id').replace($.prompt.currentPrefix +'state_',''), callback );
+		}
+		return $prev;
 	};
 	
 	/**
@@ -645,15 +652,17 @@
 			$.prompt.timeout = false;
 		}
 
-		$.prompt.jqib.fadeOut('fast',function(){
+		if($.prompt.jqib){
+			$.prompt.jqib.fadeOut('fast',function(){
 
-			if(callCallback) {
-				$.prompt.jqib.trigger('impromptu:close', [clicked,msg,formvals]);
-			}
-			$.prompt.jqib.remove();
-			
-			$(window).off('resize',$.prompt.position);
-		});
+				if(callCallback) {
+					$.prompt.jqib.trigger('impromptu:close', [clicked,msg,formvals]);
+				}
+				$.prompt.jqib.remove();
+				
+				$(window).off('resize',$.prompt.position);
+			});
+		}
 	};
 	
 	/**
