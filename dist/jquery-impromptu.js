@@ -497,9 +497,9 @@
 		if($state.length === 0){
 			return false;
 		}
-
+		
 		// transition away from it before deleting
-		if($state.is(':visible')){
+		if($state.css('display') !== 'none'){
 			if($state.next().length > 0){
 				$.prompt.nextState(rm);
 			}
@@ -658,9 +658,8 @@
 		if($.prompt.jqib){
 			$.prompt.jqib.fadeOut('fast',function(){
 
-				if(callCallback) {
-					$.prompt.jqib.trigger('impromptu:close', [clicked,msg,formvals]);
-				}
+				$.prompt.jqib.trigger('impromptu:close', [clicked,msg,formvals]);
+				
 				$.prompt.jqib.remove();
 				
 				$(window).off('resize',$.prompt.position);

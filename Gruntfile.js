@@ -78,12 +78,10 @@ module.exports = function(grunt) {
 			options: {
 				specs: 'test/*_spec.js',
 				vendor: [
-						'http://code.jquery.com/jquery-1.10.2.min.js'
+						'http://code.jquery.com/jquery-1.10.2.min.js',
+						'test/lib/jasmine-jquery.js'
 					]
 			}
-		},
-		qunit: {
-			files: ['test/**/*.html']
 		},
 		jshint: {
 			gruntfile: {

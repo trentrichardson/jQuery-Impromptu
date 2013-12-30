@@ -34,6 +34,9 @@
 		"beforeEach",
 		"afterEach",
 		"spyOn",
+		"spyOnEvent",
+		"runs",
+		"waitsFor",
 		"affix",
 		"xdescribe",
 		"xit"
