@@ -6,7 +6,6 @@ describe('jquery-impromptu', function() {
 	describe('base structure', function(){
 
 		// ====================================================================================
-		// ====================================================================================
 		describe('basic initialization', function() {
 
 			beforeEach(function() {			
@@ -38,7 +37,6 @@ describe('jquery-impromptu', function() {
 		});
 
 
-		// ====================================================================================
 		// ====================================================================================
 		describe('button creation', function() {
 
@@ -170,7 +168,6 @@ describe('jquery-impromptu', function() {
 		});
 
 		// ====================================================================================
-		// ====================================================================================
 		describe('state creation', function() {
 
 			beforeEach(function() {			
@@ -274,7 +271,6 @@ describe('jquery-impromptu', function() {
 
 
 		// ====================================================================================
-		// ====================================================================================
 		describe('$.prompt.setDefaults()', function() {
 			it('should change the default values', function() {
 				var origDefs = $.extend(true, {}, $.prompt.defaults),
@@ -290,7 +286,6 @@ describe('jquery-impromptu', function() {
 			});
 		});
 		
-		// ====================================================================================
 		// ====================================================================================
 		describe('$.prompt.setStateDefaults()', function() {
 			it('should change the default state values', function() {
@@ -308,7 +303,6 @@ describe('jquery-impromptu', function() {
 		});
 
 		// ====================================================================================
-		// ====================================================================================
 		describe('$.prompt.get()', function() {
 			it('should return the prompt jquery object', function() {
 				
@@ -322,7 +316,6 @@ describe('jquery-impromptu', function() {
 		});
 
 		// ====================================================================================
-		// ====================================================================================
 		describe('$.prompt.getState()', function() {
 			it('should return the state jquery object', function() {
 
@@ -335,7 +328,6 @@ describe('jquery-impromptu', function() {
 			});
 		});
 
-		// ====================================================================================
 		// ====================================================================================
 		describe('$.prompt.getCurrentState()', function() {
 			it('should return the current state jquery object', function() {
@@ -360,7 +352,6 @@ describe('jquery-impromptu', function() {
 		});
 
 		// ====================================================================================
-		// ====================================================================================
 		describe('$.prompt.getCurrentStateName()', function() {
 			it('should return the current state name', function() {
 
@@ -383,7 +374,6 @@ describe('jquery-impromptu', function() {
 			});
 		});
 
-		// ====================================================================================
 		// ====================================================================================
 		describe('$.prompt.goToState()', function() {
 			it('should make the requested state visible', function() {
@@ -423,7 +413,6 @@ describe('jquery-impromptu', function() {
 		});
 
 		// ====================================================================================
-		// ====================================================================================
 		describe('$.prompt.nextState()', function() {
 			it('should make the next state visible', function() {
 				
@@ -450,7 +439,6 @@ describe('jquery-impromptu', function() {
 		});
 
 		// ====================================================================================
-		// ====================================================================================
 		describe('$.prompt.prevState()', function() {
 			it('should make the previous state visible', function() {
 				
@@ -476,7 +464,6 @@ describe('jquery-impromptu', function() {
 			});
 		});
 
-		// ====================================================================================
 		// ====================================================================================
 		describe('$.prompt.addState()', function() {
 			it('should add a new state as the last state', function() {
@@ -525,7 +512,6 @@ describe('jquery-impromptu', function() {
 		});
 
 		// ====================================================================================
-		// ====================================================================================
 		describe('$.prompt.removeState()', function() {
 			it('should remove the specified state', function() {
 				
@@ -564,9 +550,9 @@ describe('jquery-impromptu', function() {
 	// ====================================================================================
 	describe('events', function() {
 		var states = [
-				{ name: 's1', html: 'state 1' },
-				{ name: 's2', html: 'state 2' },
-				{ name: 's3', html: 'state 3' }
+				{ name: 's1', html: 'state 1', buttons: { next: true, cancel: false } },
+				{ name: 's2', html: 'state 2', buttons: { back: -1, cancel: 0, next: 1 } },
+				{ name: 's3', html: 'state 3', buttons: { done: true} }
 			],
 			maxWaitTime = 100;
 
@@ -579,7 +565,6 @@ describe('jquery-impromptu', function() {
 			$.prompt.close();
 		});
 
-		// ====================================================================================
 		// ====================================================================================
 		describe('impromptu:loaded', function(){
 
@@ -614,7 +599,6 @@ describe('jquery-impromptu', function() {
 
 		});
 
-		// ====================================================================================
 		// ====================================================================================
 		describe('impromptu:close', function(){
 
@@ -656,7 +640,6 @@ describe('jquery-impromptu', function() {
 
 		});
 
-		// ====================================================================================
 		// ====================================================================================
 		describe('impromptu:statechanging', function(){
 
@@ -717,7 +700,6 @@ describe('jquery-impromptu', function() {
 		});
 
 		// ====================================================================================
-		// ====================================================================================
 		describe('impromptu:statechanged', function(){
 
 			it('should fire event', function(){
@@ -755,6 +737,156 @@ describe('jquery-impromptu', function() {
 
 				runs(function(){
 					expect(spyEventCalled).toBe(true);
+				});
+			});
+
+		});
+
+		// ====================================================================================
+		describe('impromptu:submit', function(){
+
+			it('should fire event', function(){
+				var spyEventCalled = false;
+
+				$('body').on('impromptu:submit', '.jqibox', function(){ spyEventCalled = true; });
+				$.prompt(states, {
+					loaded: function(){
+						$.prompt.getState('s1').find('.jqibutton:first').click();
+					}
+				});
+
+				waitsFor(function(){
+					return spyEventCalled;
+				}, 'event should have been called',maxWaitTime);
+
+				runs(function(){
+					expect(spyEventCalled).toBe(true);
+				});
+			});
+
+			it('should allow event function as option parameter if string message', function(){
+				var spyEventCalled = false;
+
+				$.prompt('Test message', { 
+					loaded: function(){
+						$('.jqibutton:first').click();
+					},
+					submit: function(){ spyEventCalled = true; }
+				});
+
+				waitsFor(function(){
+					return spyEventCalled;
+				}, 'event should have been called called',maxWaitTime);
+
+				runs(function(){
+					expect(spyEventCalled).toBe(true);
+				});
+			});
+
+			it('should detect button clicked', function(){
+				var spyEventCalled = false,
+					btnClicked,
+					msgReturned,
+					formVals;
+
+				$('body').on('impromptu:submit', '.jqibox', function(e,v,m,f){ 
+					btnClicked = v; 
+					msgReturned = m;
+					formVals = f;
+					spyEventCalled = true; 
+				});
+
+				$.prompt(states, {
+					loaded: function(){
+						$.prompt.getState('s1').find('#jqi_s1_buttoncancel').click();
+					}
+				});
+
+				waitsFor(function(){
+					return spyEventCalled;
+				}, 'event should have been called',maxWaitTime);
+
+				runs(function(){
+					expect(btnClicked).toBe(false);
+				});
+			});
+
+			it('should pass the state message', function(){
+				var spyEventCalled = false,
+					btnClicked,
+					msgReturned,
+					formVals;
+
+				$('body').on('impromptu:submit', '.jqibox', function(e,v,m,f){ 
+					btnClicked = v; 
+					msgReturned = m;
+					formVals = f;
+					spyEventCalled = true; 
+				});
+
+				$.prompt(states, {
+					loaded: function(){
+						$.prompt.getState('s1').find('#jqi_s1_buttoncancel').click();
+					}
+				});
+
+				waitsFor(function(){
+					return spyEventCalled;
+				}, 'event should have been called',maxWaitTime);
+
+				runs(function(){
+					expect(msgReturned).toBe('.jqimessage');
+				});
+			});
+
+			it('should pass the prompt form values', function(){
+				var spyEventCalled = false,
+					tmpStates = [],
+					btnClicked,
+					msgReturned,
+					formVals,
+					expectedValues = {
+						textInput: 'my text input',
+						selectSingle: 'select single 3',
+						selectMulti: ['select multi 2', 'select multi 3'],
+						radioInput: 'my radio yes',
+						chkInput: ['my chk no', 'my chk maybe'],
+						textareaInput: 'my textarea val'
+					};
+
+				tmpStates[0] = $.extend({}, states[0]);
+				tmpStates[0].html = '<input type="text" name="textInput" value="my text input" />'+
+									'<select name="selectSingle"><option value="select single 1">select single 1</option><option value="select single 2">select single 2</option><option value="select single 3" selected>select single 3</option></select>'+
+									'<select name="selectMulti" multiple><option value="select multi1">select multi 1</option><option value="select multi 2" selected>select multi 2</option><option value="select multi 3" selected>select multi 3</option></select>';
+				tmpStates[1] = $.extend({}, states[1]);
+				tmpStates[1].html = '<input type="radio" name="radioInput" value="my radio yes" checked />'+
+									'<input type="radio" name="radioInput" value="my radio no" />'+
+									'<input type="checkbox" name="chkInput" value="my chk no" checked />'+
+									'<input type="checkbox" name="chkInput" value="my chk yes" />'+
+									'<input type="checkbox" name="chkInput" value="my chk maybe" checked />';
+				tmpStates[3] = $.extend({}, states[3]);
+				tmpStates[3].html = '<textarea name="textareaInput">my textarea val</textarea>';
+
+
+				$('body').on('impromptu:submit', '.jqibox', function(e,v,m,f){ 
+					btnClicked = v; 
+					msgReturned = m;
+					formVals = f;
+					spyEventCalled = true; 
+				});
+
+				$.prompt(tmpStates, {
+					loaded: function(){
+						$.prompt.getState('s1').find('#jqi_s1_buttonnext').click();
+					}
+				});
+
+				waitsFor(function(){
+					return spyEventCalled;
+				}, 'event should have been called',maxWaitTime);
+
+				runs(function(){
+					expect(formVals).toEqual(expectedValues);
 				});
 			});
 
