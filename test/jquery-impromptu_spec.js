@@ -548,7 +548,7 @@ describe('jquery-impromptu', function() {
 	
 	// ====================================================================================
 	// ====================================================================================
-	describe('events', function() {
+	describe('api events', function() {
 		var states = [
 				{ name: 's1', html: 'state 1', buttons: { next: true, cancel: false } },
 				{ name: 's2', html: 'state 2', buttons: { back: -1, cancel: 0, next: 1 } },
@@ -631,7 +631,7 @@ describe('jquery-impromptu', function() {
 
 				waitsFor(function(){
 					return spyEventCalled;
-				}, 'event should have been called called',maxWaitTime);
+				}, 'event should have been called',maxWaitTime);
 
 				runs(function(){
 					expect(spyEventCalled).toBe(true);
@@ -674,7 +674,7 @@ describe('jquery-impromptu', function() {
 
 				waitsFor(function(){
 					return spyEventCalled;
-				}, 'event should have been called called',maxWaitTime);
+				}, 'event should have been called',maxWaitTime);
 
 				runs(function(){
 					expect(spyEventCalled).toBe(true);
@@ -733,7 +733,7 @@ describe('jquery-impromptu', function() {
 
 				waitsFor(function(){
 					return spyEventCalled;
-				}, 'event should have been called called',maxWaitTime);
+				}, 'event should have been called',maxWaitTime);
 
 				runs(function(){
 					expect(spyEventCalled).toBe(true);
@@ -776,7 +776,7 @@ describe('jquery-impromptu', function() {
 
 				waitsFor(function(){
 					return spyEventCalled;
-				}, 'event should have been called called',maxWaitTime);
+				}, 'event should have been called',maxWaitTime);
 
 				runs(function(){
 					expect(spyEventCalled).toBe(true);
@@ -892,6 +892,136 @@ describe('jquery-impromptu', function() {
 
 		});
 
-	}); // end events
+	}); // end qpi events
+
+	// ====================================================================================
+	// ====================================================================================
+	describe('native events', function() {
+		var states = [
+				{ name: 's1', html: 'state 1', buttons: [{ title:'One', value: 1}, { title:'Two', value: 2}, { title:'Three', value: 3 }], focus: 1 },
+				{ name: 's2', html: 'state 2', buttons: { back: -1, cancel: 0, next: 1 } },
+				{ name: 's3', html: 'state 3', buttons: { done: true} }
+			],
+			maxWaitTime = 100;
+
+		beforeEach(function() {			
+			$.fx.off = true; // for our testing lets turn off fx
+
+		});
+
+		afterEach(function() {
+			$.prompt.close();
+		});
+
+		// ====================================================================================
+		describe('keydown', function(){
+
+			it('should not close on escape key if persistent option true', function(){
+				var spyEventCalled = false;
+
+				$.prompt(states, { 
+					loaded: function(){
+						var e = $.Event('keydown');
+						e.keyCode = 27;
+						$.prompt.jqib.trigger(e);
+
+						spyEventCalled = true;
+					},
+					persistent: true
+				});
+
+				waitsFor(function(){
+					return spyEventCalled;
+				}, 'event should have been called',maxWaitTime);
+
+				runs(function(){
+					expect(spyEventCalled).toBe(true);
+					expect($('.jqi')).toExist();
+				});
+			});
+
+			it('should close on escape key if persistent option false', function(){
+				var spyEventCalled = false;
+
+				$.prompt(states, { 
+					loaded: function(){
+						var e = $.Event('keydown');
+						e.keyCode = 27;
+						$.prompt.jqib.trigger(e);
+
+						spyEventCalled = true;
+					},
+					persistent: false
+				});
+
+				waitsFor(function(){
+					return spyEventCalled;
+				}, 'event should have been called',maxWaitTime);
+
+				runs(function(){
+					expect(spyEventCalled).toBe(true);
+					expect($('.jqi')).not.toExist();
+				});
+			});
+			
+			it('should trigger default button if enter key', function(){
+				var spyEventCalled = false,
+					buttonTriggered = null;
+
+				$('body').on('impromptu:submit', function(e,v){
+					spyEventCalled = true;
+					buttonTriggered = v;
+				});
+
+				$.prompt(states, { 
+					loaded: function(){
+						var e = $.Event('keydown');
+						e.keyCode = 13;
+						$.prompt.jqi.trigger(e);
+
+					}
+				});				
+
+				waitsFor(function(){
+					return spyEventCalled;
+				}, 'event should have been called',maxWaitTime);
+
+				runs(function(){
+					expect(spyEventCalled).toBe(true);
+					expect(buttonTriggered).toBe(2);
+				});
+			});
+
+		});
+
+		// ====================================================================================
+		describe('click', function(){
+
+			it('should not close fade click if persistent option true', function(){
+				var spyEventCalled = false;
+
+				$.prompt(states, { 
+					loaded: function(){
+						var e = $.Event('click');
+						$.prompt.jqib.trigger(e);
+
+						spyEventCalled = true;
+					},
+					persistent: true
+				});
+
+				waitsFor(function(){
+					return spyEventCalled;
+				}, 'event should have been called',maxWaitTime);
+
+				runs(function(){
+					expect(spyEventCalled).toBe(true);
+					expect($('.jqi')).toExist();
+				});
+			});
+			
+		});
+
+	});// end native events
 
 });

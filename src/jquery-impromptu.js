@@ -137,7 +137,7 @@
 		};
 		
 		// listen for esc or tab keys
-		var keyPressEventHandler = function(e){
+		var keyDownEventHandler = function(e){
 			var key = (window.event) ? event.keyCode : e.keyCode;
 			
 			//escape key closes
@@ -183,7 +183,7 @@
 		$.prompt.jqif.click(fadeClicked);
 		$window.resize({animate:false}, $.prompt.position);
 		$.prompt.jqi.find('.'+ opts.prefix +'close').click($.prompt.close);
-		$.prompt.jqib.on("keydown",keyPressEventHandler)
+		$.prompt.jqib.on("keydown",keyDownEventHandler)
 					.on('impromptu:loaded', opts.loaded)
 					.on('impromptu:close', opts.close)
 					.on('impromptu:statechanging', opts.statechanging)

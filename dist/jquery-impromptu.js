@@ -1,6 +1,6 @@
 /*! jQuery-Impromptu - v5.2.2 - 2013-12-15
 * http://trentrichardson.com/Impromptu
-* Copyright (c) 2013 Trent Richardson; Licensed MIT */
+* Copyright (c) 2014 Trent Richardson; Licensed MIT */
 (function($) {
 	"use strict";
 
@@ -140,7 +140,7 @@
 		};
 		
 		// listen for esc or tab keys
-		var keyPressEventHandler = function(e){
+		var keyDownEventHandler = function(e){
 			var key = (window.event) ? event.keyCode : e.keyCode;
 			
 			//escape key closes
@@ -186,7 +186,7 @@
 		$.prompt.jqif.click(fadeClicked);
 		$window.resize({animate:false}, $.prompt.position);
 		$.prompt.jqi.find('.'+ opts.prefix +'close').click($.prompt.close);
-		$.prompt.jqib.on("keydown",keyPressEventHandler)
+		$.prompt.jqib.on("keydown",keyDownEventHandler)
 					.on('impromptu:loaded', opts.loaded)
 					.on('impromptu:close', opts.close)
 					.on('impromptu:statechanging', opts.statechanging)
