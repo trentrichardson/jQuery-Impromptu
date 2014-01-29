@@ -1,6 +1,6 @@
-/*! jQuery-Impromptu - v5.2.1 - 2013-12-15
+/*! jQuery-Impromptu - v5.2.2 - 2014-01-29
 * http://trentrichardson.com/Impromptu
-* Copyright (c) 2013 Trent Richardson; Licensed MIT */
+* Copyright (c) 2014 Trent Richardson; Licensed MIT */
 (function($) {
 	"use strict";
 
@@ -57,6 +57,7 @@
 					buttons: opts.buttons,
 					position: opts.position,
 					focus: opts.focus,
+					defaultButton: opts.defaultButton,
 					submit: opts.submit
 				}
 			};
@@ -139,7 +140,7 @@
 		};
 		
 		// listen for esc or tab keys
-		var keyPressEventHandler = function(e){
+		var keyDownEventHandler = function(e){
 			var key = (window.event) ? event.keyCode : e.keyCode;
 			
 			//escape key closes
@@ -185,7 +186,7 @@
 		$.prompt.jqif.click(fadeClicked);
 		$window.resize({animate:false}, $.prompt.position);
 		$.prompt.jqi.find('.'+ opts.prefix +'close').click($.prompt.close);
-		$.prompt.jqib.on("keydown",keyPressEventHandler)
+		$.prompt.jqib.on("keydown",keyDownEventHandler)
 					.on('impromptu:loaded', opts.loaded)
 					.on('impromptu:close', opts.close)
 					.on('impromptu:statechanging', opts.statechanging)
@@ -461,7 +462,7 @@
 				state += '" name="' + opts.prefix + '_' + statename + '_button' + v.title.replace(/[^a-z0-9]+/gi,'') + '" id="' + opts.prefix + '_' + statename + '_button' + v.title.replace(/[^a-z0-9]+/gi,'') + '" value="' + v.value + '">' + v.title + '</button>';
 				
 			} else {
-				state += '<button class="'+ $.prompt.currentPrefix + 'button '+ opts.classes.button +' '+ defbtn +'" name="' + opts.prefix + '_' + statename + '_button' + k + '" id="' + opts.prefix +  '_' + statename + '_button' + k + '" value="' + v + '">' + k + '</button>';
+				state += '<button class="'+ $.prompt.currentPrefix + 'button '+ opts.classes.button +' '+ defbtn +'" name="' + opts.prefix + '_' + statename + '_button' + k.replace(/[^a-z0-9]+/gi,'') + '" id="' + opts.prefix +  '_' + statename + '_button' + k.replace(/[^a-z0-9]+/gi,'') + '" value="' + v + '">' + k + '</button>';
 				
 			}
 			i++;
@@ -496,9 +497,9 @@
 		if($state.length === 0){
 			return false;
 		}
-
+		
 		// transition away from it before deleting
-		if($state.is(':visible')){
+		if($state.css('display') !== 'none'){
 			if($state.next().length > 0){
 				$.prompt.nextState(rm);
 			}
@@ -621,7 +622,10 @@
 	*/	
 	$.prompt.nextState = function(callback) {
 		var $next = $('#'+ $.prompt.currentPrefix +'state_'+ $.prompt.getCurrentStateName()).next();
-		return $.prompt.goToState( $next.attr('id').replace($.prompt.currentPrefix +'state_',''), callback );
+		if($next.length > 0){
+			$.prompt.goToState( $next.attr('id').replace($.prompt.currentPrefix +'state_',''), callback );
+		}
+		return $next;
 	};
 	
 	/**
@@ -631,7 +635,10 @@
 	*/	
 	$.prompt.prevState = function(callback) {
 		var $prev = $('#'+ $.prompt.currentPrefix +'state_'+ $.prompt.getCurrentStateName()).prev();
-		$.prompt.goToState( $prev.attr('id').replace($.prompt.currentPrefix +'state_',''), callback );
+		if($prev.length > 0){
+			$.prompt.goToState( $prev.attr('id').replace($.prompt.currentPrefix +'state_',''), callback );
+		}
+		return $prev;
 	};
 	
 	/**
@@ -648,15 +655,16 @@
 			$.prompt.timeout = false;
 		}
 
-		$.prompt.jqib.fadeOut('fast',function(){
+		if($.prompt.jqib){
+			$.prompt.jqib.fadeOut('fast',function(){
 
-			if(callCallback) {
 				$.prompt.jqib.trigger('impromptu:close', [clicked,msg,formvals]);
-			}
-			$.prompt.jqib.remove();
-			
-			$(window).off('resize',$.prompt.position);
-		});
+				
+				$.prompt.jqib.remove();
+				
+				$(window).off('resize',$.prompt.position);
+			});
+		}
 	};
 	
 	/**
