@@ -522,6 +522,16 @@ describe('jquery-impromptu', function() {
 				expect($('#jqistate_s2')).not.toExist();
 			});
 			
+			it('should display requested state', function() {
+
+				$.prompt(states);
+				
+				$.prompt.removeState('s1','s3');
+
+				expect($('#jqistate_s2')).toHaveCss({display:'none'});
+				expect($('#jqistate_s3')).toHaveCss({display:'block'});
+			});
+			
 			it('should display next state', function() {
 
 				$.prompt(states);

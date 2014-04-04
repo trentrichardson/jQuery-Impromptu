@@ -483,11 +483,12 @@
 	};
 	
 	/**
-	* removeState - Removes a state from the promt
+	* removeState - Removes a state from the prompt
 	* @param state String - Name of the state
+	* @param newState String - Name of the state to transition to
 	* @return Boolean - returns true on success, false on failure
 	*/
-	$.prompt.removeState = function(state) {
+	$.prompt.removeState = function(state, newState) {
 		var $state = $.prompt.getState(state),
 			rm = function(){ $state.remove(); };
 
@@ -497,7 +498,10 @@
 		
 		// transition away from it before deleting
 		if($state.css('display') !== 'none'){
-			if($state.next().length > 0){
+			if(newState !== undefined && $.prompt.getState(newState).length > 0){
+				$.prompt.goToState(newState, false, rm);
+			}
+			else if($state.next().length > 0){
 				$.prompt.nextState(rm);
 			}
 			else{
