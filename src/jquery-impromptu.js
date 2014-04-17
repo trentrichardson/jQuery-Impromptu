@@ -504,8 +504,11 @@
 			else if($state.next().length > 0){
 				$.prompt.nextState(rm);
 			}
-			else{
+			else if($state.prev().length > 0){
 				$.prompt.prevState(rm);
+			}
+			else{
+				$.prompt.close();
 			}
 		}
 		else{
@@ -666,6 +669,7 @@
 				$(window).off('resize',$.prompt.position);
 			});
 		}
+		$.prompt.currentStateName = "";
 	};
 	
 	/**
