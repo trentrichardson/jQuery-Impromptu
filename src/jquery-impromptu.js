@@ -34,7 +34,7 @@
 			msgbox +='<div class="'+ opts.prefix +'fade '+ opts.classes.fade +'"></div>';
 		}
 		msgbox += '<div class="'+ opts.prefix +' '+ opts.classes.prompt +'">'+
-					'<form action="javascript:false;" onsubmit="return false;" class="'+ opts.prefix +'form">'+
+					'<form action="javascript:false;" onsubmit="return false;" class="'+ opts.prefix +'form '+ opts.classes.form +'">'+
 						'<div class="'+ opts.prefix +'close '+ opts.classes.close +'">'+ opts.closeText +'</div>'+
 						'<div class="'+ opts.prefix +'states"></div>'+
 					'</form>'+
@@ -213,6 +213,7 @@
 			box: '',
 			fade: '',
 			prompt: '',
+			form: '',
 			close: '',
 			title: '',
 			message: '',
