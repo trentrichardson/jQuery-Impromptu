@@ -431,7 +431,8 @@
 			title = "",
 			opts = $.prompt.options,
 			$jqistates = $('.'+ $.prompt.currentPrefix +'states'),
-			defbtn,k,v,i=0;
+			buttons = [],
+			showHtml,defbtn,k,v,l,i=0;
 
 		stateobj = $.extend({},$.prompt.defaults.state, {name:statename}, stateobj);
 
@@ -442,35 +443,42 @@
 			title = '<div class="lead '+ opts.prefix + 'title '+ opts.classes.title +'">'+  stateobj.title +'</div>';
 		}
 
-                var showHtml = stateobj.html;
-                if (typeof stateobj.html === 'function') {
-                    showHtml = 'Error: html function must return text';
-                }
+		showHtml = stateobj.html;
+		if (typeof stateobj.html === 'function') {
+			showHtml = 'Error: html function must return text';
+		}
 
 		state += '<div id="'+ opts.prefix +'state_'+ statename +'" class="'+ opts.prefix + 'state" data-jqi-name="'+ statename +'" style="display:none;">'+
 					arrow + title +
 					'<div class="'+ opts.prefix +'message '+ opts.classes.message +'">' + showHtml +'</div>'+
 					'<div class="'+ opts.prefix +'buttons '+ opts.classes.buttons +'"'+ ($.isEmptyObject(stateobj.buttons)? 'style="display:none;"':'') +'>';
 
-		for(k in stateobj.buttons){
-			v = stateobj.buttons[k],
+		// state buttons may be in object or array, lets convert objects to arrays
+		if($.isArray(stateobj.buttons)){
+			buttons = stateobj.buttons;
+		}
+		else if($.isPlainObject(stateobj.buttons)){
+			for(k in stateobj.buttons){
+				if(stateobj.buttons.hasOwnProperty(k)){
+					buttons.push({ title: k, value: stateobj.buttons[k] });
+				}
+			}
+		}
+
+		// iterate over each button and create them
+		for(i=0, l=buttons.length; i<l; i++){
+			v = buttons[i],
 			defbtn = stateobj.focus === i || (isNaN(stateobj.focus) && stateobj.defaultButton === i) ? ($.prompt.currentPrefix + 'defaultbutton ' + opts.classes.defaultButton) : '';
 
-			if(typeof v === 'object'){
-				state += '<button class="'+ opts.classes.button +' '+ $.prompt.currentPrefix + 'button '+ defbtn;
+			state += '<button class="'+ opts.classes.button +' '+ $.prompt.currentPrefix + 'button '+ defbtn;
 
-				if(typeof v.classes !== "undefined"){
-					state += ' '+ ($.isArray(v.classes)? v.classes.join(' ') : v.classes) + ' ';
-				}
-
-				state += '" name="' + opts.prefix + '_' + statename + '_button' + v.title.replace(/[^a-z0-9]+/gi,'') + '" id="' + opts.prefix + '_' + statename + '_button' + v.title.replace(/[^a-z0-9]+/gi,'') + '" value="' + v.value + '">' + v.title + '</button>';
-
-			} else {
-				state += '<button class="'+ $.prompt.currentPrefix + 'button '+ opts.classes.button +' '+ defbtn +'" name="' + opts.prefix + '_' + statename + '_button' + k.replace(/[^a-z0-9]+/gi,'') + '" id="' + opts.prefix +  '_' + statename + '_button' + k.replace(/[^a-z0-9]+/gi,'') + '" value="' + v + '">' + k + '</button>';
-
+			if(typeof v.classes !== "undefined"){
+				state += ' '+ ($.isArray(v.classes)? v.classes.join(' ') : v.classes) + ' ';
 			}
-			i++;
+
+			state += '" name="' + opts.prefix + '_' + statename + '_button' + v.title.replace(/[^a-z0-9]+/gi,'') + '" id="' + opts.prefix + '_' + statename + '_button' + v.title.replace(/[^a-z0-9]+/gi,'') + '" value="' + v.value + '">' + v.title + '</button>';
 		}
+		
 		state += '</div></div>';
 
 		$state = $(state);
@@ -633,7 +641,7 @@
 				}
 			} // end isDefaultPrevented()	
 		}// end stateobj !== undefined
-		
+
 		return $state;
 	};
 
