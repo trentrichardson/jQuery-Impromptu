@@ -565,70 +565,75 @@
 			jqiopts = $.prompt.options,
 			$state = $.prompt.getState(state),
 			stateobj = jqiopts.states[$state.data('jqi-name')],
-			promptstatechanginge = new $.Event('impromptu:statechanging');
-                var opts = $.prompt.options;
+			promptstatechanginge = new $.Event('impromptu:statechanging'),
+			opts = $.prompt.options;
 
-                if (typeof stateobj.html === 'function') {
-                    var contentLaterFunc = stateobj.html;
-                    $state.find('.' + opts.prefix +'message ').html(contentLaterFunc());
-                }
+		if(stateobj !== undefined){
 
-		// subState can be ommitted
-		if(typeof subState === 'function'){
-			callback = subState;
-			subState = false;
-		}
 
-		$.prompt.jqib.trigger(promptstatechanginge, [$.prompt.getCurrentStateName(), state]);
-
-		if(!promptstatechanginge.isDefaultPrevented() && $state.length > 0){
-			$.prompt.jqi.find('.'+ $.prompt.currentPrefix +'parentstate').removeClass($.prompt.currentPrefix +'parentstate');
-
-			if(subState){ // hide any open substates
-				// get rid of any substates
-				$.prompt.jqi.find('.'+ $.prompt.currentPrefix +'substate').not($state)
-					.slideUp(jqiopts.promptspeed)
-					.removeClass('.'+ $.prompt.currentPrefix +'substate')
-					.find('.'+ $.prompt.currentPrefix +'arrow').hide();
-
-				// add parent state class so it can be visible, but blocked
-				$.prompt.jqi.find('.'+ $.prompt.currentPrefix +'state:visible').addClass($.prompt.currentPrefix +'parentstate');
-
-				// add substate class so we know it will be smaller
-				$state.addClass($.prompt.currentPrefix +'substate');
+			if (typeof stateobj.html === 'function') {
+				var contentLaterFunc = stateobj.html;
+				$state.find('.' + opts.prefix +'message ').html(contentLaterFunc());
 			}
-			else{ // hide any open states
-				$.prompt.jqi.find('.'+ $.prompt.currentPrefix +'state').not($state)
-					.slideUp(jqiopts.promptspeed)
-					.find('.'+ $.prompt.currentPrefix +'arrow').hide();
+
+			// subState can be ommitted
+			if(typeof subState === 'function'){
+				callback = subState;
+				subState = false;
 			}
-			$.prompt.currentStateName = stateobj.name;
 
-			$state.slideDown(jqiopts.promptspeed,function(){
-				var $t = $(this);
+			$.prompt.jqib.trigger(promptstatechanginge, [$.prompt.getCurrentStateName(), state]);
 
-				// if focus is a selector, find it, else its button index
-				if(typeof(stateobj.focus) === 'string'){
-					$t.find(stateobj.focus).eq(0).focus();
-				}
-				else{
-					$t.find('.'+ $.prompt.currentPrefix +'defaultbutton').focus();
-				}
+			if(!promptstatechanginge.isDefaultPrevented() && $state.length > 0){
+				$.prompt.jqi.find('.'+ $.prompt.currentPrefix +'parentstate').removeClass($.prompt.currentPrefix +'parentstate');
 
-				$t.find('.'+ $.prompt.currentPrefix +'arrow').show(jqiopts.promptspeed);
+				if(subState){ // hide any open substates
+					// get rid of any substates
+					$.prompt.jqi.find('.'+ $.prompt.currentPrefix +'substate').not($state)
+						.slideUp(jqiopts.promptspeed)
+						.removeClass('.'+ $.prompt.currentPrefix +'substate')
+						.find('.'+ $.prompt.currentPrefix +'arrow').hide();
 
-				if (typeof callback === 'function'){
-					$.prompt.jqib.on('impromptu:statechanged', callback);
+					// add parent state class so it can be visible, but blocked
+					$.prompt.jqi.find('.'+ $.prompt.currentPrefix +'state:visible').addClass($.prompt.currentPrefix +'parentstate');
+
+					// add substate class so we know it will be smaller
+					$state.addClass($.prompt.currentPrefix +'substate');
 				}
-				$.prompt.jqib.trigger('impromptu:statechanged', [state]);
-				if (typeof callback === 'function'){
-					$.prompt.jqib.off('impromptu:statechanged', callback);
+				else{ // hide any open states
+					$.prompt.jqi.find('.'+ $.prompt.currentPrefix +'state').not($state)
+						.slideUp(jqiopts.promptspeed)
+						.find('.'+ $.prompt.currentPrefix +'arrow').hide();
 				}
-			});
-			if(!subState){
-				$.prompt.position();
-			}
-		}
+				$.prompt.currentStateName = stateobj.name;
+
+				$state.slideDown(jqiopts.promptspeed,function(){
+					var $t = $(this);
+
+					// if focus is a selector, find it, else its button index
+					if(typeof(stateobj.focus) === 'string'){
+						$t.find(stateobj.focus).eq(0).focus();
+					}
+					else{
+						$t.find('.'+ $.prompt.currentPrefix +'defaultbutton').focus();
+					}
+
+					$t.find('.'+ $.prompt.currentPrefix +'arrow').show(jqiopts.promptspeed);
+
+					if (typeof callback === 'function'){
+						$.prompt.jqib.on('impromptu:statechanged', callback);
+					}
+					$.prompt.jqib.trigger('impromptu:statechanged', [state]);
+					if (typeof callback === 'function'){
+						$.prompt.jqib.off('impromptu:statechanged', callback);
+					}
+				});
+				if(!subState){
+					$.prompt.position();
+				}
+			} // end isDefaultPrevented()	
+		}// end stateobj !== undefined
+		
 		return $state;
 	};
 

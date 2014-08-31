@@ -57,7 +57,7 @@ describe('jquery-impromptu', function() {
 				var okBtn = $('#jqi_state0_buttonOk'),
 					cancelBtn = $('#jqi_state0_buttonCancel');
 
-				expect($('.jqibutton').length).toBe(2);
+				expect($('.jqibutton')).toHaveLength(2);
 
 				expect(okBtn).toExist();
 				expect(cancelBtn).toExist();
