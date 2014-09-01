@@ -1,4 +1,4 @@
-/*! jQuery-Impromptu - v5.2.5 - 2014-05-26
+/*! jQuery-Impromptu - v5.2.5 - 2014-09-01
 * http://trentrichardson.com/Impromptu
 * Copyright (c) 2014 Trent Richardson; Licensed MIT */
 (function($) {
@@ -481,6 +481,7 @@
 
 			state += '" name="' + opts.prefix + '_' + statename + '_button' + v.title.replace(/[^a-z0-9]+/gi,'') + '" id="' + opts.prefix + '_' + statename + '_button' + v.title.replace(/[^a-z0-9]+/gi,'') + '" value="' + v.value + '">' + v.title + '</button>';
 		}
+		
 		state += '</div></div>';
 
 		$state = $(state);
