@@ -623,12 +623,12 @@ describe('jquery-impromptu', function() {
 		});
 
 		// ====================================================================================
-		describe('impromptu:closing', function(){
+		describe('impromptu:close', function(){
 
 			it('should fire event', function(){
 				var spyEventCalled = false;
 
-				$('body').on('impromptu:closing', '.jqibox', function(){ spyEventCalled = true; });
+				$('body').on('impromptu:close', '.jqibox', function(){ spyEventCalled = true; });
 				$.prompt(states, {
 					loaded: function(){
 						$.prompt.close();

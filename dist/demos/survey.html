@@ -80,11 +80,13 @@
 				
 				$.prompt(temp,{
 					close: function(e,v,m,f){
-						var str = "You can now process with this given information:<br />";
-						$.each(f,function(i,obj){
-							str += i + " - <em>" + obj + "</em><br />";
-						});	
-						$('#results').html(str);
+						if(v !== undefined){
+							var str = "You can now process with this given information:<br />";
+							$.each(f,function(i,obj){
+								str += i + " - <em>" + obj + "</em><br />";
+							});	
+							$('#results').html(str);
+						}
 					}
 				});
 			}
