@@ -554,6 +554,19 @@ describe('jquery-impromptu', function() {
 			
 		});
 
+		// ====================================================================================
+		describe('$.prompt.close()', function() {
+			it('should close the prompt', function() {
+				
+				$.prompt(states);
+				
+				$.prompt.close();
+
+				expect($('.jqibox')).not.toExist();
+			});
+
+		});
+
 	}); // end api methods
 	
 	// ====================================================================================
@@ -610,12 +623,12 @@ describe('jquery-impromptu', function() {
 		});
 
 		// ====================================================================================
-		describe('impromptu:close', function(){
+		describe('impromptu:closing', function(){
 
 			it('should fire event', function(){
 				var spyEventCalled = false;
 
-				$('body').on('impromptu:close', '.jqibox', function(){ spyEventCalled = true; });
+				$('body').on('impromptu:closing', '.jqibox', function(){ spyEventCalled = true; });
 				$.prompt(states, {
 					loaded: function(){
 						$.prompt.close();

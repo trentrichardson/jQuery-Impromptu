@@ -185,7 +185,7 @@
 		$.prompt.jqi.find('.'+ opts.prefix +'close').click($.prompt.close);
 		$.prompt.jqib.on("keydown",keyDownEventHandler)
 					.on('impromptu:loaded', opts.loaded)
-					.on('impromptu:close', opts.close)
+					.on('impromptu:closing', opts.close)
 					.on('impromptu:statechanging', opts.statechanging)
 					.on('impromptu:statechanged', opts.statechanged);
 
@@ -687,11 +687,11 @@
 
 		if($.prompt.jqib){
 			$.prompt.jqib.fadeOut('fast',function(){
-
-				$.prompt.jqib.trigger('impromptu:close', [clicked,msg,formvals]);
-
+				
+				$.prompt.jqib.trigger('impromptu:closing', [clicked,msg,formvals]);
+				
 				$.prompt.jqib.remove();
-
+				
 				$(window).off('resize',$.prompt.position);
 			});
 		}
