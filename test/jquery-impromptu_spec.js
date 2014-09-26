@@ -590,73 +590,67 @@ describe('jquery-impromptu', function() {
 
 		// ====================================================================================
 		describe('impromptu:loaded', function(){
+			describe('running through jquery event binding', function(){
+				var spyEventCalled;
 
-			it('should fire event', function(){
-				var spyEventCalled = false;
+				beforeEach(function(done){
+					spyEventCalled = false;
+					$('body').on('impromptu:loaded', '.jqibox', function(){ spyEventCalled=true; done() });
+					$.prompt(states);
+				});
 
-				$('body').on('impromptu:loaded', '.jqibox', function(){ spyEventCalled = true; });
-				$.prompt(states);
-
-				waitsFor(function(){
-					return spyEventCalled;
-				}, 'event should have been called',maxWaitTime);
-
-				runs(function(){
+				it('should fire event', function(){
 					expect(spyEventCalled).toBe(true);
 				});
 			});
 
-			it('should allow event function as option parameter', function(){
-				var spyEventCalled = false;
+			describe('passing loaded event through as option', function(){
+				var spyEventCalled;
 
-				$.prompt(states, { loaded: function(){ spyEventCalled = true; } });
+				beforeEach(function(done){
+					spyEventCalled = false;
+					$.prompt(states, { loaded: function(){ spyEventCalled = true; done(); } });
+				});
 
-				waitsFor(function(){
-					return spyEventCalled;
-				}, 'event should have been called',maxWaitTime);
-
-				runs(function(){
+				it('should allow event function as option parameter', function(){
 					expect(spyEventCalled).toBe(true);
 				});
 			});
-
 		});
 
 		// ====================================================================================
 		describe('impromptu:close', function(){
 
-			it('should fire event', function(){
-				var spyEventCalled = false;
+			describe('running through jquery event binding', function(){
+				var spyEventCalled;
 
-				$('body').on('impromptu:close', '.jqibox', function(){ spyEventCalled = true; });
-				$.prompt(states, {
-					loaded: function(){
-						$.prompt.close();
-					}
+				beforeEach(function(done){
+					spyEventCalled = false;
+					$('body').on('impromptu:close', '.jqibox', function(){ spyEventCalled=true; done() });
+					$.prompt(states, {
+						loaded: function(){
+							$.prompt.close();
+						}
+					});
 				});
 
-				waitsFor(function(){
-					return spyEventCalled;
-				}, 'event should have been called',maxWaitTime);
-
-				runs(function(){
+				it('should fire event', function(){
 					expect(spyEventCalled).toBe(true);
 				});
 			});
 
-			it('should allow event function as option parameter', function(){
-				var spyEventCalled = false;
+			describe('passing loaded event through as option', function(){
+				var spyEventCalled;
 
-				$.prompt(states, { 
-					loaded: function(){ $.prompt.close(); },
-					close: function(){ spyEventCalled = true; }
+				beforeEach(function(done){
+					spyEventCalled = false;
+					$.prompt(states, { 
+						loaded: function(){ $.prompt.close(); },
+						close: function(){ spyEventCalled = true; done(); }
+					});
 				});
 
-				waitsFor(function(){
-					return spyEventCalled;
-				}, 'event should have been called',maxWaitTime);
-
-				runs(function(){
+				it('should allow event function as option parameter', function(){
 					expect(spyEventCalled).toBe(true);
 				});
 			});
@@ -666,43 +660,44 @@ describe('jquery-impromptu', function() {
 		// ====================================================================================
 		describe('impromptu:statechanging', function(){
 
-			it('should fire event', function(){
-				var spyEventCalled = false;
+			describe('running through jquery event binding', function(){
+				var spyEventCalled;
 
-				$('body').on('impromptu:statechanging', '.jqibox', function(){ spyEventCalled = true; });
-				$.prompt(states, {
-					loaded: function(){
-						$.prompt.goToState('s2');
-					}
+				beforeEach(function(done){
+					spyEventCalled = false;
+
+					$('body').on('impromptu:statechanging', '.jqibox', function(){ spyEventCalled = true; done(); });
+					$.prompt(states, {
+						loaded: function(){
+							$.prompt.goToState('s2');
+						}
+					});
 				});
 
-				waitsFor(function(){
-					return spyEventCalled;
-				}, 'event should have been called',maxWaitTime);
-
-				runs(function(){
+				it('should fire event', function(){
 					expect(spyEventCalled).toBe(true);
 				});
 			});
 
-			it('should allow event function as option parameter', function(){
-				var spyEventCalled = false;
+			describe('passing loaded event through as option', function(){
+				var spyEventCalled;
 
-				$.prompt(states, { 
-					loaded: function(){
-						$.prompt.goToState('s2');
-					},
-					statechanging: function(){ spyEventCalled = true; }
+				beforeEach(function(done){
+					spyEventCalled = false;
+
+					$.prompt(states, { 
+						loaded: function(){
+							$.prompt.goToState('s2');
+						},
+						statechanging: function(){ spyEventCalled = true; done(); }
+					});
 				});
 
-				waitsFor(function(){
-					return spyEventCalled;
-				}, 'event should have been called',maxWaitTime);
-
-				runs(function(){
+				it('should allow event function as option parameter', function(){
 					expect(spyEventCalled).toBe(true);
 				});
 			});
+
 
 			it('should allow preventDefault', function(){
 				var spyEvent = spyOnEvent('body', 'impromptu:statechanging');
@@ -725,40 +720,40 @@ describe('jquery-impromptu', function() {
 		// ====================================================================================
 		describe('impromptu:statechanged', function(){
 
-			it('should fire event', function(){
-				var spyEventCalled = false;
+			describe('running through jquery event binding', function(){
+				var spyEventCalled;
 
-				$('body').on('impromptu:statechanged', '.jqibox', function(){ spyEventCalled = true; });
-				$.prompt(states, {
-					loaded: function(){
-						$.prompt.goToState('s2');
-					}
+				beforeEach(function(done){
+					spyEventCalled = false;
+
+					$('body').on('impromptu:statechanged', '.jqibox', function(){ spyEventCalled = true; done(); });
+					$.prompt(states, {
+						loaded: function(){
+							$.prompt.goToState('s2');
+						}
+					});
 				});
 
-				waitsFor(function(){
-					return spyEventCalled;
-				}, 'event should have been called',maxWaitTime);
-
-				runs(function(){
+				it('should fire event', function(){
 					expect(spyEventCalled).toBe(true);
 				});
 			});
 
-			it('should allow event function as option parameter', function(){
-				var spyEventCalled = false;
+			describe('passing loaded event through as option', function(){
+				var spyEventCalled;
 
-				$.prompt(states, { 
-					loaded: function(){
-						$.prompt.goToState('s2');
-					},
-					statechanged: function(){ spyEventCalled = true; }
+				beforeEach(function(done){
+					spyEventCalled = false;
+
+					$.prompt(states, { 
+						loaded: function(){
+							$.prompt.goToState('s2');
+						},
+						statechanged: function(){ spyEventCalled = true; done(); }
+					});
 				});
 
-				waitsFor(function(){
-					return spyEventCalled;
-				}, 'event should have been called',maxWaitTime);
-
-				runs(function(){
+				it('should allow event function as option parameter', function(){
 					expect(spyEventCalled).toBe(true);
 				});
 			});
@@ -768,96 +763,76 @@ describe('jquery-impromptu', function() {
 		// ====================================================================================
 		describe('impromptu:submit', function(){
 
-			it('should fire event', function(){
-				var spyEventCalled = false;
+			describe('running through jquery event binding', function(){
+				var spyEventCalled;
 
-				$('body').on('impromptu:submit', '.jqibox', function(){ spyEventCalled = true; });
-				$.prompt(states, {
-					loaded: function(){
-						$.prompt.getState('s1').find('.jqibutton:first').click();
-					}
+				beforeEach(function(done){
+					spyEventCalled = false;
+
+					$('body').on('impromptu:submit', '.jqibox', function(){ spyEventCalled = true; done(); });
+					$.prompt(states, {
+						loaded: function(){
+							$.prompt.getState('s1').find('.jqibutton:first').click();
+						}
+					});
 				});
 
-				waitsFor(function(){
-					return spyEventCalled;
-				}, 'event should have been called',maxWaitTime);
-
-				runs(function(){
+				it('should fire event', function(){
 					expect(spyEventCalled).toBe(true);
 				});
 			});
 
-			it('should allow event function as option parameter if string message', function(){
-				var spyEventCalled = false;
 
-				$.prompt('Test message', { 
-					loaded: function(){
-						$('.jqibutton:first').click();
-					},
-					submit: function(){ spyEventCalled = true; }
+
+			describe('passing loaded event through as option if string message', function(){
+				var spyEventCalled;
+
+				beforeEach(function(done){
+					spyEventCalled = false;
+
+						$.prompt('Test message', { 
+							loaded: function(){
+								$('.jqibutton:first').click();
+							},
+							submit: function(){ spyEventCalled = true; done(); }
+						});
 				});
 
-				waitsFor(function(){
-					return spyEventCalled;
-				}, 'event should have been called',maxWaitTime);
-
-				runs(function(){
+				it('should allow event function as option parameter', function(){
 					expect(spyEventCalled).toBe(true);
 				});
 			});
 
-			it('should detect button clicked', function(){
+
+			describe('should detect button clicked', function(){
 				var spyEventCalled = false,
 					btnClicked,
 					msgReturned,
 					formVals;
 
-				$('body').on('impromptu:submit', '.jqibox', function(e,v,m,f){ 
-					btnClicked = v; 
-					msgReturned = m;
-					formVals = f;
-					spyEventCalled = true; 
+				beforeEach(function(done){
+					spyEventCalled = false;
+
+					$('body').on('impromptu:submit', '.jqibox', function(e,v,m,f){ 
+						btnClicked = v; 
+						msgReturned = m;
+						formVals = f;
+						spyEventCalled = true; 
+						done();
+					});
+
+					$.prompt(states, {
+						loaded: function(){
+							$.prompt.getState('s1').find('#jqi_s1_buttoncancel').click();
+						}
+					});
 				});
 
-				$.prompt(states, {
-					loaded: function(){
-						$.prompt.getState('s1').find('#jqi_s1_buttoncancel').click();
-					}
-				});
-
-				waitsFor(function(){
-					return spyEventCalled;
-				}, 'event should have been called',maxWaitTime);
-
-				runs(function(){
+				it('should detect button', function(){
 					expect(btnClicked).toBe(false);
 				});
-			});
 
-			it('should pass the state message', function(){
-				var spyEventCalled = false,
-					btnClicked,
-					msgReturned,
-					formVals;
-
-				$('body').on('impromptu:submit', '.jqibox', function(e,v,m,f){ 
-					btnClicked = v; 
-					msgReturned = m;
-					formVals = f;
-					spyEventCalled = true; 
-				});
-
-				$.prompt(states, {
-					loaded: function(){
-						$.prompt.getState('s1').find('#jqi_s1_buttoncancel').click();
-					}
-				});
-
-				waitsFor(function(){
-					return spyEventCalled;
-				}, 'event should have been called',maxWaitTime);
-
-				runs(function(){
+				it('should pass the state message', function(){
 					expect(msgReturned).toBe('.jqimessage');
 				});
 			});
