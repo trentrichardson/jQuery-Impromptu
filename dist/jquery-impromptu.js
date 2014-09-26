@@ -1,7 +1,13 @@
 /*! jQuery-Impromptu - v5.2.6 - 2014-09-01
 * http://trentrichardson.com/Impromptu
 * Copyright (c) 2014 Trent Richardson; Licensed MIT */
-(function($) {
+(function(root, factory) {
+	if (typeof define === 'function' && define.amd) {
+		define(['jquery'], factory);
+	} else {
+		factory(root.jQuery);
+	}
+}(this, function($) {
 	"use strict";
 
 	/**
@@ -716,4 +722,4 @@
 		$.prompt($(this).clone(options.withDataAndEvents).html(),options);
 	};
 
-})(jQuery);
+}));
