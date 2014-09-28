@@ -784,18 +784,18 @@ describe('jquery-impromptu', function() {
 
 
 
-			describe('passing loaded event through as option if string message', function(){
+			describe('passing submit event through as option if string message', function(){
 				var spyEventCalled;
 
 				beforeEach(function(done){
 					spyEventCalled = false;
 
-						$.prompt('Test message', { 
-							loaded: function(){
-								$('.jqibutton:first').click();
-							},
-							submit: function(){ spyEventCalled = true; done(); }
-						});
+					$.prompt('Test message', { 
+						loaded: function(){
+							$('.jqibutton:first').click();
+						},
+						submit: function(){ spyEventCalled = true; done(); }
+					});
 				});
 
 				it('should allow event function as option parameter', function(){
@@ -805,19 +805,16 @@ describe('jquery-impromptu', function() {
 
 
 			describe('should detect button clicked', function(){
-				var spyEventCalled = false,
-					btnClicked,
+				var btnClicked,
 					msgReturned,
 					formVals;
 
 				beforeEach(function(done){
-					spyEventCalled = false;
 
 					$('body').on('impromptu:submit', '.jqibox', function(e,v,m,f){ 
 						btnClicked = v; 
 						msgReturned = m;
 						formVals = f;
-						spyEventCalled = true; 
 						done();
 					});
 
@@ -833,13 +830,12 @@ describe('jquery-impromptu', function() {
 				});
 
 				it('should pass the state message', function(){
-					expect(msgReturned).toBe('.jqimessage');
+					expect(msgReturned.is('.jqimessage')).toBe(true);
 				});
 			});
 
-			it('should pass the prompt form values', function(){
-				var spyEventCalled = false,
-					tmpStates = [],
+			describe('verifying form values', function(){
+				var tmpStates = [],
 					btnClicked,
 					msgReturned,
 					formVals,
@@ -865,32 +861,32 @@ describe('jquery-impromptu', function() {
 				tmpStates[3] = $.extend({}, states[3]);
 				tmpStates[3].html = '<textarea name="textareaInput">my textarea val</textarea>';
 
+				beforeEach(function(done){
+					spyEventCalled = false;
 
-				$('body').on('impromptu:submit', '.jqibox', function(e,v,m,f){ 
-					btnClicked = v; 
-					msgReturned = m;
-					formVals = f;
-					spyEventCalled = true; 
+					$('body').on('impromptu:submit', '.jqibox', function(e,v,m,f){ 
+						btnClicked = v; 
+						msgReturned = m;
+						formVals = f;
+						done();
+					});
+
+					$.prompt(tmpStates, {
+						loaded: function(){
+							$.prompt.getState('s1').find('#jqi_s1_buttonnext').click();
+						}
+					});
 				});
 
-				$.prompt(tmpStates, {
-					loaded: function(){
-						$.prompt.getState('s1').find('#jqi_s1_buttonnext').click();
-					}
-				});
-
-				waitsFor(function(){
-					return spyEventCalled;
-				}, 'event should have been called',maxWaitTime);
-
-				runs(function(){
+				it('should pass the correct form values', function(){
 					expect(formVals).toEqual(expectedValues);
 				});
+
 			});
 
 		});
 
-	}); // end qpi events
+	}); // end api events
 
 	// ====================================================================================
 	// ====================================================================================
@@ -914,106 +910,92 @@ describe('jquery-impromptu', function() {
 		// ====================================================================================
 		describe('keydown', function(){
 
-			it('should not close on escape key if persistent option true', function(){
-				var spyEventCalled = false;
+			describe('persistent option on', function(){
 
-				$.prompt(states, { 
-					loaded: function(){
-						var e = $.Event('keydown');
-						e.keyCode = 27;
-						$.prompt.jqib.trigger(e);
+				beforeEach(function(done){
 
-						spyEventCalled = true;
-					},
-					persistent: true
+					$.prompt(states, { 
+						loaded: function(){
+							var e = $.Event('keydown');
+							e.keyCode = 27;
+							$.prompt.jqib.trigger(e);
+							done();
+						},
+						persistent: true
+					});
 				});
 
-				waitsFor(function(){
-					return spyEventCalled;
-				}, 'event should have been called',maxWaitTime);
-
-				runs(function(){
-					expect(spyEventCalled).toBe(true);
+				it('should not close when persistent is true', function(){
 					expect($('.jqi')).toExist();
 				});
 			});
 
-			it('should close on escape key if persistent option false', function(){
-				var spyEventCalled = false;
 
-				$.prompt(states, { 
-					loaded: function(){
-						var e = $.Event('keydown');
-						e.keyCode = 27;
-						$.prompt.jqib.trigger(e);
+			describe('persistent option off', function(){
 
-						spyEventCalled = true;
-					},
-					persistent: false
+				beforeEach(function(done){
+
+					$.prompt(states, { 
+						loaded: function(){
+							var e = $.Event('keydown');
+							e.keyCode = 27;
+							$.prompt.jqib.trigger(e);
+							done();
+						},
+						persistent: false
+					});
 				});
 
-				waitsFor(function(){
-					return spyEventCalled;
-				}, 'event should have been called',maxWaitTime);
-
-				runs(function(){
-					expect(spyEventCalled).toBe(true);
+				it('should close when persistent is false', function(){console.log($('.jqi').length);
 					expect($('.jqi')).not.toExist();
 				});
 			});
-			
-			it('should trigger default button if enter key', function(){
-				var spyEventCalled = false,
-					buttonTriggered = null;
 
-				$('body').on('impromptu:submit', function(e,v){
-					spyEventCalled = true;
-					buttonTriggered = v;
+
+			describe('enter key', function(){
+				var buttonTriggered = null;
+
+				beforeEach(function(done){
+
+					$('body').on('impromptu:submit', function(e,v){
+						buttonTriggered = v;
+						done();
+					});
+
+					$.prompt(states, { 
+						loaded: function(){
+							var e = $.Event('keydown');
+							e.keyCode = 13;
+							$.prompt.jqi.trigger(e);
+						}
+					});	
 				});
 
-				$.prompt(states, { 
-					loaded: function(){
-						var e = $.Event('keydown');
-						e.keyCode = 13;
-						$.prompt.jqi.trigger(e);
-
-					}
-				});				
-
-				waitsFor(function(){
-					return spyEventCalled;
-				}, 'event should have been called',maxWaitTime);
-
-				runs(function(){
-					expect(spyEventCalled).toBe(true);
+				it('should trigger click on the correct button', function(){
 					expect(buttonTriggered).toBe(2);
 				});
 			});
-
+			
 		});
 
 		// ====================================================================================
 		describe('click', function(){
 
-			it('should not close fade click if persistent option true', function(){
-				var spyEventCalled = false;
+			describe('fade click', function(){
 
-				$.prompt(states, { 
-					loaded: function(){
-						var e = $.Event('click');
-						$.prompt.jqib.trigger(e);
+				beforeEach(function(done){
+					$.prompt(states, { 
+						loaded: function(){
+							var e = $.Event('click');
+							$.prompt.jqib.trigger(e);
 
-						spyEventCalled = true;
-					},
-					persistent: true
+							done();
+						},
+						persistent: true
+					});
 				});
 
-				waitsFor(function(){
-					return spyEventCalled;
-				}, 'event should have been called',maxWaitTime);
-
-				runs(function(){
-					expect(spyEventCalled).toBe(true);
+				it('should not close fade if persistent option true',function(){
 					expect($('.jqi')).toExist();
 				});
 			});
