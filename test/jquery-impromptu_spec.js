@@ -262,7 +262,6 @@ describe('jquery-impromptu', function() {
 
 		beforeEach(function() {			
 			$.fx.off = true; // for our testing lets turn off fx
-
 		});
 
 		afterEach(function() {
@@ -576,16 +575,15 @@ describe('jquery-impromptu', function() {
 				{ name: 's1', html: 'state 1', buttons: { next: true, cancel: false } },
 				{ name: 's2', html: 'state 2', buttons: { back: -1, cancel: 0, next: 1 } },
 				{ name: 's3', html: 'state 3', buttons: { done: true} }
-			],
-			maxWaitTime = 100;
+			];
 
-		beforeEach(function() {			
+		beforeEach(function() {
 			$.fx.off = true; // for our testing lets turn off fx
-
 		});
 
 		afterEach(function() {
 			$.prompt.close();
+			$('.jqibox').remove();
 		});
 
 		// ====================================================================================
@@ -595,7 +593,7 @@ describe('jquery-impromptu', function() {
 
 				beforeEach(function(done){
 					spyEventCalled = false;
-					$('body').on('impromptu:loaded', '.jqibox', function(){ spyEventCalled=true; done() });
+					$('body').on('impromptu:loaded', '.jqibox', function(){ spyEventCalled=true; done(); });
 					$.prompt(states);
 				});
 
@@ -626,7 +624,7 @@ describe('jquery-impromptu', function() {
 
 				beforeEach(function(done){
 					spyEventCalled = false;
-					$('body').on('impromptu:close', '.jqibox', function(){ spyEventCalled=true; done() });
+					$('body').on('impromptu:close', '.jqibox', function(){ spyEventCalled=true; done(); });
 					$.prompt(states, {
 						loaded: function(){
 							$.prompt.close();
@@ -862,7 +860,6 @@ describe('jquery-impromptu', function() {
 				tmpStates[3].html = '<textarea name="textareaInput">my textarea val</textarea>';
 
 				beforeEach(function(done){
-					spyEventCalled = false;
 
 					$('body').on('impromptu:submit', '.jqibox', function(e,v,m,f){ 
 						btnClicked = v; 
@@ -895,8 +892,7 @@ describe('jquery-impromptu', function() {
 				{ name: 's1', html: 'state 1', buttons: [{ title:'One', value: 1}, { title:'Two', value: 2}, { title:'Three', value: 3 }], focus: 1 },
 				{ name: 's2', html: 'state 2', buttons: { back: -1, cancel: 0, next: 1 } },
 				{ name: 's3', html: 'state 3', buttons: { done: true} }
-			],
-			maxWaitTime = 100;
+			];
 
 		beforeEach(function() {			
 			$.fx.off = true; // for our testing lets turn off fx
@@ -910,7 +906,7 @@ describe('jquery-impromptu', function() {
 		// ====================================================================================
 		describe('keydown', function(){
 
-			describe('persistent option on', function(){
+			describe('on fade when persistent option true', function(){
 
 				beforeEach(function(done){
 
@@ -925,13 +921,13 @@ describe('jquery-impromptu', function() {
 					});
 				});
 
-				it('should not close when persistent is true', function(){
+				it('should not close prompt', function(){
 					expect($('.jqi')).toExist();
 				});
 			});
 
 
-			describe('persistent option off', function(){
+			describe('on fade when persistent option false', function(){
 
 				beforeEach(function(done){
 
@@ -946,13 +942,13 @@ describe('jquery-impromptu', function() {
 					});
 				});
 
-				it('should close when persistent is false', function(){console.log($('.jqi').length);
+				it('should close prompt', function(){
 					expect($('.jqi')).not.toExist();
 				});
 			});
 
 
-			describe('enter key', function(){
+			describe('enter key in prompt', function(){
 				var buttonTriggered = null;
 
 				beforeEach(function(done){
