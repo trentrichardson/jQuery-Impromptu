@@ -1,5 +1,118 @@
 describe('jquery-impromptu', function() {
 
+	// ====================================================================================
+	// ====================================================================================
+	describe('utilities', function(){
+
+		// ====================================================================================
+		describe('extend', function(){
+
+			it('should extend an object non recursive', function(){				
+				var o1 = { foo: 'foo', bar: 'bar' },
+					o2 = { foo: 'foo2' },
+					o3 = { foo: 'foo3', foobar: 'foobar' },
+					result = Impromptu._.extend(false, o1,o2,o3),
+					compare = { foo: 'foo3', bar: 'bar', foobar: 'foobar' };
+
+				expect(result).toEqual(compare);
+
+				o1 = { foo: { a:1, b:2 }, bar: [1,2,3,4,5] };
+				o2 = { foo: { a: -1, c: 3 } };
+				o3 = { bar: [9,8,7] };
+				result = Impromptu._.extend(false, o1,o2,o3);
+				compare = { foo: { a: -1, c: 3 }, bar: [9,8,7] };
+					
+				expect(result).toEqual(compare);
+			});
+
+			it('should extend an object recursively', function(){				
+				var o1 = { foo: 'foo', bar: 'bar' },
+					o2 = { foo: 'foo2' },
+					o3 = { foo: 'foo3', foobar: 'foobar' },
+					result = Impromptu._.extend(true, o1,o2,o3),
+					compare = { foo: 'foo3', bar: 'bar', foobar: 'foobar' };
+
+				expect(result).toEqual(compare);
+
+				o1 = { foo: { a:1, b:2 }, bar: [1,2,3,4,5] };
+				o2 = { foo: { a: -1, c: 3 } };
+				o3 = { bar: [9,8,7] };
+				result = Impromptu._.extend(true, o1,o2,o3);
+				compare = { foo: { a: -1, b: 2, c: 3 }, bar: [9,8,7] };
+					
+				expect(result).toEqual(compare);
+			});
+		});
+
+		describe('query', function(){
+			beforeEach(function(){
+				$('body').append('<div id="dummyels" style="display:none">'+
+					'<form action="" method="post" class="dummyels-form">'+
+						'<label class="field"><input type="text" name="test1" value="test val 1"></label>'+
+						'<label class="field"><input type="password" name="test2" value="test val 2"></label>'+
+						'<label class="field"><input type="file" name="test3"></label>'+
+						'<label class="field"><input type="checkbox" name="test4" value="test val 4 - a"></label>'+
+						'<label class="field"><input type="checkbox" name="test4" value="test val 4 - b" checked></label>'+
+						'<label class="field"><input type="checkbox" name="test4" value="test val 4 - c"></label>'+
+						'<label class="field"><input type="checkbox" name="test4" value="test val 4 - d" checked></label>'+
+						'<label class="field"><input type="checkbox" name="test4" value="test val 4 - e"></label>'+
+						'<label class="field"><input type="radio" name="test5" value="test val 5 - a"></label>'+
+						'<label class="field"><input type="radio" name="test5" value="test val 5 - b" checked></label>'+
+						'<label class="field"><input type="radio" name="test5" value="test val 5 - c"></label>'+
+						'<label class="field"><textarea name="test6">test val 6</textarea></label>'+
+						'<label class="field">'+
+							'<select name="test7">'+
+								'<option value="test val 7 - a">'+
+								'<option value="test val 7 - b">'+
+								'<option value="test val 7 - c" selected>'+
+							'</select>'+
+						'</label>'+
+						'<label class="field">'+
+							'<select name="test8" multiple>'+
+								'<option value="test val 8 - a">'+
+								'<option value="test val 8 - b" selected>'+
+								'<option value="test val 8 - c" selected>'+
+							'</select>'+
+						'</label>'+
+					'</form>'+
+				'</div>');
+			});
+			afterEach(function(){
+				$('#dummyels').remove();
+			});
+
+			describe('find', function(){
+
+				it('should find elements', function(){
+					var result = Impromptu._.query('#dummyels'),
+						compare = 1;
+					
+					expect(true).toBeDefined();
+					expect(result.length).toHaveLength(1);
+				});
+			});
+
+			describe('each', function(){
+				
+				it('return a result set', function(){
+					var result = 0,
+						compare = 14,
+						els = Impromptu._.query('#dummyels form label').each(function(i,el){ result++; });
+										
+					expect(els.length).toHaveLength(1);
+				});
+
+				it('should loop every over every found element', function(){
+					var result = 0,
+						compare = 14,
+						els = Impromptu._.query('#dummyels form label').each(function(i,el){ result++; });
+										
+					expect(result).toBe(compare);
+				});
+			});
+		});
+
+	});
 
 	// ====================================================================================
 	// ====================================================================================
