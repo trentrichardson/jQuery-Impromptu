@@ -707,7 +707,7 @@
 	/**
 	* @var _ A utility object for internal use only.
 	*/
-	imp._ = {
+	var _ = {
 		/**
 		* query - query the document for elements
 		* @param selector String - css selector
@@ -716,23 +716,26 @@
 		*/
 		query: function(selector, scope){
 			// this returns a mini object with css, data, on event methods
-			var sel = function(selector, scope){
+			var Sel = function(selector, scope){
 				this.scope = scope || document;
 				this.els = this.scope.querySelectorAll(selector);
 				this.length = this.els.length;
 				return this;
 			};
-			sel.prototype.each = function(fn){
+			Sel.prototype.find = function(selector){
+				return new Sel(selector, this.els[0]);
+			};
+			Sel.prototype.each = function(fn){
 				for(var i=0; i<this.length; i++){
 					fn.apply(this.els[i], [i, this.els[i]]);
 				}
 				return this;
 			};
-			sel.prototype.data = function(props){
+			Sel.prototype.data = function(props){
 				if(typeof props === 'string' && this.els.length > 0){
 					return this.els[0].getAttribute('data-'+props);
 				}
-				return this.each(function(el, i){
+				return this.each(function(i, el){
 					for(var k in props){
 						if(props.hasOwnProperty(k)){
 							el.setAttribute('data-'+k, props[k]);
@@ -740,19 +743,63 @@
 					}
 				});
 			};
-			sel.prototype.css = function(props){
+			Sel.prototype.css = function(props){
 				if(typeof props === 'string' && this.els.length > 0){		
 					return this.els[0].style[props];
 				}
-				return this.each(function(el, i){
+				return this.each(function(i, el){
 					for(var k in props){
 						if(props.hasOwnProperty(k)){
 							el.style[k] = props[k];
 						}
 					}
 				});
-			}
-			return new sel(selector, scope);
+			};
+			Sel.prototype.serialize = function(){
+				var ret = {};
+				this.find('input,select,textarea').each(function(i,el){
+					var n = el.name,
+						v = el.value,
+						tag = el.tagName.toLowerCase();
+
+					// checkboxes are always an array, only append if checked
+					if(tag === 'input' && el.type === 'checkbox'){
+						if(ret[n] === undefined){
+							ret[n] = [];
+						}
+						if(el.checked){
+							ret[n].push(v);
+						}
+					}
+					// radio is never an array, set only if checked
+					else if(tag === 'input' && el.type === 'radio'){
+						if(el.checked){
+							ret[n] = v;
+						}
+					}
+					// select multiple is always an array, append only selected options
+					else if(tag === 'select' && el.multiple){
+						ret[n] = [];
+						new Sel('option[selected]',el).each(function(i,oel){
+							ret[n].push(oel.value);
+						});						
+					}
+					// else standard input or select, convert to array if mulple with same name
+					else{
+						if(typeof ret[n] === 'object'){
+							ret[n].push(v);
+						}
+						else if(ret[n] !== undefined){
+							ret[n] = [ret[n], v];
+						}
+						else{
+							ret[n] = v;
+						}
+					}
+				});
+				return ret;
+			};
+			return new Sel(selector, scope);
 		}, 
 		extend: function(rec, o1){
 			var i,j,v,t,args = Array.prototype.slice.call(arguments);
@@ -774,6 +821,8 @@
 			return o1;
 		}
 	};
+	imp._ = _;
+	
 
 	if($){
 		/**

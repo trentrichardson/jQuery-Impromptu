@@ -78,7 +78,7 @@ module.exports = function(grunt) {
 			options: {
 				specs: 'test/*_spec.js',
 				vendor: [
-						'http://code.jquery.com/jquery-1.11.1.min.js',
+						'test/lib/jquery.min.js',
 						'test/lib/jasmine-jquery.js'
 					]
 			}

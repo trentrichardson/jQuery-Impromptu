@@ -87,8 +87,8 @@ describe('jquery-impromptu', function() {
 					var result = Impromptu._.query('#dummyels'),
 						compare = 1;
 					
-					expect(true).toBeDefined();
-					expect(result.length).toHaveLength(1);
+					expect(result).toBeDefined();
+					expect(result.length).toBe(compare);
 				});
 			});
 
@@ -97,18 +97,101 @@ describe('jquery-impromptu', function() {
 				it('return a result set', function(){
 					var result = 0,
 						compare = 14,
-						els = Impromptu._.query('#dummyels form label').each(function(i,el){ result++; });
+						els = Impromptu._.query('#dummyels form label').each(function(){ result++; });
 										
-					expect(els.length).toHaveLength(1);
+					expect(els.length).toBe(compare);
 				});
 
 				it('should loop every over every found element', function(){
 					var result = 0,
-						compare = 14,
-						els = Impromptu._.query('#dummyels form label').each(function(i,el){ result++; });
+						compare = 14;
+					
+					Impromptu._.query('#dummyels form label').each(function(){ result++; });
 										
 					expect(result).toBe(compare);
 				});
+			});
+
+			describe('data', function(){
+				
+				it('return a result set', function(){
+					var compare = 14,
+						els = Impromptu._.query('#dummyels form label').data({ test: '1234' });
+										
+					expect(els.length).toBe(compare);
+				});
+
+				it('should set a data attribute', function(){
+					
+					Impromptu._.query('#dummyels form label').data({ test: 'asdf' });
+					
+					var result = document.querySelector('#dummyels form label').getAttribute('data-test'),
+						compare = 'asdf';
+
+					expect(result).toBe(compare);
+				});
+
+				it('should get a data attribute', function(){
+
+					document.querySelector('#dummyels form label').setAttribute('data-test', 'asdf');
+
+					var compare = 'asdf',
+						result = Impromptu._.query('#dummyels form label').data('test');
+					
+
+					expect(result).toBe(compare);
+				});
+			});
+
+			describe('css', function(){
+				
+				it('return a result set', function(){
+					var compare = 14,
+						els = Impromptu._.query('#dummyels form label').css({ color: 'rgb(255, 0, 0)' });
+										
+					expect(els.length).toBe(compare);
+				});
+
+				it('should set a css property', function(){
+					
+					Impromptu._.query('#dummyels form label').css({ color: 'rgb(255, 0, 0)' });
+					
+					var result = document.querySelector('#dummyels form label').style.color,
+						compare = 'rgb(255, 0, 0)';
+
+					expect(result).toBe(compare);
+				});
+
+				it('should get a css property', function(){
+
+					document.querySelector('#dummyels form label').style.color = 'rgb(255, 0, 0)';
+
+					var compare = 'rgb(255, 0, 0)',
+						result = Impromptu._.query('#dummyels form label').css('color');
+					
+
+					expect(result).toBe(compare);
+				});
+			});
+
+			describe('serialize', function(){
+				
+				it('return an object with selected values', function(){
+					var compare = {
+							test1: 'test val 1',
+							test2: 'test val 2',
+							test3: '',
+							test4: ['test val 4 - b','test val 4 - d'],
+							test5: 'test val 5 - b',
+							test6: 'test val 6',
+							test7: 'test val 7 - c',
+							test8: ['test val 8 - b','test val 8 - c']
+						},
+						result = Impromptu._.query('#dummyels form').serialize();
+										
+					expect(result).toEqual(compare);
+				});
+
 			});
 		});
 

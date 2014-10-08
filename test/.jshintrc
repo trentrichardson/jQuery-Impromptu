@@ -39,6 +39,7 @@
 		"waitsFor",
 		"affix",
 		"xdescribe",
-		"xit"
+		"xit",
+		"Impromptu"
 	]
 }
