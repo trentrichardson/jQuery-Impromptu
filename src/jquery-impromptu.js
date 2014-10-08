@@ -799,6 +799,22 @@
 				});
 				return ret;
 			};
+			Sel.prototype.on = function(type, fn){
+				return this.each(function(i, el){
+					el.addEventListener(type, fn, (type === 'blur' || type === 'focus'));
+				});
+			};
+			Sel.prototype.off = function(type, fn){
+				return this.each(function(i, el){
+					el.removeEventListener(type, fn, (type === 'blur' || type === 'focus'));
+				});
+			};
+			Sel.prototype.trigger = function(ev){
+				return this.each(function(i, el){
+					el.dispatchEvent(ev);
+				});
+			};
+			
 			return new Sel(selector, scope);
 		}, 
 		extend: function(rec, o1){
