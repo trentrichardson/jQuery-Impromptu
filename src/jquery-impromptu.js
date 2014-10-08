@@ -799,6 +799,17 @@
 				});
 				return ret;
 			};
+			Sel.prototype.event = function(action, ev, fn){
+				return this.each(function(i,el){
+					if(action === 'trigger'){
+						el.dispatchEvent(ev);
+					}
+					else{
+						el[action+'EventListener'](ev, fn, (ev === 'blur' || ev === 'focus'));
+					}
+				});
+			};
+			/*
 			Sel.prototype.on = function(type, fn){
 				return this.each(function(i, el){
 					el.addEventListener(type, fn, (type === 'blur' || type === 'focus'));
@@ -814,7 +825,7 @@
 					el.dispatchEvent(ev);
 				});
 			};
-			
+			*/
 			return new Sel(selector, scope);
 		}, 
 		extend: function(rec, o1){
