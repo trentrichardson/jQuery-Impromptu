@@ -44,6 +44,7 @@ describe('jquery-impromptu', function() {
 			});
 		});
 
+		// ====================================================================================
 		describe('query', function(){
 			beforeEach(function(){
 				$('body').append('<div id="dummyels" style="display:none">'+
@@ -81,6 +82,7 @@ describe('jquery-impromptu', function() {
 				$('#dummyels').remove();
 			});
 
+			// ====================================================================================
 			describe('find', function(){
 
 				it('should find elements', function(){
@@ -92,6 +94,7 @@ describe('jquery-impromptu', function() {
 				});
 			});
 
+			// ====================================================================================
 			describe('each', function(){
 				
 				it('return a result set', function(){
@@ -112,6 +115,7 @@ describe('jquery-impromptu', function() {
 				});
 			});
 
+			// ====================================================================================
 			describe('data', function(){
 				
 				it('return a result set', function(){
@@ -143,6 +147,7 @@ describe('jquery-impromptu', function() {
 				});
 			});
 
+			// ====================================================================================
 			describe('css', function(){
 				
 				it('return a result set', function(){
@@ -174,6 +179,41 @@ describe('jquery-impromptu', function() {
 				});
 			});
 
+			// ====================================================================================
+			describe('cls', function(){
+				
+				it('should find the class name', function(){
+					var compare = true,
+						result = Impromptu._.query('#dummyels form label').cls('has', 'field');
+										
+					expect(result).toBe(compare);
+				});
+
+				it('should not find the class name', function(){
+					var compare = false,
+						result = Impromptu._.query('#dummyels form label').cls('has', 'foobar');
+										
+					expect(result).toBe(compare);
+				});
+
+				it('should add the class to the elemnts', function(){
+					var compare = true,
+						els = Impromptu._.query('#dummyels form label').cls('add', 'foobar'),
+						result = els.cls('has', 'foobar');
+									
+					expect(result).toBe(compare);
+				});
+
+				it('should remove the class to the elemnts', function(){
+					var compare = false,
+						els = Impromptu._.query('#dummyels form label').cls('remove', 'field'),
+						result = els.cls('has', 'field');
+									
+					expect(result).toBe(compare);
+				});	
+			});
+
+			// ====================================================================================
 			describe('serialize', function(){
 				
 				it('return an object with selected values', function(){
@@ -192,6 +232,126 @@ describe('jquery-impromptu', function() {
 					expect(result).toEqual(compare);
 				});
 
+			});
+
+			// ====================================================================================
+			describe('on', function(){
+
+				describe('add native event', function(){
+					var spyEventCalled;
+
+					beforeEach(function(done){
+						spyEventCalled = false;
+						
+						Impromptu._.query('body').on('click', function(){ spyEventCalled = true; done(); });
+						
+						document.body.dispatchEvent(Impromptu._.event('click'));
+					});
+
+					it('should fire event', function(){
+						expect(spyEventCalled).toBe(true);
+					});
+				});
+
+				describe('add custom event', function(){
+					var spyEventCalled;
+
+					beforeEach(function(done){
+						spyEventCalled = false;
+						
+						Impromptu._.query('body').on('impromptu:test', function(){ spyEventCalled = true; done(); });
+						
+						document.body.dispatchEvent(Impromptu._.event('impromptu:test'));
+					});
+
+					it('should fire event', function(){
+						expect(spyEventCalled).toBe(true);
+					});
+				});
+			});
+
+			// ====================================================================================
+			describe('off', function(){
+
+				describe('remove native event', function(){
+					var spyEventCalled;
+
+					beforeEach(function(done){
+						spyEventCalled = false;
+						var evtfn = function(){ spyEventCalled = true; done(); };
+
+						Impromptu._.query('body').on('click', evtfn);
+
+						Impromptu._.query('body').off('click', evtfn);
+						
+						document.body.dispatchEvent(Impromptu._.event('click'));
+
+						// since it should haven been called and should happen quickly, end this test
+						setTimeout(function(){ if(!spyEventCalled){ done(); }}, 10);
+					});
+
+					it('should not fire event', function(){
+						expect(spyEventCalled).not.toBe(true);
+					});
+				});
+
+				describe('remove custom event', function(){
+					var spyEventCalled;
+
+					beforeEach(function(done){
+						spyEventCalled = false;
+						var evtfn = function(){ spyEventCalled = true; done(); };
+
+						Impromptu._.query('body').on('impromptu:test', evtfn);
+
+						Impromptu._.query('body').off('impromptu:test', evtfn);
+						
+						document.body.dispatchEvent(Impromptu._.event('impromptu:test'));
+
+						// since it should haven been called and should happen quickly, end this test
+						setTimeout(function(){ if(!spyEventCalled){ done(); }}, 10);
+					});
+
+					it('should not fire event', function(){
+						expect(spyEventCalled).not.toBe(true);
+					});
+				});
+
+			});
+
+			// ====================================================================================
+			describe('trigger', function(){
+				describe('emit native event', function(){
+					var spyEventCalled;
+
+					beforeEach(function(done){
+						spyEventCalled = false;
+						
+						Impromptu._.query('body').on('click', function(){ spyEventCalled = true; done(); });
+						
+						Impromptu._.query('body').trigger('click');
+					});
+
+					it('should fire event', function(){
+						expect(spyEventCalled).toBe(true);
+					});
+				});
+
+				describe('emit custom event', function(){
+					var spyEventCalled;
+
+					beforeEach(function(done){
+						spyEventCalled = false;
+						
+						Impromptu._.query('body').on('impromptu:test', function(){ spyEventCalled = true; done(); });
+						
+						Impromptu._.query('body').trigger(Impromptu._.event('impromptu:test'));
+					});
+
+					it('should fire event', function(){
+						expect(spyEventCalled).toBe(true);
+					});
+				});
 			});
 		});
 

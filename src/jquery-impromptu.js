@@ -715,25 +715,49 @@
 		* @return Class - selector class with properties to manipulate collection of elements
 		*/
 		query: function(selector, scope){
-			// this returns a mini object with css, data, on event methods
+			
+			/**
+			* Sel - a mini selector object with built in methods to traverse nodes
+			* @param selector String - css selector
+			* @param scope Element - Dom element to search from
+			* @return Class - selector class with properties to manipulate collection of elements
+			*/
 			var Sel = function(selector, scope){
 				this.scope = scope || document;
-				this.els = this.scope.querySelectorAll(selector);
-				this.length = this.els.length;
+				this.nodes = this.scope.querySelectorAll(selector);
+				this.length = this.nodes.length;
 				return this;
 			};
+
+			/**
+			* Sel.find - selector functionality for the current collection of nodes
+			* @param selector String - css selector
+			* @return Class - returns a new Sel class instance of found nodes
+			*/
 			Sel.prototype.find = function(selector){
-				return new Sel(selector, this.els[0]);
+				return new Sel(selector, this.nodes[0]);
 			};
+
+			/**
+			* Sel.each - loop over each element in the collection
+			* @param fn function - the callback function for each node
+			* @return Class - returns this Sel class instance
+			*/
 			Sel.prototype.each = function(fn){
 				for(var i=0; i<this.length; i++){
-					fn.apply(this.els[i], [i, this.els[i]]);
+					fn.apply(this.nodes[i], [i, this.nodes[i]]);
 				}
 				return this;
 			};
+
+			/**
+			* Sel.data - get/set the data properties on all nodes in collection
+			* @param data string, object - string of property name to get, a hash of key/values to set
+			* @return Class - returns this Sel class instance or value when using get
+			*/
 			Sel.prototype.data = function(props){
-				if(typeof props === 'string' && this.els.length > 0){
-					return this.els[0].getAttribute('data-'+props);
+				if(typeof props === 'string' && this.nodes.length > 0){
+					return this.nodes[0].getAttribute('data-'+props);
 				}
 				return this.each(function(i, el){
 					for(var k in props){
@@ -743,9 +767,15 @@
 					}
 				});
 			};
+
+			/**
+			* Sel.css - get/set the css properties on all nodes in collection
+			* @param data string, object - string of property name to get, a hash of key/values to set
+			* @return Class - returns this Sel class instance or value when using get
+			*/
 			Sel.prototype.css = function(props){
-				if(typeof props === 'string' && this.els.length > 0){		
-					return this.els[0].style[props];
+				if(typeof props === 'string' && this.nodes.length > 0){		
+					return this.nodes[0].style[props];
 				}
 				return this.each(function(i, el){
 					for(var k in props){
@@ -755,18 +785,40 @@
 					}
 				});
 			};
+
+			/**
+			* Sel.class - work with class names on all nodes in collection
+			* @param action string - has, add, delete 
+			* @param cls string - the class name to add, delete, has
+			* @return Class/Bool - returns this Sel class instance, when action="has" will return boolean
+			*/
+			Sel.prototype.cls = function(action, cls){
+				var findre = new RegExp("\\b"+ cls +"\\b", 'i');
+				if(action === 'has'){
+					return findre.test(this.nodes[0].className);
+				}
+				return this.each(function(i, el){
+					el.className = el.className.replace(findre, " ");
+					if(action === 'add'){
+						el.className += ' '+ cls;
+					}
+				});
+			};
+
+			/**
+			* Sel.serialize - serialize the collection's form fields into an object
+			* @return Object - keys are field names, values are field values
+			*/
 			Sel.prototype.serialize = function(){
 				var ret = {};
-				this.find('input,select,textarea').each(function(i,el){
+				this.find('input,select,textarea,button').each(function(i,el){
 					var n = el.name,
 						v = el.value,
 						tag = el.tagName.toLowerCase();
 
 					// checkboxes are always an array, only append if checked
 					if(tag === 'input' && el.type === 'checkbox'){
-						if(ret[n] === undefined){
-							ret[n] = [];
-						}
+						ret[n] = ret[n] || [];
 						if(el.checked){
 							ret[n].push(v);
 						}
@@ -799,35 +851,73 @@
 				});
 				return ret;
 			};
-			Sel.prototype.event = function(action, ev, fn){
-				return this.each(function(i,el){
-					if(action === 'trigger'){
-						el.dispatchEvent(ev);
-					}
-					else{
-						el[action+'EventListener'](ev, fn, (ev === 'blur' || ev === 'focus'));
-					}
-				});
-			};
-			/*
+			
+			/**
+			* Sel.on - attach an event to the node collection
+			* @param type string - name of the event to attach
+			* @param fn function - the event handler function
+			* @return Class - returns this Sel class instance
+			*/
 			Sel.prototype.on = function(type, fn){
 				return this.each(function(i, el){
-					el.addEventListener(type, fn, (type === 'blur' || type === 'focus'));
+					el[ el.addEventListener? 'addEventListener' : 'attachEvent'](type, fn, (type === 'blur' || type === 'focus'));
 				});
 			};
+
+			/**
+			* Sel.off - remove an event from the node collection
+			* @param type string - name of the event to attach
+			* @param fn function - the event handler function
+			* @return Class - returns this Sel class instance
+			*/
 			Sel.prototype.off = function(type, fn){
 				return this.each(function(i, el){
-					el.removeEventListener(type, fn, (type === 'blur' || type === 'focus'));
+					el[ el.removeEventListener? 'removeEventListener' : 'detachEvent'](type, fn, (type === 'blur' || type === 'focus'));
 				});
 			};
-			Sel.prototype.trigger = function(ev){
-				return this.each(function(i, el){
-					el.dispatchEvent(ev);
-				});
-			};
+
+			/**
+			* Sel.trigger - trigger an event to the node collection
+			* @param type Event/string - name of the event trigger or an Event object
+			* @param isCustom bool - whether this is a custom event or native
+			* @return Class - returns this Sel class instance
 			*/
+			Sel.prototype.trigger = function(ev, isCustom){
+				ev = (typeof ev === 'string')? _.event(ev) : ev;
+				return this.each(function(i, el){
+					var j = el.dispatchEvent ? el.dispatchEvent(ev) : el.fireEvent((isCustom ? 'on' : '')+ ev.type, ev);
+				});
+			};
+			
 			return new Sel(selector, scope);
 		}, 
+
+		/**
+		* Build a new event object
+		* @param name string - name of the event. Do not include "on" ex: "onclick"
+		* @param data object - any data to include into the event
+		* @return Event - A native event object
+		*/
+		event: function(name, data){			
+			var evt = (typeof Event === 'function')? new Event(name) : (function(){
+					var mouse=/^(?:click|dblclick|mouse(?:down|up|over|move|out))$/.test(name),
+						evt = document.createEvent(mouse ? 'MouseEvents':'HTMLEvents');
+					evt[mouse ? 'initMouseEvent':'initEvent'](name, true, true);
+					return evt;
+				})();
+			
+			for(var i in data){
+				evt[i] = data[i];
+			}
+			return evt;
+		},
+		/**
+		* Extend an object with 1 or more objects
+		* @param rec bool - true to do a recursive extend (nested), false for one level
+		* @param o1 object - base object to extend, this will be returned
+		* param o2.. object - any objects to extend the base object with
+		* @return object - o1 object will be returned
+		*/
 		extend: function(rec, o1){
 			var i,j,v,t,args = Array.prototype.slice.call(arguments);
 
