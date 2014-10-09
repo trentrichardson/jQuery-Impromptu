@@ -806,6 +806,39 @@
 			};
 
 			/**
+			* animate the collection of elements
+			* @param fromprops object - key/value pairs of css properties to animate from
+			* @param toprops object - key/value pairs of css properties to animate to
+			* @param duration int - milliseconds to animate
+			* @param fn function - callback when done
+			* @return Class - returns this Sel class instance
+			*/
+			Sel.prototype.animate = function(fromprops, toprops, duration, fn){
+				var start,
+					raf,
+					progress,
+					percent,
+					animloop = function(time){
+							start = start || time;
+							progress = time - start;
+							percent = progress / duration;
+
+							// do css updates
+							// loop through each from prop and calc the amount to add/subtract 
+							// (toprops.width - fromprops.width) * percent
+
+							raf = progress < duration ? 
+									window.requestAnimationFrame(animloop) : 
+									window.cancelAnimationFrame(raf);
+						},
+					// we need to look for an animation flag so this can be turned off 
+					// when needed.  Perhaps just set Impromptu.fx = false;
+					fx = imp.fx ? window.requestAnimationFrame(animloop) : this.css(toprops);
+
+				return this;
+			};
+
+			/**
 			* Sel.serialize - serialize the collection's form fields into an object
 			* @return Object - keys are field names, values are field values
 			*/
@@ -938,6 +971,8 @@
 			return o1;
 		}
 	};
+
+	// export the utility class so so we can test it
 	imp._ = _;
 	
 
