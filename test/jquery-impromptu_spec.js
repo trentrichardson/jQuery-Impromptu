@@ -159,7 +159,7 @@ describe('jquery-impromptu', function() {
 			// ====================================================================================
 			describe('each', function(){
 				
-				it('return a result set', function(){
+				it('should return a result set', function(){
 					var result = 0,
 						compare = 14,
 						els = Impromptu._.query('#dummyels form label').each(function(){ result++; });
@@ -201,7 +201,7 @@ describe('jquery-impromptu', function() {
 			// ====================================================================================
 			describe('data', function(){
 				
-				it('return a result set', function(){
+				it('should return a result set', function(){
 					var compare = 14,
 						els = Impromptu._.query('#dummyels form label').data({ test: '1234' });
 										
@@ -233,7 +233,7 @@ describe('jquery-impromptu', function() {
 			// ====================================================================================
 			describe('css', function(){
 				
-				it('return a result set', function(){
+				it('should return a result set', function(){
 					var compare = 14,
 						els = Impromptu._.query('#dummyels form label').css({ color: 'rgb(255, 0, 0)' });
 										
@@ -337,7 +337,7 @@ describe('jquery-impromptu', function() {
 			// ====================================================================================
 			describe('serialize', function(){
 				
-				it('return an object with selected values', function(){
+				it('should return an object with selected values', function(){
 					var compare = {
 							test1: 'test val 1',
 							test2: 'test val 2',
