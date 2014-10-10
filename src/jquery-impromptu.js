@@ -718,13 +718,28 @@
 			
 			/**
 			* Sel - a mini selector object with built in methods to traverse nodes
-			* @param selector String - css selector
+			* @param selector String, NodeList, Node - css selector, a node list, or a single element
 			* @param scope Element - Dom element to search from
 			* @return Class - selector class with properties to manipulate collection of elements
 			*/
 			var Sel = function(selector, scope){
+				var nl;
 				this.scope = scope || document;
-				this.nodes = this.scope.querySelectorAll(selector);
+				this.nodes=[];
+
+				if(typeof selector === 'string'){ // either an html string or css selector
+					nl = (selector[0] === '<') ? (function(){
+							var dv = document.createElement('div');
+							dv.innerHTML = selector;
+							return document.createDocumentFragment().appendChild(dv).childNodes;
+						})() : this.scope.querySelectorAll(selector);
+				}
+				else{ // a Node or NodeList was passed in
+					nl = selector.length !== undefined ? selector : [selector];
+				}
+
+				// convert the nodelist to a native array
+				for(var i = nl.length; i--; this.nodes.unshift(nl[i])){}
 				this.length = this.nodes.length;
 				return this;
 			};
@@ -739,12 +754,35 @@
 			};
 
 			/**
+			* Sel.attach - attach the collection of elements to a parent element
+			* @param parent Node - an html node element to attach to
+			* @param how String - append or prepend
+			* @param where Node - Node to insert the new node before
+			* @return Class - returns a new Sel class instance of found nodes or null
+			*/
+			Sel.prototype.attach = function(parent, how, where){
+				var t = this;
+				return this.each(function(i,el){
+					var x = how === 'append'? parent.appendChild(el) : parent.insertBefore(el, where || parent.firstChild);
+				});
+			};
+
+			/**
+			* Sel.neighbor - get the sibling element, not necessarily in the Sel collection but the overall dom
+			* @param where String - previous or next
+			* @return Class - returns a new Sel class instance of found nodes or null
+			*/
+			Sel.prototype.neighbor = function(where){
+				return new Sel(this.nodes[0][where +'Sibling']);
+			};
+
+			/**
 			* Sel.each - loop over each element in the collection
 			* @param fn function - the callback function for each node
 			* @return Class - returns this Sel class instance
 			*/
 			Sel.prototype.each = function(fn){
-				for(var i=0; i<this.length; i++){
+				for(var i=0; i<this.nodes.length; i++){
 					fn.apply(this.nodes[i], [i, this.nodes[i]]);
 				}
 				return this;
@@ -756,16 +794,15 @@
 			* @return Class - returns this Sel class instance or value when using get
 			*/
 			Sel.prototype.data = function(props){
-				if(typeof props === 'string' && this.nodes.length > 0){
-					return this.nodes[0].getAttribute('data-'+props);
-				}
-				return this.each(function(i, el){
-					for(var k in props){
-						if(props.hasOwnProperty(k)){
-							el.setAttribute('data-'+k, props[k]);
+				return (typeof props === 'string' && this.nodes.length > 0) ?
+					this.nodes[0].getAttribute('data-'+props) :
+					this.each(function(i, el){
+						for(var k in props){
+							if(props.hasOwnProperty(k)){
+								el.setAttribute('data-'+k, props[k]);
+							}
 						}
-					}
-				});
+					});
 			};
 
 			/**
@@ -774,16 +811,15 @@
 			* @return Class - returns this Sel class instance or value when using get
 			*/
 			Sel.prototype.css = function(props){
-				if(typeof props === 'string' && this.nodes.length > 0){		
-					return this.nodes[0].style[props];
-				}
-				return this.each(function(i, el){
-					for(var k in props){
-						if(props.hasOwnProperty(k)){
-							el.style[k] = props[k];
+				return (typeof props === 'string' && this.nodes.length > 0) ?
+					this.nodes[0].style[props] :
+					this.each(function(i, el){
+						for(var k in props){
+							if(props.hasOwnProperty(k)){
+								el.style[k] = props[k];
+							}
 						}
-					}
-				});
+					});
 			};
 
 			/**
@@ -794,46 +830,63 @@
 			*/
 			Sel.prototype.cls = function(action, cls){
 				var findre = new RegExp("\\b"+ cls +"\\b", 'i');
-				if(action === 'has'){
-					return findre.test(this.nodes[0].className);
-				}
-				return this.each(function(i, el){
-					el.className = el.className.replace(findre, " ");
-					if(action === 'add'){
-						el.className += ' '+ cls;
-					}
-				});
+				return action === 'has' ? 
+					findre.test(this.nodes[0].className) :
+					this.each(function(i, el){
+						el.className = el.className.replace(findre, " ");
+						if(action === 'add'){
+							el.className += ' '+ cls;
+						}
+					});
 			};
 
 			/**
 			* animate the collection of elements
-			* @param fromprops object - key/value pairs of css properties to animate from
-			* @param toprops object - key/value pairs of css properties to animate to
+			* @param props object - key/value pairs of css properties to animate to
 			* @param duration int - milliseconds to animate
 			* @param fn function - callback when done
 			* @return Class - returns this Sel class instance
 			*/
-			Sel.prototype.animate = function(fromprops, toprops, duration, fn){
-				var start,
-					raf,
+			Sel.prototype.animate = function(props, duration, fn){
+				var raf,
+					t = this,
+					start,
 					progress,
 					percent,
+					fromprops={},
 					animloop = function(time){
+							var tmp = {};
 							start = start || time;
 							progress = time - start;
-							percent = progress / duration;
+							percent = duration === 0 ? 1 : (progress / duration);
 
-							// do css updates
-							// loop through each from prop and calc the amount to add/subtract 
-							// (toprops.width - fromprops.width) * percent
+							for(var k in fromprops){
+								tmp[k] = (props[k]-fromprops[k]) * percent;
+							}
+							t.css(tmp);
 
-							raf = progress < duration ? 
-									window.requestAnimationFrame(animloop) : 
-									window.cancelAnimationFrame(raf);
-						},
+							if(progress < duration){
+								window.requestAnimationFrame(animloop);
+							}
+							else{
+								window.cancelAnimationFrame(raf);
+								t.css(props);
+								if(fn){fn.call(t);}
+							}
+						};
+
+					for(var k in props){
+						fromprops[k] = t.css(k) || 0;
+					}
+
 					// we need to look for an animation flag so this can be turned off 
-					// when needed.  Perhaps just set Impromptu.fx = false;
-					fx = imp.fx ? window.requestAnimationFrame(animloop) : this.css(toprops);
+					if(imp.fx || duration > 0){
+						raf = window.requestAnimationFrame(animloop);
+					}
+					else{
+						t.css(props);
+						if(fn){fn.call(t);}
+					}
 
 				return this;
 			};
@@ -944,6 +997,7 @@
 			}
 			return evt;
 		},
+
 		/**
 		* Extend an object with 1 or more objects
 		* @param rec bool - true to do a recursive extend (nested), false for one level
@@ -975,6 +1029,11 @@
 	// export the utility class so so we can test it
 	imp._ = _;
 	
+	/**
+	* @var bool - true to run animations, false to simply set the values
+	*/
+	imp.fx = true;
+	
 
 	if($){
 		/**
@@ -998,3 +1057,32 @@
 	window.Impromptu = imp;
 
 }));
+
+
+// http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+// http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
+
+// requestAnimationFrame polyfill by Erik Möller
+// fixes from Paul Irish and Tino Zijdel
+
+(function() {
+	var lastTime = 0;
+	var vendors = ['ms', 'moz', 'webkit', 'o'];
+	for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+		window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+		window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
+	}
+
+	if (!window.requestAnimationFrame){
+		window.requestAnimationFrame = function(callback, element) {
+			var currTime = new Date().getTime();
+			var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+			var id = window.setTimeout(function() { callback(currTime + timeToCall); }, timeToCall);
+			lastTime = currTime + timeToCall;
+			return id;
+		};
+	}
+	if (!window.cancelAnimationFrame){
+		window.cancelAnimationFrame = function(id) { clearTimeout(id); };
+	}
+}());

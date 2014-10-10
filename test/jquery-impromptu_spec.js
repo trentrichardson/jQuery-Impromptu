@@ -45,6 +45,35 @@ describe('jquery-impromptu', function() {
 		});
 
 		// ====================================================================================
+		describe('event', function(){
+
+			it('should create a native event', function(){
+				var result = Impromptu._.event('click'),
+					compare = 'object';
+				
+				expect(result).toBeDefined();
+				expect(typeof result).toBe(compare);
+				expect(result.type).toBe('click');
+			});
+
+			it('should create a custom event', function(){
+				var result = Impromptu._.event('impromptu:test'),
+					compare = 'object';
+				
+				expect(result).toBeDefined();
+				expect(typeof result).toBe(compare);
+				expect(result.type).toBe('impromptu:test');
+			});
+
+			it('should attach data to an event', function(){
+				var result = Impromptu._.event('impromptu:test', {test1: 'foobar'}),
+					compare = 'foobar';
+				
+				expect(result.test1).toBe(compare);
+			});
+		});
+
+		// ====================================================================================
 		describe('query', function(){
 			beforeEach(function(){
 				$('body').append('<div id="dummyels" style="display:none">'+
@@ -83,13 +112,46 @@ describe('jquery-impromptu', function() {
 			});
 
 			// ====================================================================================
-			describe('find', function(){
+			describe('constructor', function(){
 
-				it('should find elements', function(){
+				it('should find elements with a css selector', function(){
 					var result = Impromptu._.query('#dummyels'),
 						compare = 1;
 					
 					expect(result).toBeDefined();
+					expect(result.length).toBe(compare);
+				});
+
+				it('should accept a single Node', function(){
+					var result = Impromptu._.query(document.getElementById('dummyels')),
+						compare = 1;
+					
+					expect(result.length).toBe(compare);
+				});
+
+				it('should accept a NodeList', function(){
+					var result = Impromptu._.query(document.getElementById('dummyels').querySelectorAll('label')),
+						compare = 14;
+					
+					expect(result.length).toBe(compare);
+				});
+
+				it('should accept an html string and build a document fragment', function(){
+					var result = Impromptu._.query('<span>foo</span><span>bar</span><div>foobar</div>'),
+						compare = 3;
+					
+					expect(result.length).toBe(compare);
+					expect(result.nodes.length).toBe(compare);
+				});
+			});
+
+			// ====================================================================================
+			describe('find', function(){
+
+				it('should find elements', function(){
+					var result = Impromptu._.query('#dummyels').find('label'),
+						compare = 14;
+					
 					expect(result.length).toBe(compare);
 				});
 			});
@@ -113,6 +175,27 @@ describe('jquery-impromptu', function() {
 										
 					expect(result).toBe(compare);
 				});
+			});
+
+			// ====================================================================================
+			describe('attach', function(){
+
+				it('should append elements to a parent', function(){
+					var parent = document.getElementById('dummyels'),
+						result = Impromptu._.query('<span>test append</span>').attach(parent, 'append'),
+						compare = parent.lastChild;
+
+					expect(result.nodes[0]).toBe(compare);
+				});
+
+				it('should append elements to a parent', function(){
+					var parent = document.getElementById('dummyels'),
+						result = Impromptu._.query('<span>test append</span>').attach(parent, 'prepend'),
+						compare = parent.firstChild;
+
+					expect(result.nodes[0]).toBe(compare);
+				});
+
 			});
 
 			// ====================================================================================
@@ -211,6 +294,44 @@ describe('jquery-impromptu', function() {
 									
 					expect(result).toBe(compare);
 				});	
+			});
+
+			// ====================================================================================
+			describe('animate', function(){
+				describe('with Imprompt.fx false', function(){
+
+					beforeEach(function(){
+						Impromptu.fx = false;
+					});
+
+					afterEach(function(){
+						Impromptu.fx = true;
+					});
+
+					it('should set css properties', function(){
+						
+						Impromptu._.query('#dummyels form label').animate({ width: 200, opacity: 0.5 }, 0);
+						
+						var result = document.querySelector('#dummyels form label').style.opacity,
+							compare = '0.5';
+
+						expect(result).toBe(compare);
+					});
+				});
+
+				describe('with Imprompt.fx true', function(){
+
+					beforeEach(function(done){
+						Impromptu._.query('#dummyels form label').animate({ width: 200, opacity: 0.5 }, 100, function(){ done(); });
+					});
+
+					it('should set css properties', function(){
+						var result = document.querySelector('#dummyels form label').style.opacity,
+							compare = '0.5';
+
+						expect(result).toBe(compare);
+					});
+				});
 			});
 
 			// ====================================================================================
