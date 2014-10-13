@@ -806,6 +806,22 @@
 			};
 
 			/**
+			* Sel.offset - get the offset of an element from the overall document x/y
+			* @return Object - {x: 123, y: 123} relative to the document, not the parent
+			*/
+			Sel.prototype.offset = function(){
+				var el = this.nodes[0],
+					ret = { x:0, y:0 };
+
+				do {
+					ret.x += isNaN(el.offsetLeft) ? 0 : el.offsetLeft;
+					ret.y += isNaN(el.offsetTop) ? 0 : el.offsetTop;
+				} while(el = el.offsetParent);
+
+				return ret;
+			};
+
+			/**
 			* Sel.css - get/set the css properties on all nodes in collection
 			* @param data string, object - string of property name to get, a hash of key/values to set
 			* @return Class - returns this Sel class instance or value when using get
