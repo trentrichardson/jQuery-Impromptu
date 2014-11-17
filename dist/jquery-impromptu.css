@@ -42,6 +42,7 @@ div.jqi .jqimessage{
 	padding: 10px; 
 	line-height: 20px; 
 	color: #444444; 
+	overflow: auto;
 }
 div.jqi .jqibuttons{ 
 	text-align: right; 
