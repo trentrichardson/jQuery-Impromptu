@@ -699,6 +699,10 @@
 				imp.jqib.remove();
 				
 				$(window).off('resize',imp.position);
+
+				if(typeof callCallback === 'function'){
+					callCallback();
+				}
 			});
 		}
 		imp.currentStateName = "";

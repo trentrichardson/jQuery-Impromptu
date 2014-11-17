@@ -1,4 +1,4 @@
-/*! jQuery-Impromptu - v5.3.0 - 2014-11-16
+/*! jQuery-Impromptu - v5.3.1 - 2014-11-16
 * http://trentrichardson.com/Impromptu
 * Copyright (c) 2014 Trent Richardson; Licensed MIT */
 (function(root, factory) {
@@ -702,8 +702,10 @@
 				imp.jqib.remove();
 				
 				$(window).off('resize',imp.position);
-				
-				if(typeof callCallback === 'function') callCallback();
+
+				if(typeof callCallback === 'function'){
+					callCallback();
+				}
 			});
 		}
 		imp.currentStateName = "";
