@@ -6,7 +6,7 @@
 	background-color: #777777; 
 }
 div.jqi{ 
-	width: 400px; 
+	min-width: 400px; 
 	max-width:90%;
 	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; 
 	position: absolute; 
@@ -42,6 +42,7 @@ div.jqi .jqimessage{
 	padding: 10px; 
 	line-height: 20px; 
 	color: #444444; 
+	overflow: auto;
 }
 div.jqi .jqibuttons{ 
 	text-align: right; 
