@@ -6,7 +6,7 @@
 	background-color: #777777; 
 }
 div.jqi{ 
-	min-width: 400px; 
+	width: 400px; 
 	max-width:90%;
 	font-family: Verdana, Geneva, Arial, Helvetica, sans-serif; 
 	position: absolute; 
