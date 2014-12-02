@@ -37,7 +37,7 @@
 					'<div class="field"><label for="editfname">First Name</label><input type="text" id="editfname" name="editfname" value="'+ fname +'" /></div>'+
 					'<div class="field"><label for="editlname">Last Name</label><input type="text" id="editlname" name="editlname" value="'+ lname +'" /></div>';
 				
-				$.prompt(txt,{ 
+				$.prompt.open(txt,{ 
 					buttons:{Change:true, Cancel:false},
 					submit: function(e,v,m,f){
 						//this is simple pre submit validation, the submit function

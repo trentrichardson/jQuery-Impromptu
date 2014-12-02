@@ -24,7 +24,39 @@ describe('jquery-impromptu', function() {
 				var expectedTitle = 'This is a title',
 					expectedText = 'This is a test';
 
-				$.prompt(expectedText, { title: expectedTitle });
+				$.prompt.open(expectedText, { title: expectedTitle });
+
+				expect($('.jqibox')).toExist();
+				expect($('.jqifade')).toExist();
+				expect($('.jqi')).toExist();
+				expect($('.jqi .jqititle')).toHaveText(expectedTitle);
+				expect($('.jqi .jqimessage')).toHaveText(expectedText);
+			});
+
+		});
+
+		// ====================================================================================
+		describe('instance initialization', function() {
+			var imp = new Impromptu();
+
+			beforeEach(function() {			
+				$.fx.off = true; // for our testing lets turn off fx
+			});
+
+			afterEach(function() {
+				imp.close();
+			});
+
+			it('should be defined', function() {
+				
+				expect(imp).not.toBeUndefined();
+			});
+
+			it('should generate markup', function() {
+				var expectedTitle = 'This is a title',
+					expectedText = 'This is a test';
+
+				imp.open(expectedText, { title: expectedTitle });
 
 				expect($('.jqibox')).toExist();
 				expect($('.jqifade')).toExist();
@@ -50,7 +82,7 @@ describe('jquery-impromptu', function() {
 
 			it('should generate buttons from hash', function() {
 
-				$.prompt('This is a test', {
+				$.prompt.open('This is a test', {
 					buttons: { Ok:true, Cancel:false }
 				});
 				var okBtn = $('#jqi_state0_buttonOk'),
@@ -70,7 +102,7 @@ describe('jquery-impromptu', function() {
 
 			it('should generate buttons from array', function() {
 
-				$.prompt('This is a test', {
+				$.prompt.open('This is a test', {
 					buttons: [
 						{ title: 'Ok', value: true },
 						{ title: 'Cancel', value: false }
@@ -93,7 +125,7 @@ describe('jquery-impromptu', function() {
 
 			it('should add classes to buttons', function() {
 
-				$.prompt('This is a test', {
+				$.prompt.open('This is a test', {
 					buttons: [
 						{ title: 'Ok', value: true, classes: ['ok1','ok2'] },
 						{ title: 'Cancel', value: false, classes: 'cancel1 cancel2' }
@@ -111,7 +143,7 @@ describe('jquery-impromptu', function() {
 
 			it('should add classes to buttons from classes obj', function() {
 
-				$.prompt('This is a test', {
+				$.prompt.open('This is a test', {
 					buttons: [
 						{ title: 'Ok', value: true, classes: ['ok1','ok2'] },
 						{ title: 'Cancel', value: false, classes: 'cancel1 cancel2' }
@@ -127,7 +159,7 @@ describe('jquery-impromptu', function() {
 
 			it('should default correct button', function() {
 
-				$.prompt('This is a test', {
+				$.prompt.open('This is a test', {
 					buttons: [
 						{ title: 'Ok', value: 1 },
 						{ title: 'Cancel', value: 2 },
@@ -146,7 +178,7 @@ describe('jquery-impromptu', function() {
 
 			it('should default correct button when focus on an input', function() {
 
-				$.prompt('This is a test <input type="text" id="testInput" />', {
+				$.prompt.open('This is a test <input type="text" id="testInput" />', {
 					buttons: [
 						{ title: 'Ok', value: 1 },
 						{ title: 'Cancel', value: 2 },
@@ -179,7 +211,7 @@ describe('jquery-impromptu', function() {
 
 			it('should create a single state from string', function() {
 
-				$.prompt('This is a test');
+				$.prompt.open('This is a test');
 				
 				expect($('.jqistate')).toExist();
 			});
@@ -191,7 +223,7 @@ describe('jquery-impromptu', function() {
 					s3: { html: 'state 3' }
 				};
 
-				$.prompt(states);
+				$.prompt.open(states);
 				
 				expect($('.jqistate')).toHaveLength(3);
 
@@ -207,7 +239,7 @@ describe('jquery-impromptu', function() {
 					{ html: 'state 3' }
 				];
 
-				$.prompt(states);
+				$.prompt.open(states);
 				
 				expect($('.jqistate')).toHaveLength(3);
 
@@ -225,7 +257,7 @@ describe('jquery-impromptu', function() {
 					{ html: 'state 3' }
 				];
 
-				$.prompt(states);
+				$.prompt.open(states);
 
 				expect($('#jqistate_0')).toHaveCss({display:'block'});
 				expect($('#jqistate_1')).toHaveCss({display:'none'});
@@ -239,7 +271,7 @@ describe('jquery-impromptu', function() {
 					{ name: 's3', html: 'state 3' }
 				];
 
-				$.prompt(states);
+				$.prompt.open(states);
 				
 				expect($('#jqistate_s1')).toExist();
 				expect($('#jqistate_s2')).toExist();
@@ -267,304 +299,306 @@ describe('jquery-impromptu', function() {
 			$.prompt.close();
 		});
 
+		describe('static methods', function() {
+			// ====================================================================================
+			describe('Impromptu.setDefaults()', function() {
+				it('should change the default values', function() {
+					var origDefs = $.extend(true, {}, Impromptu.defaults),
+						overrides = { prefix: 'myjqi', classes: { box: 'boxclass' } };
+					
+					Impromptu.setDefaults(overrides);
 
-		// ====================================================================================
-		describe('$.prompt.setDefaults()', function() {
-			it('should change the default values', function() {
-				var origDefs = $.extend(true, {}, $.prompt.defaults),
-					overrides = { prefix: 'myjqi', classes: { box: 'boxclass' } };
-				
-				$.prompt.setDefaults(overrides);
+					expect(Impromptu.defaults.prefix).toBe(overrides.prefix);
+					expect(Impromptu.defaults.classes.box).toBe(overrides.classes.box);
+					expect(Impromptu.defaults.speed).toBe(origDefs.speed);
 
-				expect($.prompt.defaults.prefix).toBe(overrides.prefix);
-				expect($.prompt.defaults.classes.box).toBe(overrides.classes.box);
-				expect($.prompt.defaults.speed).toBe(origDefs.speed);
-
-				$.prompt.defaults = origDefs;
-			});
-		});
-		
-		// ====================================================================================
-		describe('$.prompt.setStateDefaults()', function() {
-			it('should change the default state values', function() {
-				var origDefs = $.extend(true, {}, $.prompt.defaults),
-					overrides = { title: 'My Title', position: { width: 123 } };
-				
-				$.prompt.setStateDefaults(overrides);
-
-				expect($.prompt.defaults.state.title).toBe(overrides.title);
-				expect($.prompt.defaults.state.position.width).toBe(overrides.position.width);
-				expect($.prompt.defaults.state.focus).toBe(origDefs.state.focus);
-
-				$.prompt.defaults = origDefs;
-			});
-		});
-
-		// ====================================================================================
-		describe('$.prompt.get()', function() {
-			it('should return the prompt jquery object', function() {
-				
-				$.prompt('This is a test');
-
-				var actualResult = $.prompt.get(),
-					expectedResult = $('.jqi');
-
-				expect(actualResult[0]).toBe(expectedResult[0]);
-			});
-		});
-
-		// ====================================================================================
-		describe('$.prompt.getState()', function() {
-			it('should return the state jquery object', function() {
-
-				$.prompt(states);
-				
-				var actualResult = $.prompt.getState('s2'),
-					expectedResult = $('#jqistate_s2');
-
-				expect(actualResult[0]).toBe(expectedResult[0]);
-			});
-		});
-
-		// ====================================================================================
-		describe('$.prompt.getCurrentState()', function() {
-			it('should return the current state jquery object', function() {
-
-				$.prompt(states);
-				
-				var actualResult = $.prompt.getCurrentState(),
-					expectedResult = $('#jqistate_s1');
-
-				expect(actualResult[0]).toBe(expectedResult[0]);
-			});
-
-			it('should return the current state jquery object after a state change', function() {
-
-				$.prompt(states);
-				$.prompt.goToState('s2');
-				var actualResult = $.prompt.getCurrentState(),
-					expectedResult = $('#jqistate_s2');
-
-				expect(actualResult[0]).toBe(expectedResult[0]);
-			});
-		});
-
-		// ====================================================================================
-		describe('$.prompt.getCurrentStateName()', function() {
-			it('should return the current state name', function() {
-
-				$.prompt(states);
-				
-				var actualResult = $.prompt.getCurrentStateName(),
-					expectedResult = 's1';
-
-				expect(actualResult).toBe(expectedResult);
-			});
-
-			it('should return the current state name after a state change', function() {
-
-				$.prompt(states);
-				$.prompt.goToState('s2');
-				var actualResult = $.prompt.getCurrentStateName(),
-					expectedResult = 's2';
-
-				expect(actualResult).toBe(expectedResult);
-			});
-		});
-
-		// ====================================================================================
-		describe('$.prompt.goToState()', function() {
-			it('should make the requested state visible', function() {
-
-				$.prompt(states);
-				
-				$.prompt.goToState('s3');
-
-				expect($('#jqistate_s1')).toHaveCss({display:'none'});
-				expect($('#jqistate_s2')).toHaveCss({display:'none'});
-				expect($('#jqistate_s3')).toHaveCss({display:'block'});
-			});
-
-			it('should do nothing if the state is not available', function() {
-
-				$.prompt(states);
-				
-				$.prompt.goToState('s4');
-
-				expect($('#jqistate_s1')).toHaveCss({display:'block'});
-				expect($('#jqistate_s2')).toHaveCss({display:'none'});
-				expect($('#jqistate_s3')).toHaveCss({display:'none'});
-			});
-
-			it('should handle substate option', function() {
-
-				$.prompt(states);
-				
-				$.prompt.goToState('s2',true);
-
-				expect($('#jqistate_s1')).toHaveCss({display:'block'});
-				expect($('#jqistate_s2')).toHaveCss({display:'block'});
-				expect($('#jqistate_s3')).toHaveCss({display:'none'});
-
-				expect($('#jqistate_s2')).toHaveClass('jqisubstate');
-			});
-		});
-
-		// ====================================================================================
-		describe('$.prompt.nextState()', function() {
-			it('should make the next state visible', function() {
-				
-				$.prompt(states);
-				
-				$.prompt.nextState();
-
-				expect($('#jqistate_s1')).toHaveCss({display:'none'});
-				expect($('#jqistate_s2')).toHaveCss({display:'block'});
-				expect($('#jqistate_s3')).toHaveCss({display:'none'});
-			});
-
-			it('should do nothing if the state is not available', function() {
-
-				$.prompt(states);
-				
-				$.prompt.goToState('s3');
-				$.prompt.nextState();
-
-				expect($('#jqistate_s1')).toHaveCss({display:'none'});
-				expect($('#jqistate_s2')).toHaveCss({display:'none'});
-				expect($('#jqistate_s3')).toHaveCss({display:'block'});
-			});
-		});
-
-		// ====================================================================================
-		describe('$.prompt.prevState()', function() {
-			it('should make the previous state visible', function() {
-				
-				$.prompt(states);
-				
-				$.prompt.goToState('s3');
-				$.prompt.prevState();
-
-				expect($('#jqistate_s1')).toHaveCss({display:'none'});
-				expect($('#jqistate_s2')).toHaveCss({display:'block'});
-				expect($('#jqistate_s3')).toHaveCss({display:'none'});
-			});
-
-			it('should do nothing if the state is not available', function() {
-
-				$.prompt(states);
-				
-				$.prompt.prevState();
-
-				expect($('#jqistate_s1')).toHaveCss({display:'block'});
-				expect($('#jqistate_s2')).toHaveCss({display:'none'});
-				expect($('#jqistate_s3')).toHaveCss({display:'none'});
-			});
-		});
-
-		// ====================================================================================
-		describe('$.prompt.addState()', function() {
-			it('should add a new state as the last state', function() {
-				var newState = {
-					name: 's4',
-					title: 's4',
-					html: 'testing s4',
-					buttons: { Ok:true,Cancel:false}
-				};
-
-				$.prompt(states);
-				
-				var $stateobj = $.prompt.addState(newState.name, newState);
-
-				// element created?
-				expect($stateobj).toExist();
-
-				// element in the right place?
-				expect($stateobj.prev()).toHaveId('jqistate_s3');
-
-				// element visibility correct?
-				expect($('#jqistate_s1')).toHaveCss({display:'block'});
-				expect($stateobj).toHaveCss({display:'none'});
-
-				// content generated ok?
-				expect($stateobj.find('.jqimessage')).toHaveText(newState.html);
-				expect($stateobj.find('.jqititle')).toHaveText(newState.title);
-				expect($stateobj.find('.jqibutton')).toHaveLength(2);
-			});
-
-			it('should add a new state after specified state', function() {
-				var newState = {
-					name: 's4',
-					title: 's4',
-					html: 'testing s4',
-					buttons: { Ok:true,Cancel:false}
-				},
-				afterState = 's2';
-
-				$.prompt(states);
-				
-				var $stateobj = $.prompt.addState(newState.name, newState, afterState);
-
-				expect($stateobj.prev()).toHaveId('jqistate_'+afterState);
-			});
-		});
-
-		// ====================================================================================
-		describe('$.prompt.removeState()', function() {
-			it('should remove the specified state', function() {
-				
-				$.prompt(states);
-				
-				$.prompt.removeState('s2');
-
-				expect($('#jqistate_s2')).not.toExist();
+					Impromptu.defaults = origDefs;
+				});
 			});
 			
-			it('should display requested state', function() {
+			// ====================================================================================
+			describe('Impromptu.setStateDefaults()', function() {
+				it('should change the default state values', function() {
+					var origDefs = $.extend(true, {}, Impromptu.defaults),
+						overrides = { title: 'My Title', position: { width: 123 } };
+					
+					Impromptu.setStateDefaults(overrides);
 
-				$.prompt(states);
-				
-				$.prompt.removeState('s1','s3');
+					expect(Impromptu.defaults.state.title).toBe(overrides.title);
+					expect(Impromptu.defaults.state.position.width).toBe(overrides.position.width);
+					expect(Impromptu.defaults.state.focus).toBe(origDefs.state.focus);
 
-				expect($('#jqistate_s2')).toHaveCss({display:'none'});
-				expect($('#jqistate_s3')).toHaveCss({display:'block'});
+					Impromptu.defaults = origDefs;
+				});
 			});
-			
-			it('should display next state', function() {
-
-				$.prompt(states);
-				
-				$.prompt.removeState('s1');
-
-				expect($('#jqistate_s2')).toHaveCss({display:'block'});
-				expect($('#jqistate_s3')).toHaveCss({display:'none'});
-			});
-			
-			it('should display previous state', function() {
-
-				$.prompt(states);
-				$.prompt.goToState('s3');
-				$.prompt.removeState('s3');
-
-				expect($('#jqistate_s1')).toHaveCss({display:'none'});
-				expect($('#jqistate_s2')).toHaveCss({display:'block'});
-			});
-			
 		});
 
-		// ====================================================================================
-		describe('$.prompt.close()', function() {
-			it('should close the prompt', function() {
-				
-				$.prompt(states);
-				
-				$.prompt.close();
+		describe('instance methods', function() {
+			// ====================================================================================
+			describe('$.prompt.getPrompt()', function() {
+				it('should return the prompt jquery object', function() {
+					
+					$.prompt.open('This is a test');
 
-				expect($('.jqibox')).not.toExist();
+					var actualResult = $.prompt.getPrompt(),
+						expectedResult = $('.jqi');
+
+					expect(actualResult[0]).toBe(expectedResult[0]);
+				});
 			});
 
-		});
+			// ====================================================================================
+			describe('$.prompt.getState()', function() {
+				it('should return the state jquery object', function() {
 
+					$.prompt.open(states);
+					
+					var actualResult = $.prompt.getState('s2'),
+						expectedResult = $('#jqistate_s2');
+
+					expect(actualResult[0]).toBe(expectedResult[0]);
+				});
+			});
+
+			// ====================================================================================
+			describe('$.prompt.getCurrentState()', function() {
+				it('should return the current state jquery object', function() {
+
+					$.prompt.open(states);
+					
+					var actualResult = $.prompt.getCurrentState(),
+						expectedResult = $('#jqistate_s1');
+
+					expect(actualResult[0]).toBe(expectedResult[0]);
+				});
+
+				it('should return the current state jquery object after a state change', function() {
+
+					$.prompt.open(states);
+					$.prompt.goToState('s2');
+					var actualResult = $.prompt.getCurrentState(),
+						expectedResult = $('#jqistate_s2');
+
+					expect(actualResult[0]).toBe(expectedResult[0]);
+				});
+			});
+
+			// ====================================================================================
+			describe('$.prompt.getCurrentStateName()', function() {
+				it('should return the current state name', function() {
+
+					$.prompt.open(states);
+					
+					var actualResult = $.prompt.getCurrentStateName(),
+						expectedResult = 's1';
+
+					expect(actualResult).toBe(expectedResult);
+				});
+
+				it('should return the current state name after a state change', function() {
+
+					$.prompt.open(states);
+					$.prompt.goToState('s2');
+					var actualResult = $.prompt.getCurrentStateName(),
+						expectedResult = 's2';
+
+					expect(actualResult).toBe(expectedResult);
+				});
+			});
+
+			// ====================================================================================
+			describe('$.prompt.goToState()', function() {
+				it('should make the requested state visible', function() {
+
+					$.prompt.open(states);
+					
+					$.prompt.goToState('s3');
+
+					expect($('#jqistate_s1')).toHaveCss({display:'none'});
+					expect($('#jqistate_s2')).toHaveCss({display:'none'});
+					expect($('#jqistate_s3')).toHaveCss({display:'block'});
+				});
+
+				it('should do nothing if the state is not available', function() {
+
+					$.prompt.open(states);
+					
+					$.prompt.goToState('s4');
+
+					expect($('#jqistate_s1')).toHaveCss({display:'block'});
+					expect($('#jqistate_s2')).toHaveCss({display:'none'});
+					expect($('#jqistate_s3')).toHaveCss({display:'none'});
+				});
+
+				it('should handle substate option', function() {
+
+					$.prompt.open(states);
+					
+					$.prompt.goToState('s2',true);
+
+					expect($('#jqistate_s1')).toHaveCss({display:'block'});
+					expect($('#jqistate_s2')).toHaveCss({display:'block'});
+					expect($('#jqistate_s3')).toHaveCss({display:'none'});
+
+					expect($('#jqistate_s2')).toHaveClass('jqisubstate');
+				});
+			});
+
+			// ====================================================================================
+			describe('$.prompt.nextState()', function() {
+				it('should make the next state visible', function() {
+					
+					$.prompt.open(states);
+					
+					$.prompt.nextState();
+
+					expect($('#jqistate_s1')).toHaveCss({display:'none'});
+					expect($('#jqistate_s2')).toHaveCss({display:'block'});
+					expect($('#jqistate_s3')).toHaveCss({display:'none'});
+				});
+
+				it('should do nothing if the state is not available', function() {
+
+					$.prompt.open(states);
+					
+					$.prompt.goToState('s3');
+					$.prompt.nextState();
+
+					expect($('#jqistate_s1')).toHaveCss({display:'none'});
+					expect($('#jqistate_s2')).toHaveCss({display:'none'});
+					expect($('#jqistate_s3')).toHaveCss({display:'block'});
+				});
+			});
+
+			// ====================================================================================
+			describe('$.prompt.prevState()', function() {
+				it('should make the previous state visible', function() {
+					
+					$.prompt.open(states);
+					
+					$.prompt.goToState('s3');
+					$.prompt.prevState();
+
+					expect($('#jqistate_s1')).toHaveCss({display:'none'});
+					expect($('#jqistate_s2')).toHaveCss({display:'block'});
+					expect($('#jqistate_s3')).toHaveCss({display:'none'});
+				});
+
+				it('should do nothing if the state is not available', function() {
+
+					$.prompt.open(states);
+					
+					$.prompt.prevState();
+
+					expect($('#jqistate_s1')).toHaveCss({display:'block'});
+					expect($('#jqistate_s2')).toHaveCss({display:'none'});
+					expect($('#jqistate_s3')).toHaveCss({display:'none'});
+				});
+			});
+
+			// ====================================================================================
+			describe('$.prompt.addState()', function() {
+				it('should add a new state as the last state', function() {
+					var newState = {
+						name: 's4',
+						title: 's4',
+						html: 'testing s4',
+						buttons: { Ok:true,Cancel:false}
+					};
+
+					$.prompt.open(states);
+					
+					var $stateobj = $.prompt.addState(newState.name, newState);
+
+					// element created?
+					expect($stateobj).toExist();
+
+					// element in the right place?
+					expect($stateobj.prev()).toHaveId('jqistate_s3');
+
+					// element visibility correct?
+					expect($('#jqistate_s1')).toHaveCss({display:'block'});
+					expect($stateobj).toHaveCss({display:'none'});
+
+					// content generated ok?
+					expect($stateobj.find('.jqimessage')).toHaveText(newState.html);
+					expect($stateobj.find('.jqititle')).toHaveText(newState.title);
+					expect($stateobj.find('.jqibutton')).toHaveLength(2);
+				});
+
+				it('should add a new state after specified state', function() {
+					var newState = {
+						name: 's4',
+						title: 's4',
+						html: 'testing s4',
+						buttons: { Ok:true,Cancel:false}
+					},
+					afterState = 's2';
+
+					$.prompt.open(states);
+					
+					var $stateobj = $.prompt.addState(newState.name, newState, afterState);
+
+					expect($stateobj.prev()).toHaveId('jqistate_'+afterState);
+				});
+			});
+
+			// ====================================================================================
+			describe('$.prompt.removeState()', function() {
+				it('should remove the specified state', function() {
+					
+					$.prompt.open(states);
+					
+					$.prompt.removeState('s2');
+
+					expect($('#jqistate_s2')).not.toExist();
+				});
+				
+				it('should display requested state', function() {
+
+					$.prompt.open(states);
+					
+					$.prompt.removeState('s1','s3');
+
+					expect($('#jqistate_s2')).toHaveCss({display:'none'});
+					expect($('#jqistate_s3')).toHaveCss({display:'block'});
+				});
+				
+				it('should display next state', function() {
+
+					$.prompt.open(states);
+					
+					$.prompt.removeState('s1');
+
+					expect($('#jqistate_s2')).toHaveCss({display:'block'});
+					expect($('#jqistate_s3')).toHaveCss({display:'none'});
+				});
+				
+				it('should display previous state', function() {
+
+					$.prompt.open(states);
+					$.prompt.goToState('s3');
+					$.prompt.removeState('s3');
+
+					expect($('#jqistate_s1')).toHaveCss({display:'none'});
+					expect($('#jqistate_s2')).toHaveCss({display:'block'});
+				});
+				
+			});
+
+			// ====================================================================================
+			describe('$.prompt.close()', function() {
+				it('should close the prompt', function() {
+					
+					$.prompt.open(states);
+					
+					$.prompt.close();
+
+					expect($('.jqibox')).not.toExist();
+				});
+
+			});
+		}); // end instance methods
 	}); // end api methods
 	
 	// ====================================================================================
@@ -593,7 +627,7 @@ describe('jquery-impromptu', function() {
 				beforeEach(function(done){
 					spyEventCalled = false;
 					$('body').on('impromptu:loaded', '.jqibox', function(){ spyEventCalled=true; done(); });
-					$.prompt(states);
+					$.prompt.open(states);
 				});
 
 				it('should fire event', function(){
@@ -606,7 +640,7 @@ describe('jquery-impromptu', function() {
 
 				beforeEach(function(done){
 					spyEventCalled = false;
-					$.prompt(states, { loaded: function(){ spyEventCalled = true; done(); } });
+					$.prompt.open(states, { loaded: function(){ spyEventCalled = true; done(); } });
 				});
 
 				it('should allow event function as option parameter', function(){
@@ -624,7 +658,7 @@ describe('jquery-impromptu', function() {
 				beforeEach(function(done){
 					spyEventCalled = false;
 					$('body').on('impromptu:close', '.jqibox', function(){ spyEventCalled=true; done(); });
-					$.prompt(states, {
+					$.prompt.open(states, {
 						loaded: function(){
 							$.prompt.close();
 						}
@@ -641,7 +675,7 @@ describe('jquery-impromptu', function() {
 
 				beforeEach(function(done){
 					spyEventCalled = false;
-					$.prompt(states, { 
+					$.prompt.open(states, { 
 						loaded: function(){ $.prompt.close(); },
 						close: function(){ spyEventCalled = true; done(); }
 					});
@@ -664,7 +698,7 @@ describe('jquery-impromptu', function() {
 					spyEventCalled = false;
 
 					$('body').on('impromptu:statechanging', '.jqibox', function(){ spyEventCalled = true; done(); });
-					$.prompt(states, {
+					$.prompt.open(states, {
 						loaded: function(){
 							$.prompt.goToState('s2');
 						}
@@ -682,7 +716,7 @@ describe('jquery-impromptu', function() {
 				beforeEach(function(done){
 					spyEventCalled = false;
 
-					$.prompt(states, { 
+					$.prompt.open(states, { 
 						loaded: function(){
 							$.prompt.goToState('s2');
 						},
@@ -699,7 +733,7 @@ describe('jquery-impromptu', function() {
 			it('should allow preventDefault', function(){
 				var spyEvent = spyOnEvent('body', 'impromptu:statechanging');
 
-				$.prompt(states, { 
+				$.prompt.open(states, { 
 					loaded: function(){
 						$.prompt.goToState('s2');
 					},
@@ -724,7 +758,7 @@ describe('jquery-impromptu', function() {
 					spyEventCalled = false;
 
 					$('body').on('impromptu:statechanged', '.jqibox', function(){ spyEventCalled = true; done(); });
-					$.prompt(states, {
+					$.prompt.open(states, {
 						loaded: function(){
 							$.prompt.goToState('s2');
 						}
@@ -742,7 +776,7 @@ describe('jquery-impromptu', function() {
 				beforeEach(function(done){
 					spyEventCalled = false;
 
-					$.prompt(states, { 
+					$.prompt.open(states, { 
 						loaded: function(){
 							$.prompt.goToState('s2');
 						},
@@ -767,7 +801,7 @@ describe('jquery-impromptu', function() {
 					spyEventCalled = false;
 
 					$('body').on('impromptu:submit', '.jqibox', function(){ spyEventCalled = true; done(); });
-					$.prompt(states, {
+					$.prompt.open(states, {
 						loaded: function(){
 							$.prompt.getState('s1').find('.jqibutton:first').click();
 						}
@@ -787,7 +821,7 @@ describe('jquery-impromptu', function() {
 				beforeEach(function(done){
 					spyEventCalled = false;
 
-					$.prompt('Test message', { 
+					$.prompt.open('Test message', { 
 						loaded: function(){
 							$('.jqibutton:first').click();
 						},
@@ -815,7 +849,7 @@ describe('jquery-impromptu', function() {
 						done();
 					});
 
-					$.prompt(states, {
+					$.prompt.open(states, {
 						loaded: function(){
 							$.prompt.getState('s1').find('#jqi_s1_buttoncancel').click();
 						}
@@ -867,7 +901,7 @@ describe('jquery-impromptu', function() {
 						done();
 					});
 
-					$.prompt(tmpStates, {
+					$.prompt.open(tmpStates, {
 						loaded: function(){
 							$.prompt.getState('s1').find('#jqi_s1_buttonnext').click();
 						}
@@ -909,7 +943,7 @@ describe('jquery-impromptu', function() {
 
 				beforeEach(function(done){
 
-					$.prompt(states, { 
+					$.prompt.open(states, { 
 						loaded: function(){
 							var e = $.Event('keydown');
 							e.keyCode = 27;
@@ -930,7 +964,7 @@ describe('jquery-impromptu', function() {
 
 				beforeEach(function(done){
 
-					$.prompt(states, { 
+					$.prompt.open(states, { 
 						loaded: function(){
 							var e = $.Event('keydown');
 							e.keyCode = 27;
@@ -957,7 +991,7 @@ describe('jquery-impromptu', function() {
 						done();
 					});
 
-					$.prompt(states, { 
+					$.prompt.open(states, { 
 						loaded: function(){
 							var e = $.Event('keydown');
 							e.keyCode = 13;
@@ -979,7 +1013,7 @@ describe('jquery-impromptu', function() {
 			describe('fade click', function(){
 
 				beforeEach(function(done){
-					$.prompt(states, { 
+					$.prompt.open(states, { 
 						loaded: function(){
 							var e = $.Event('click');
 							$.prompt.jqib.trigger(e);
