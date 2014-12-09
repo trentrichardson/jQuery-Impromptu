@@ -296,7 +296,7 @@
 
 			t.jqif.click(fadeClicked);
 			$window.resize({animate:false}, function(){ t.position(); });
-			t.jqi.find('.'+ opts.prefix +'close').click(t.close);
+			t.jqi.find('.'+ opts.prefix +'close').click(function(){ t.close(); });
 			t.jqib.on("keydown",keyDownEventHandler)
 						.on('impromptu:loaded', opts.loaded)
 						.on('impromptu:close', opts.close)
