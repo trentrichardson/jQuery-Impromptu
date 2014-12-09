@@ -145,7 +145,7 @@
 			if(opts.useiframe && ($('object, applet').length > 0)) {
 				msgbox += '<iframe src="javascript:false;" style="display:block;position:absolute;z-index:-1;" class="'+ opts.prefix +'fade '+ opts.classes.fade +'"></iframe>';
 			} else {
-				msgbox +='<div class="'+ opts.prefix +'fade '+ opts.classes.fade +'"></div>';
+				msgbox += '<div class="'+ opts.prefix +'fade '+ opts.classes.fade +'"></div>';
 			}
 			msgbox += '<div class="'+ opts.prefix +' '+ opts.classes.prompt +'">'+
 						'<form action="javascript:false;" onsubmit="return false;" class="'+ opts.prefix +'form '+ opts.classes.form +'">'+
@@ -294,8 +294,13 @@
 			t.position();
 			t.style();
 
+			// store copy of the window resize function for interal use only
+			t._windowResize = function(e){
+				t.position(e);
+			};
+			$window.resize({ animate: false }, t._windowResize);
+
 			t.jqif.click(fadeClicked);
-			$window.resize({animate:false}, function(){ t.position(); });
 			t.jqi.find('.'+ opts.prefix +'close').click(function(){ t.close(); });
 			t.jqib.on("keydown",keyDownEventHandler)
 						.on('impromptu:loaded', opts.loaded)
@@ -344,7 +349,7 @@
 					
 					t.jqib.remove();
 					
-					$(window).off('resize', function(){ t.position(); });
+					$(window).off('resize', t._windowResize);
 
 					if(typeof callCallback === 'function'){
 						callCallback();
