@@ -85,8 +85,8 @@ describe('jquery-impromptu', function() {
 				$.prompt.open('This is a test', {
 					buttons: { Ok:true, Cancel:false }
 				});
-				var okBtn = $('#jqi_state0_buttonOk'),
-					cancelBtn = $('#jqi_state0_buttonCancel');
+				var okBtn = $('button[name="jqi_state0_buttonOk"]'),
+					cancelBtn = $('button[name="jqi_state0_buttonCancel"]');
 
 				expect($('.jqibutton')).toHaveLength(2);
 
@@ -108,8 +108,8 @@ describe('jquery-impromptu', function() {
 						{ title: 'Cancel', value: false }
 					]
 				});
-				var okBtn = $('#jqi_state0_buttonOk'),
-					cancelBtn = $('#jqi_state0_buttonCancel');
+				var okBtn = $('button[name="jqi_state0_buttonOk"]'),
+					cancelBtn = $('button[name="jqi_state0_buttonCancel"]');
 
 				expect($('.jqibutton')).toHaveLength(2);
 
@@ -131,8 +131,8 @@ describe('jquery-impromptu', function() {
 						{ title: 'Cancel', value: false, classes: 'cancel1 cancel2' }
 					]
 				});
-				var okBtn = $('#jqi_state0_buttonOk'),
-					cancelBtn = $('#jqi_state0_buttonCancel');
+				var okBtn = $('button[name="jqi_state0_buttonOk"]'),
+					cancelBtn = $('button[name="jqi_state0_buttonCancel"]');
 
 				expect(okBtn).toHaveClass('ok1');
 				expect(okBtn).toHaveClass('ok2');
@@ -150,8 +150,8 @@ describe('jquery-impromptu', function() {
 					],
 					classes: { button: 'testclass' }
 				});
-				var okBtn = $('#jqi_state0_buttonOk'),
-					cancelBtn = $('#jqi_state0_buttonCancel');
+				var okBtn = $('button[name="jqi_state0_buttonOk"]'),
+					cancelBtn = $('button[name="jqi_state0_buttonCancel"]');
 
 				expect(okBtn).toHaveClass('testclass');
 				expect(cancelBtn).toHaveClass('testclass');
@@ -167,9 +167,9 @@ describe('jquery-impromptu', function() {
 					],
 					focus: 1
 				});
-				var okBtn = $('#jqi_state0_buttonOk'),
-					cancelBtn = $('#jqi_state0_buttonCancel'),
-					anotherBtn = $('#jqi_state0_buttonAnother');
+				var okBtn = $('button[name="jqi_state0_buttonOk"]'),
+					cancelBtn = $('button[name="jqi_state0_buttonCancel"]'),
+					anotherBtn = $('button[name="jqi_state0_buttonAnother"]');
 
 				expect(okBtn).not.toHaveClass('jqidefaultbutton');
 				expect(cancelBtn).toHaveClass('jqidefaultbutton');
@@ -187,9 +187,9 @@ describe('jquery-impromptu', function() {
 					focus: '#testInput',
 					defaultButton: 1
 				});
-				var okBtn = $('#jqi_state0_buttonOk'),
-					cancelBtn = $('#jqi_state0_buttonCancel'),
-					anotherBtn = $('#jqi_state0_buttonAnother');
+				var okBtn = $('button[name="jqi_state0_buttonOk"]'),
+					cancelBtn = $('button[name="jqi_state0_buttonCancel"]'),
+					anotherBtn = $('button[name="jqi_state0_buttonAnother"]');
 
 				expect(okBtn).not.toHaveClass('jqidefaultbutton');
 				expect(cancelBtn).toHaveClass('jqidefaultbutton');
@@ -227,9 +227,9 @@ describe('jquery-impromptu', function() {
 				
 				expect($('.jqistate')).toHaveLength(3);
 
-				expect($('#jqistate_s1 .jqimessage')).toHaveText(states.s1.html);
-				expect($('#jqistate_s2 .jqimessage')).toHaveText(states.s2.html);
-				expect($('#jqistate_s3 .jqimessage')).toHaveText(states.s3.html);
+				expect($('.jqistate[data-jqi-name="s1"] .jqimessage')).toHaveText(states.s1.html);
+				expect($('.jqistate[data-jqi-name="s2"] .jqimessage')).toHaveText(states.s2.html);
+				expect($('.jqistate[data-jqi-name="s3"] .jqimessage')).toHaveText(states.s3.html);
 			});
 
 			it('should create states from array', function() {
@@ -243,9 +243,9 @@ describe('jquery-impromptu', function() {
 				
 				expect($('.jqistate')).toHaveLength(3);
 
-				expect($('#jqistate_0 .jqimessage')).toHaveText(states[0].html);
-				expect($('#jqistate_1 .jqimessage')).toHaveText(states[1].html);
-				expect($('#jqistate_2 .jqimessage')).toHaveText(states[2].html);
+				expect($('.jqistate[data-jqi-name="0"] .jqimessage')).toHaveText(states[0].html);
+				expect($('.jqistate[data-jqi-name="1"] .jqimessage')).toHaveText(states[1].html);
+				expect($('.jqistate[data-jqi-name="2"] .jqimessage')).toHaveText(states[2].html);
 			});
 
 			it('should show the first state automatically', function() {
@@ -259,9 +259,9 @@ describe('jquery-impromptu', function() {
 
 				$.prompt.open(states);
 
-				expect($('#jqistate_0')).toHaveCss({display:'block'});
-				expect($('#jqistate_1')).toHaveCss({display:'none'});
-				expect($('#jqistate_2')).toHaveCss({display:'none'});
+				expect($('.jqistate[data-jqi-name="0"]')).toHaveCss({display:'block'});
+				expect($('.jqistate[data-jqi-name="1"]')).toHaveCss({display:'none'});
+				expect($('.jqistate[data-jqi-name="2"]')).toHaveCss({display:'none'});
 			});
 
 			it('should name states properly when name specified', function() {
@@ -273,9 +273,9 @@ describe('jquery-impromptu', function() {
 
 				$.prompt.open(states);
 				
-				expect($('#jqistate_s1')).toExist();
-				expect($('#jqistate_s2')).toExist();
-				expect($('#jqistate_s3')).toExist();
+				expect($('.jqistate[data-jqi-name="s1"]')).toExist();
+				expect($('.jqistate[data-jqi-name="s2"]')).toExist();
+				expect($('.jqistate[data-jqi-name="s3"]')).toExist();
 			});
 		});
 
@@ -354,7 +354,7 @@ describe('jquery-impromptu', function() {
 					$.prompt.open(states);
 					
 					var actualResult = $.prompt.getState('s2'),
-						expectedResult = $('#jqistate_s2');
+						expectedResult = $('.jqistate[data-jqi-name="s2"]');
 
 					expect(actualResult[0]).toBe(expectedResult[0]);
 				});
@@ -367,7 +367,7 @@ describe('jquery-impromptu', function() {
 					$.prompt.open(states);
 					
 					var actualResult = $.prompt.getCurrentState(),
-						expectedResult = $('#jqistate_s1');
+						expectedResult = $('.jqistate[data-jqi-name="s1"]');
 
 					expect(actualResult[0]).toBe(expectedResult[0]);
 				});
@@ -377,7 +377,7 @@ describe('jquery-impromptu', function() {
 					$.prompt.open(states);
 					$.prompt.goToState('s2');
 					var actualResult = $.prompt.getCurrentState(),
-						expectedResult = $('#jqistate_s2');
+						expectedResult = $('.jqistate[data-jqi-name="s2"]');
 
 					expect(actualResult[0]).toBe(expectedResult[0]);
 				});
@@ -414,9 +414,9 @@ describe('jquery-impromptu', function() {
 					
 					$.prompt.goToState('s3');
 
-					expect($('#jqistate_s1')).toHaveCss({display:'none'});
-					expect($('#jqistate_s2')).toHaveCss({display:'none'});
-					expect($('#jqistate_s3')).toHaveCss({display:'block'});
+					expect($('.jqistate[data-jqi-name="s1"]')).toHaveCss({display:'none'});
+					expect($('.jqistate[data-jqi-name="s2"]')).toHaveCss({display:'none'});
+					expect($('.jqistate[data-jqi-name="s3"]')).toHaveCss({display:'block'});
 				});
 
 				it('should do nothing if the state is not available', function() {
@@ -425,9 +425,9 @@ describe('jquery-impromptu', function() {
 					
 					$.prompt.goToState('s4');
 
-					expect($('#jqistate_s1')).toHaveCss({display:'block'});
-					expect($('#jqistate_s2')).toHaveCss({display:'none'});
-					expect($('#jqistate_s3')).toHaveCss({display:'none'});
+					expect($('.jqistate[data-jqi-name="s1"]')).toHaveCss({display:'block'});
+					expect($('.jqistate[data-jqi-name="s2"]')).toHaveCss({display:'none'});
+					expect($('.jqistate[data-jqi-name="s3"]')).toHaveCss({display:'none'});
 				});
 
 				it('should handle substate option', function() {
@@ -436,11 +436,11 @@ describe('jquery-impromptu', function() {
 					
 					$.prompt.goToState('s2',true);
 
-					expect($('#jqistate_s1')).toHaveCss({display:'block'});
-					expect($('#jqistate_s2')).toHaveCss({display:'block'});
-					expect($('#jqistate_s3')).toHaveCss({display:'none'});
+					expect($('.jqistate[data-jqi-name="s1"]')).toHaveCss({display:'block'});
+					expect($('.jqistate[data-jqi-name="s2"]')).toHaveCss({display:'block'});
+					expect($('.jqistate[data-jqi-name="s3"]')).toHaveCss({display:'none'});
 
-					expect($('#jqistate_s2')).toHaveClass('jqisubstate');
+					expect($('.jqistate[data-jqi-name="s2"]')).toHaveClass('jqisubstate');
 				});
 			});
 
@@ -452,9 +452,9 @@ describe('jquery-impromptu', function() {
 					
 					$.prompt.nextState();
 
-					expect($('#jqistate_s1')).toHaveCss({display:'none'});
-					expect($('#jqistate_s2')).toHaveCss({display:'block'});
-					expect($('#jqistate_s3')).toHaveCss({display:'none'});
+					expect($('.jqistate[data-jqi-name="s1"]')).toHaveCss({display:'none'});
+					expect($('.jqistate[data-jqi-name="s2"]')).toHaveCss({display:'block'});
+					expect($('.jqistate[data-jqi-name="s3"]')).toHaveCss({display:'none'});
 				});
 
 				it('should do nothing if the state is not available', function() {
@@ -464,9 +464,9 @@ describe('jquery-impromptu', function() {
 					$.prompt.goToState('s3');
 					$.prompt.nextState();
 
-					expect($('#jqistate_s1')).toHaveCss({display:'none'});
-					expect($('#jqistate_s2')).toHaveCss({display:'none'});
-					expect($('#jqistate_s3')).toHaveCss({display:'block'});
+					expect($('.jqistate[data-jqi-name="s1"]')).toHaveCss({display:'none'});
+					expect($('.jqistate[data-jqi-name="s2"]')).toHaveCss({display:'none'});
+					expect($('.jqistate[data-jqi-name="s3"]')).toHaveCss({display:'block'});
 				});
 			});
 
@@ -479,9 +479,9 @@ describe('jquery-impromptu', function() {
 					$.prompt.goToState('s3');
 					$.prompt.prevState();
 
-					expect($('#jqistate_s1')).toHaveCss({display:'none'});
-					expect($('#jqistate_s2')).toHaveCss({display:'block'});
-					expect($('#jqistate_s3')).toHaveCss({display:'none'});
+					expect($('.jqistate[data-jqi-name="s1"]')).toHaveCss({display:'none'});
+					expect($('.jqistate[data-jqi-name="s2"]')).toHaveCss({display:'block'});
+					expect($('.jqistate[data-jqi-name="s3"]')).toHaveCss({display:'none'});
 				});
 
 				it('should do nothing if the state is not available', function() {
@@ -490,9 +490,9 @@ describe('jquery-impromptu', function() {
 					
 					$.prompt.prevState();
 
-					expect($('#jqistate_s1')).toHaveCss({display:'block'});
-					expect($('#jqistate_s2')).toHaveCss({display:'none'});
-					expect($('#jqistate_s3')).toHaveCss({display:'none'});
+					expect($('.jqistate[data-jqi-name="s1"]')).toHaveCss({display:'block'});
+					expect($('.jqistate[data-jqi-name="s2"]')).toHaveCss({display:'none'});
+					expect($('.jqistate[data-jqi-name="s3"]')).toHaveCss({display:'none'});
 				});
 			});
 
@@ -514,10 +514,10 @@ describe('jquery-impromptu', function() {
 					expect($stateobj).toExist();
 
 					// element in the right place?
-					expect($stateobj.prev()).toHaveId('jqistate_s3');
+					expect($stateobj.prev().data('jqi-name')).toBe('s3');
 
 					// element visibility correct?
-					expect($('#jqistate_s1')).toHaveCss({display:'block'});
+					expect($('.jqistate[data-jqi-name="s1"]')).toHaveCss({display:'block'});
 					expect($stateobj).toHaveCss({display:'none'});
 
 					// content generated ok?
@@ -539,7 +539,7 @@ describe('jquery-impromptu', function() {
 					
 					var $stateobj = $.prompt.addState(newState.name, newState, afterState);
 
-					expect($stateobj.prev()).toHaveId('jqistate_'+afterState);
+					expect($stateobj.prev().data('jqi-name')).toBe(afterState);
 				});
 			});
 
@@ -551,7 +551,7 @@ describe('jquery-impromptu', function() {
 					
 					$.prompt.removeState('s2');
 
-					expect($('#jqistate_s2')).not.toExist();
+					expect($('.jqistate[data-jqi-name="s2"]')).not.toExist();
 				});
 				
 				it('should display requested state', function() {
@@ -560,8 +560,8 @@ describe('jquery-impromptu', function() {
 					
 					$.prompt.removeState('s1','s3');
 
-					expect($('#jqistate_s2')).toHaveCss({display:'none'});
-					expect($('#jqistate_s3')).toHaveCss({display:'block'});
+					expect($('.jqistate[data-jqi-name="s2"]')).toHaveCss({display:'none'});
+					expect($('.jqistate[data-jqi-name="s3"]')).toHaveCss({display:'block'});
 				});
 				
 				it('should display next state', function() {
@@ -570,8 +570,8 @@ describe('jquery-impromptu', function() {
 					
 					$.prompt.removeState('s1');
 
-					expect($('#jqistate_s2')).toHaveCss({display:'block'});
-					expect($('#jqistate_s3')).toHaveCss({display:'none'});
+					expect($('.jqistate[data-jqi-name="s2"]')).toHaveCss({display:'block'});
+					expect($('.jqistate[data-jqi-name="s3"]')).toHaveCss({display:'none'});
 				});
 				
 				it('should display previous state', function() {
@@ -580,8 +580,8 @@ describe('jquery-impromptu', function() {
 					$.prompt.goToState('s3');
 					$.prompt.removeState('s3');
 
-					expect($('#jqistate_s1')).toHaveCss({display:'none'});
-					expect($('#jqistate_s2')).toHaveCss({display:'block'});
+					expect($('.jqistate[data-jqi-name="s1"]')).toHaveCss({display:'none'});
+					expect($('.jqistate[data-jqi-name="s2"]')).toHaveCss({display:'block'});
 				});
 				
 			});
@@ -851,7 +851,7 @@ describe('jquery-impromptu', function() {
 
 					$.prompt.open(states, {
 						loaded: function(){
-							$.prompt.getState('s1').find('#jqi_s1_buttoncancel').click();
+							$.prompt.getState('s1').find('button[value="false"]').click();
 						}
 					});
 				});
@@ -903,7 +903,7 @@ describe('jquery-impromptu', function() {
 
 					$.prompt.open(tmpStates, {
 						loaded: function(){
-							$.prompt.getState('s1').find('#jqi_s1_buttonnext').click();
+							$.prompt.getState('s1').find('button[value="true"]').click();
 						}
 					});
 				});
