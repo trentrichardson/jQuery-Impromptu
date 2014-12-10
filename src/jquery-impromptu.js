@@ -480,6 +480,14 @@
 		},
 
 		/**
+		* get - Get the box containing fade and prompt
+		* @return jQuery - the prompt
+		*/
+		getBox: function() {
+			return this.jqib;
+		},
+
+		/**
 		* get - Get the prompt
 		* @return jQuery - the prompt
 		*/
@@ -738,6 +746,61 @@
 	};
 
 	// ########################################################################
+	// $.prompt will manage a queue of Impromptu instances
+	// ########################################################################
+
+	/**
+	* $.prompt create a new Impromptu instance and push it on the stack of instances
+	* @param message String/Object - String of html or Object of states
+	* @param options Object - Options to set the prompt
+	* @return jQuery - the jQuery object of the prompt within the modal
+	*/
+	$.prompt = function(message, options){
+		var api = new Imp();		
+		$.prompt.lifo.push(api);
+		
+		api.open.apply(api, arguments);
+		return api.jqi;
+	};
+
+	/**
+	* @var Array - An array of Impromptu intances in a LIFO queue (last in first out)
+	*/
+	$.prompt.lifo = [];
+
+	/**
+	* $.prompt.getLast - get the last element from the queue (doesn't pop, just returns)
+	* @return Imp - the instance of this Impromptu object or false if queue is empty
+	*/
+	$.prompt.getLast = function(){
+		var l = $.prompt.lifo.length;
+		return (l > 0)? $.prompt.lifo[l-1] : false;
+	};
+
+	/**
+	* Copy over static methods
+	*/
+	$.each(Imp, function(k,v){
+		$.prompt[k] = v;
+	});
+
+	/**
+	* Create a proxy for accessing all instance methods. The close method pops from queue.
+	*/
+	$.each(Imp.prototype, function(k,v){
+		$.prompt[k] = function(){
+			var api = $.prompt.getLast();
+
+			if(api && typeof api[k] === "function"){
+				if(k === 'close'){
+					$.prompt.lifo.pop();
+				}
+				return api[k].apply(api, arguments);
+			}
+		};
+	});
+
+	// ########################################################################
 	// jQuery Plugin and public access
 	// ########################################################################
 
@@ -761,11 +824,5 @@
 	* Can be used from here forth as new Impromptu(states, opts)
 	*/
 	window.Impromptu = Imp;
-
-	/**
-	* Set $.prompt as a single instance
-	* Can be used from here forth as $.prompt.open(state, opts)
-	*/
-	$.prompt = new Imp();
 
 }));

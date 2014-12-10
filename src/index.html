@@ -128,7 +128,20 @@
 				<!-- ---------------------------------------------- -->
 				<div id="Options" class="section">
 					<h2>Options</h2>
-					<pre><code>$.prompt.open( msg , options )</code></pre>
+
+					<h3>Usage</h3>
+					<pre><code>var jqPromptEl = $.prompt( msg , options );
+
+// OR
+
+var api = new Impromptu( msg , options );</code></pre>
+					
+					<p>Impromptu can be called through $.prompt() or by creating a new instance of the Impromptu object.  Whats the difference?</p>
+					<p>An Impromptu instance is a single prompt.  The constructor returns it's api so you can manipulate it.</p>
+					<p>$.prompt is an object that manages a stack of Impromptu instances.  What does this mean?  You can continuously call $.prompt without closing the previous prompt, and $.prompt will always manage the newest prompt on the stack by acting as a proxy to the latest Impromptu instance. $.prompt() will return a jQuery object of the latests prompt.</p>
+					
+					<p>Since $.prompt acts as a simple proxy to Impromptu, they accept the same options.</p>
+
 					<h3>msg</h3>
 					<p>The message can either be an html string, or an object of "states".  Each state has the following properties:</p>
 					<dl>
@@ -247,19 +260,19 @@
 				<div id="Methods" class="section">
 					<h2>Methods</h2>
 					<dl class="methoddl">
-						<dt>Impromptu.setDefaults(options)</dt>
+						<dt>$.prompt.setDefaults(options)</dt>
 						<dd>
 							Sets the defaults for prompts.<br />
-<pre><code>Impromptu.setDefaults({
+<pre><code>$.prompt.setDefaults({
 	prefix: 'myPrompt',
 	show: 'slideDown'
 });</pre></code>
 						</dd>
 						
-						<dt>Impromptu.setStateDefaults(options)</dt>
+						<dt>$.prompt.setStateDefaults(options)</dt>
 						<dd>
 							Sets the defaults for states.<br />
-<pre><code>Impromptu.setStateDefaults({
+<pre><code>$.prompt.setStateDefaults({
 	buttons: { Ok:true, Cancel:false },
 	focus: 1
 });</pre></code>
@@ -338,7 +351,7 @@ $.prompt.getState('state2')
 					
 <div class="example-container">
 	<p>A prompt in the simplest of fashion.</p>
-<pre class="code">$.prompt.open("Hello World!");</pre>
+<pre class="code">$.prompt("Hello World!");</pre>
 	<div class="buttons">
 		<button class="run">Run It!</button>
 	</div>
@@ -346,7 +359,7 @@ $.prompt.getState('state2')
 
 <div class="example-container">
 	<p>Lets add some buttons and a title.</p>
-<pre class="code">$.prompt.open("Proceeding may be good for your site..", {
+<pre class="code">$.prompt("Proceeding may be good for your site..", {
 	title: "Are you Ready?",
 	buttons: { "Yes, I'm Ready": true, "No, Lets Wait": false }
 });</pre>
@@ -357,7 +370,7 @@ $.prompt.getState('state2')
 
 <div class="example-container">
 	<p>Use the submit function to get the answer.</p>
-<pre class="code">$.prompt.open("Open your javascript console to see the answer.", {
+<pre class="code">$.prompt("Open your javascript console to see the answer.", {
 	title: "Are you Ready?",
 	buttons: { "Yes, I'm Ready": true, "No, Lets Wait": false },
 	submit: function(e,v,m,f){
@@ -404,7 +417,7 @@ $.prompt.getState('state2')
 	}
 };
 
-$.prompt.open(statesdemo);</pre>
+$.prompt(statesdemo);</pre>
 	<div class="buttons">
 		<button class="run">Run It!</button>
 	</div>
@@ -448,7 +461,7 @@ $.prompt.open(statesdemo);</pre>
 	}
 };
 
-$.prompt.open(statesdemo);</pre>
+$.prompt(statesdemo);</pre>
 	<div class="buttons">
 		<button class="run">Run It!</button>
 	</div>
@@ -517,7 +530,7 @@ tourStates = [
 		submit: tourSubmitFunc
 	}
 ];
-$.prompt.open(tourStates);</pre>
+$.prompt(tourStates);</pre>
 	<div class="buttons">
 		<button class="run">Run It!</button>
 	</div>
@@ -575,7 +588,7 @@ $.prompt.open(tourStates);</pre>
 	},
 };
 
-$.prompt.open(statesdemo);</pre>
+$.prompt(statesdemo);</pre>
 	<div class="buttons">
 		<button class="run">Run It!</button>
 	</div>
