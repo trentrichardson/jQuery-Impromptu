@@ -290,6 +290,15 @@ var api = new Impromptu( msg , options );</code></pre>
 						<dt>jQuery.prompt.getState(stateName)</dt>
 						<dd>Returns a jquery object of the state, so you can update the content within it.</dd>
 						
+						<dt>jQuery.prompt.getPrompt()</dt>
+						<dd>Returns a jquery object of the prompt.</dd>
+						
+						<dt>jQuery.prompt.getBox()</dt>
+						<dd>Returns a jquery object of the box (div) containing the fade and prompt.</dd>
+						
+						<dt>jQuery.prompt.getApi()</dt>
+						<dd>Returns the instance object exposing the api.  Useful when using $.prompt and you want direct access to the Impromptu instance.</dd>
+						
 						<dt>jQuery.prompt.addState(stateName, stateOptions, insertAfterState)</dt>
 						<dd>Injects a new state after the indicated insertAfterState name.  Returns a jQuery object of the new state.</dd>
 						

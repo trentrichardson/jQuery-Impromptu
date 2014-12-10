@@ -156,7 +156,7 @@
 				'</div>';
 
 			t.jqib = $(msgbox).appendTo($body);
-			t.jqi = t.jqib.children('.'+ opts.prefix);//.data('jqi',opts);
+			t.jqi = t.jqib.children('.'+ opts.prefix);
 			t.jqif = t.jqib.children('.'+ opts.prefix +'fade');
 
 			//if a string was passed, convert to a single state
@@ -480,7 +480,15 @@
 		},
 
 		/**
-		* get - Get the box containing fade and prompt
+		* getApi - Get the api, so you can extract it from $.prompt stack
+		* @return jQuery - the prompt
+		*/
+		getApi: function() {
+			return this;
+		},
+
+		/**
+		* getBox - Get the box containing fade and prompt
 		* @return jQuery - the prompt
 		*/
 		getBox: function() {
@@ -488,7 +496,7 @@
 		},
 
 		/**
-		* get - Get the prompt
+		* getPrompt - Get the prompt
 		* @return jQuery - the prompt
 		*/
 		getPrompt: function() {
@@ -758,7 +766,7 @@
 	$.prompt = function(message, options){
 		var api = new Imp();		
 		$.prompt.lifo.push(api);
-		
+
 		api.open.apply(api, arguments);
 		return api.jqi;
 	};
