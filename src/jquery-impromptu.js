@@ -824,7 +824,7 @@
 			options.withDataAndEvents = false;
 		}
 
-		new Imp($(this).clone(options.withDataAndEvents).html(),options);
+		$.prompt($(this).clone(options.withDataAndEvents).html(),options);
 	};
 
 	/**
