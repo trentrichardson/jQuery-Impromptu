@@ -394,6 +394,32 @@ $.prompt.getState('state2')
 	</div>
 </div>
 
+<div class="example-container">
+	<p>You can open multiple prompts at one time. Of course for a better user experience you may want to look at using states when possible, but multiple prompts can be open at once.</p>
+	<p>$.prompt will always control the most recent prompt.  If you ever need direct access to the current instance, you can call $.prompt.getApi();</p>
+<pre class="code">var multiplePromptsCounter = 1;
+
+function openMultiplePrompts(){
+
+	$.prompt("Do you want to open another?", {
+		title: "A Prompt Has Opened: "+ multiplePromptsCounter++,
+		buttons: { "Yes, Open Another": true, "No, Close This One": false },
+		persistent: false,
+		submit: function(e,v,m,f){
+			if(v){
+				e.preventDefault();
+				openMultiplePrompts();
+			}
+		}
+	});
+}
+
+openMultiplePrompts();</pre>
+	<div class="buttons">
+		<button class="run">Run It!</button>
+	</div>
+</div>
+
 					<h3>States</h3>
 
 <div class="example-container">

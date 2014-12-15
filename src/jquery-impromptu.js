@@ -18,10 +18,15 @@
 	* @return Imp - the instance of this Impromptu object
 	*/
 	var Imp = function(message, options){
+		var t = this;
+		t.id = Imp.count++;
+
+		Imp.lifo.push(t);
+
 		if(message){
-			this.open(message, options);
+			t.open(message, options);
 		}
-		return this;
+		return t;
 	};
 
 	// ########################################################################
@@ -114,11 +119,48 @@
 		Imp.defaults.state = $.extend({}, Imp.defaults.state, o);
 	};
 
+	/**
+	* @var Int - A counter used to provide a unique ID for new prompts
+	*/
+	Imp.count = 0;
+
+	/**
+	* @var Array - An array of Impromptu intances in a LIFO queue (last in first out)
+	*/
+	Imp.lifo = [];
+
+	/**
+	* getLast - get the last element from the queue (doesn't pop, just returns)
+	* @return Imp - the instance of this Impromptu object or false if queue is empty
+	*/
+	Imp.getLast = function(){
+		var l = Imp.lifo.length;
+		return (l > 0)? Imp.lifo[l-1] : false;
+	};
+
+	/**
+	* removeFromStack - remove an element from the lifo stack by its id
+	* @param id int - id of the instance to remove
+	* @return api - The api of the element removed from the stack or void
+	*/
+	Imp.removeFromStack = function(id){
+		for(var i=Imp.lifo.length-1; i>=0; i--){
+			if(Imp.lifo[i].id === id){
+				return Imp.lifo.splice(i,1)[0];
+			}
+		}
+	};
+
 	// ########################################################################
 	// extend our object instance properties and methods
 	// ########################################################################
 	Imp.prototype = {
-		
+
+		/**
+		* @var Int - A unique id, simply an autoincremented number
+		*/
+		id: null,
+
 		/**
 		* open - Opens the prompt
 		* @param message String/Object - String of html or Object of states
@@ -336,6 +378,7 @@
 		*/
 		close: function(callCallback, clicked, msg, formvals){
 			var t = this;
+			Imp.removeFromStack(t.id);
 
 			if(t.timeout){
 				clearTimeout(t.timeout);
@@ -764,25 +807,8 @@
 	* @return jQuery - the jQuery object of the prompt within the modal
 	*/
 	$.prompt = function(message, options){
-		var api = new Imp();		
-		$.prompt.lifo.push(api);
-
-		api.open.apply(api, arguments);
+		var api = new Imp(message, options);
 		return api.jqi;
-	};
-
-	/**
-	* @var Array - An array of Impromptu intances in a LIFO queue (last in first out)
-	*/
-	$.prompt.lifo = [];
-
-	/**
-	* $.prompt.getLast - get the last element from the queue (doesn't pop, just returns)
-	* @return Imp - the instance of this Impromptu object or false if queue is empty
-	*/
-	$.prompt.getLast = function(){
-		var l = $.prompt.lifo.length;
-		return (l > 0)? $.prompt.lifo[l-1] : false;
 	};
 
 	/**
@@ -797,12 +823,9 @@
 	*/
 	$.each(Imp.prototype, function(k,v){
 		$.prompt[k] = function(){
-			var api = $.prompt.getLast();
+			var api = Imp.getLast(); // always use the last instance on the stack
 
 			if(api && typeof api[k] === "function"){
-				if(k === 'close'){
-					$.prompt.lifo.pop();
-				}
 				return api[k].apply(api, arguments);
 			}
 		};
