@@ -11,5 +11,6 @@
 		"url": "git://github.com/trentrichardson/jQuery-Impromptu.git"
 	},
 	"dependencies": {
+		"jquery": ">=1.6"
 	}
 }
