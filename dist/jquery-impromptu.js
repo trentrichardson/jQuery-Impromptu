@@ -68,6 +68,7 @@
 		overlayspeed: 'slow',
 		promptspeed: 'fast',
 		show: 'fadeIn',
+		hide: 'fadeOut',
 		focus: 0,
 		defaultButton: 0,
 		useiframe: false,
@@ -389,7 +390,7 @@
 			}
 
 			if(t.jqib){
-				t.jqib.fadeOut('fast',function(){
+				t.jqib[t.options.hide]('fast',function(){
 					
 					t.jqib.trigger('impromptu:close', [clicked,msg,formvals]);
 					
