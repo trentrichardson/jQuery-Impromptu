@@ -51,7 +51,7 @@
 						
 				e.preventDefault();
 				
-				var imp = $.prompt.open(html, {
+				var imp = $.prompt(html, {
 						title: 'Search Options',
 						buttons: { Ok:true,Cancel:false },
 						submit: function(e,v,m,f){
@@ -61,20 +61,20 @@
 						}
 					});
 
-				var $so = $('#searchoptions', imp.getPrompt());
+				var $so = $('#searchoptions', imp);
 
 				$so.delegate('input', 'click', function(){
 					$('tr.checked', $so).removeClass('checked');
 					$(this).parent().parent().addClass('checked');
 				});
 
-				$('#searchquery', imp.getPrompt()).focus().keydown(function(event){
+				$('#searchquery', imp).focus().keydown(function(event){
 					var $i = $(this),
 						query = $i.val(),
 						re = new RegExp(query,"i"),
 						html = "",
 						counter = 0,
-						$sos = $('#optionsearchstatus',imp.getPrompt());
+						$sos = $('#optionsearchstatus',imp);
 
 					if(event.which == 13 || event.keyCode == 13 && $.trim(query) !== ''){
 
@@ -98,7 +98,7 @@
 						$so.find('tbody').html(html);
 						$so.find('tr:eq(0)').addClass('checked').find('input').attr('checked',true);
 
-						$('#searchoptionswrapper',imp.getPrompt()).slideDown('slow', function(){
+						$('#searchoptionswrapper',imp).slideDown('slow', function(){
 							$sos.hide();
 						});
 
