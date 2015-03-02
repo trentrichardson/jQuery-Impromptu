@@ -188,6 +188,9 @@ var api = new Impromptu( msg , options );</code></pre>
 						<dt>buttons</dt>
 						<dd>An object containing the text and values of each button the user may click. <em>Default: { Ok : true }</em></dd>
 
+						<dt>buttonTimeout</dt>
+						<dd>A time frame in milliseconds to disable buttons after a click to prevent double submitting.  -1 will disable this feature. <em>Default: 1000</em></dd>
+
 						<dt>classes</dt>
 						<dd>An object of class names for each part of a prompt for greater compatibilty with existing css frameworks.  For example if you would like to use twitter bootstrap you would include the base theme (in the themes folder), then pass the following classes:
 <pre><code>{
@@ -316,6 +319,12 @@ var api = new Impromptu( msg , options );</code></pre>
 						
 						<dt>jQuery.prompt.prevState(callback)</dt>
 						<dd>Transitions to the previous state. Callback represents a statechanged event.</dd>
+						
+						<dt>jQuery.prompt.enableStateButtons(stateName, buttons)</dt>
+						<dd>Enable buttons in a state.  stateName defaults to the current state and buttons is an array of button values to enable.  Omit the buttons argument to enable all buttons.</dd>
+						
+						<dt>jQuery.prompt.disableStateButtons(stateName, buttons)</dt>
+						<dd>disable buttons in a state.  stateName defaults to the current state and buttons is an array of button values to disable.  Omit the buttons argument to disable all buttons.</dd>
 						
 						<dt>jQuery.prompt.close()</dt>
 						<dd>Closes the prompt.</dd>

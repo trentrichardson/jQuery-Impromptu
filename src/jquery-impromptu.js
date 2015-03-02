@@ -55,6 +55,7 @@
 		buttons: {
 			Ok: true
 		},
+		buttonTimeout: 1000,
 		loaded: function(e){},
 		submit: function(e,v,m,f){},
 		close: function(e,v,m,f){},
@@ -233,10 +234,19 @@
 			t.jqi.on('click', '.'+ opts.prefix +'buttons button', function(e){
 				var $t = $(this),
 					$state = $t.parents('.'+ opts.prefix +'state'),
-					stateobj = t.options.states[$state.data('jqi-name')],
+					statename = $state.data('jqi-name'),
+					stateobj = t.options.states[statename],
 					msg = $state.children('.'+ opts.prefix +'message'),
 					clicked = stateobj.buttons[$t.text()] || stateobj.buttons[$t.html()],
 					forminputs = {};
+
+				// disable for a moment to prevent multiple clicks
+				if(t.options.buttonTimeout > 0){
+					t.disableStateButtons(statename);
+					setTimeout(function(){
+						t.enableStateButtons(statename);
+					}, t.options.buttonTimeout);
+				}
 
 				// if for some reason we couldn't get the value
 				if(clicked === undefined){
@@ -441,7 +451,7 @@
 			state += '<div class="'+ opts.prefix + 'state" data-jqi-name="'+ statename +'">'+
 						arrow + title +
 						'<div class="'+ opts.prefix +'message '+ opts.classes.message +'">' + showHtml +'</div>'+
-						'<div class="'+ opts.prefix +'buttons'+ ($.isEmptyObject(stateobj.buttons)? 'hide ':' ')+ opts.classes.buttons +'">';
+						'<div class="'+ opts.prefix +'buttons'+ ($.isEmptyObject(stateobj.buttons)? 'hide ':' ') + opts.classes.buttons +'">';
 
 			// state buttons may be in object or array, lets convert objects to arrays
 			if($.isArray(stateobj.buttons)){
@@ -471,7 +481,7 @@
 			
 			state += '</div></div>';
 
-			$state = $(state);
+			$state = $(state).css({display:'none'});
 
 			$state.on('impromptu:submit', stateobj.submit);
 
@@ -571,6 +581,38 @@
 		*/
 		getCurrentStateName: function() {
 			return this.currentStateName;
+		},
+
+		/**
+		* disableStateButtons - Disables the buttons in a state
+		* @param statename String - Name of the state containing buttons
+		* @param buttons Array - Array of button values to disable. By default all are disabled
+		* @param enable Boolean - True to enable the buttons instead of disabling (internally use only)
+		* @return Void
+		*/
+		disableStateButtons: function(statename, buttons, enable) {
+			var t = this;
+
+			if($.isArray(statename)){
+				buttons = statename;
+				statename = null;
+			}
+			
+			t.getState(statename || t.getCurrentStateName()).find('.'+ t.options.prefix + 'button').each(function(i,btn){
+				if(buttons === undefined || $.inArray(btn.value, buttons) !== -1){
+					btn.disabled = !enable;
+				}
+			});
+		},
+
+		/**
+		* enableStateButtons - Enables the buttons in a state
+		* @param statename String - Name of the state containing buttons. Defaults to current state
+		* @param buttons Array - Array of button values to enable. By default all are enabled
+		* @return Void
+		*/
+		enableStateButtons: function(statename, buttons) {
+			this.disableStateButtons(statename, buttons, true);
 		},
 
 		/**
