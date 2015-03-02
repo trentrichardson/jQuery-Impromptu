@@ -186,7 +186,7 @@
 			//build the box and fade
 			var msgbox = '<div class="'+ opts.prefix +'box '+ opts.classes.box +'">';
 			if(opts.useiframe && ($('object, applet').length > 0)) {
-				msgbox += '<iframe src="javascript:false;" style="display:block;position:absolute;z-index:-1;" class="'+ opts.prefix +'fade '+ opts.classes.fade +'"></iframe>';
+				msgbox += '<iframe src="javascript:false;" class="'+ opts.prefix +'fade '+ opts.classes.fade +'"></iframe>';
 			} else {
 				msgbox += '<div class="'+ opts.prefix +'fade '+ opts.classes.fade +'"></div>';
 			}
@@ -438,10 +438,10 @@
 				showHtml = 'Error: html function must return text';
 			}
 
-			state += '<div class="'+ opts.prefix + 'state" data-jqi-name="'+ statename +'" style="display:none;">'+
+			state += '<div class="'+ opts.prefix + 'state" data-jqi-name="'+ statename +'">'+
 						arrow + title +
 						'<div class="'+ opts.prefix +'message '+ opts.classes.message +'">' + showHtml +'</div>'+
-						'<div class="'+ opts.prefix +'buttons '+ opts.classes.buttons +'"'+ ($.isEmptyObject(stateobj.buttons)? 'style="display:none;"':'') +'>';
+						'<div class="'+ opts.prefix +'buttons'+ ($.isEmptyObject(stateobj.buttons)? 'hide ':' ')+ opts.classes.buttons +'">';
 
 			// state buttons may be in object or array, lets convert objects to arrays
 			if($.isArray(stateobj.buttons)){
