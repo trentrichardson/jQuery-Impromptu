@@ -191,7 +191,7 @@
 				msgbox += '<div class="'+ opts.prefix +'fade '+ opts.classes.fade +'"></div>';
 			}
 			msgbox += '<div class="'+ opts.prefix +' '+ opts.classes.prompt +'">'+
-						'<form action="javascript:false;" onsubmit="return false;" class="'+ opts.prefix +'form '+ opts.classes.form +'">'+
+						'<form action="#" class="'+ opts.prefix +'form '+ opts.classes.form +'">'+
 							'<div class="'+ opts.prefix +'close '+ opts.classes.close +'">'+ opts.closeText +'</div>'+
 							'<div class="'+ opts.prefix +'states"></div>'+
 						'</form>'+
@@ -345,6 +345,7 @@
 
 			t.jqif.click(fadeClicked);
 			t.jqi.find('.'+ opts.prefix +'close').click(function(){ t.close(); });
+			t.jqi.find('.'+ opts.prefix +'form').submit(function(){ return false; });
 			t.jqib.on("keydown",keyDownEventHandler)
 						.on('impromptu:loaded', opts.loaded)
 						.on('impromptu:close', opts.close)

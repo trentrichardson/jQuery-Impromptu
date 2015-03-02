@@ -1,6 +1,6 @@
-/*! jQuery-Impromptu - v6.0.0 - 2014-12-27
+/*! jQuery-Impromptu - v6.0.1 - 2014-12-27
 * http://trentrichardson.com/Impromptu
-* Copyright (c) 2014 Trent Richardson; Licensed MIT */
+* Copyright (c) 2015 Trent Richardson; Licensed MIT */
 (function(root, factory) {
 	if (typeof define === 'function' && define.amd) {
 		define(['jquery'], factory);
@@ -194,7 +194,7 @@
 				msgbox += '<div class="'+ opts.prefix +'fade '+ opts.classes.fade +'"></div>';
 			}
 			msgbox += '<div class="'+ opts.prefix +' '+ opts.classes.prompt +'">'+
-						'<form action="javascript:false;" onsubmit="return false;" class="'+ opts.prefix +'form '+ opts.classes.form +'">'+
+						'<form action="#" class="'+ opts.prefix +'form '+ opts.classes.form +'">'+
 							'<div class="'+ opts.prefix +'close '+ opts.classes.close +'">'+ opts.closeText +'</div>'+
 							'<div class="'+ opts.prefix +'states"></div>'+
 						'</form>'+
@@ -348,6 +348,7 @@
 
 			t.jqif.click(fadeClicked);
 			t.jqi.find('.'+ opts.prefix +'close').click(function(){ t.close(); });
+			t.jqi.find('.'+ opts.prefix +'form').submit(function(){ return false; });
 			t.jqib.on("keydown",keyDownEventHandler)
 						.on('impromptu:loaded', opts.loaded)
 						.on('impromptu:close', opts.close)
