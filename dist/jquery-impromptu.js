@@ -433,7 +433,7 @@
 				arrow = '',
 				title = '',
 				opts = t.options,
-				$jqistates = $('.'+ opts.prefix +'states'),
+				$jqistates = t.jqi.find('.'+ opts.prefix +'states'),
 				buttons = [],
 				showHtml,defbtn,k,v,l,i=0;
 
