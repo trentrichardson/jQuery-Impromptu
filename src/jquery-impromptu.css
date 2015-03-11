@@ -76,6 +76,9 @@ div.jqi .jqibuttons button:focus{
 	color: #287ade;
 	outline: none;
 }
+div.jqi .jqibuttons button[disabled]{
+	color: #aaa;
+}
 .jqiwarning .jqi .jqibuttons{ 
 	background-color: #b95656;
 }
