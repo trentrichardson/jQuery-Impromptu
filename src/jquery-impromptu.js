@@ -782,7 +782,8 @@
 
 					$state.slideDown(jqiopts.promptspeed,function(){
 						var $t = $(this);
-
+						t.enableStateButtons();
+						
 						// if focus is a selector, find it, else its button index
 						if(typeof(stateobj.focus) === 'string'){
 							$t.find(stateobj.focus).eq(0).focus();
