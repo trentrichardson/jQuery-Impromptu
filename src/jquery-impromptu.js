@@ -486,7 +486,7 @@
 			$state.on('impromptu:submit', stateobj.submit);
 
 			if(afterState !== undefined){
-				$jqistates.find('[data-jqi-name="'+afterState+'"]').after($state);
+				t.getState(afterState).after($state);
 			}
 			else{
 				$jqistates.append($state);
