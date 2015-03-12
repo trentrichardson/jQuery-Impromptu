@@ -600,6 +600,56 @@ describe('jquery-impromptu', function() {
 			});
 
 			// ====================================================================================
+			describe('$.prompt.disableStateButtons()', function() {
+				it('should disable the buttons in a state', function() {
+					
+					$.prompt(states);
+					
+					$.prompt.disableStateButtons();
+
+					expect($('.jqistate[data-jqi-name="s1"] button[disabled]').length).toBe(1);
+					expect($('.jqistate[data-jqi-name="s2"] button[disabled]').length).toBe(0);
+				});
+
+				it('should disable the buttons in a specific state', function() {
+					
+					$.prompt(states);
+					
+					$.prompt.disableStateButtons('s2');
+
+					expect($('.jqistate[data-jqi-name="s1"] button[disabled]').length).toBe(0);
+					expect($('.jqistate[data-jqi-name="s2"] button[disabled]').length).toBe(1);
+				});
+			});
+
+			// ====================================================================================
+			describe('$.prompt.enbleStateButtons()', function() {
+				it('should enable the buttons in a state', function() {
+					
+					$.prompt(states);
+					
+					$.prompt.disableStateButtons('s1');
+					$.prompt.disableStateButtons('s2');
+					$.prompt.enableStateButtons();
+
+					expect($('.jqistate[data-jqi-name="s1"] button[disabled]').length).toBe(0);
+					expect($('.jqistate[data-jqi-name="s2"] button[disabled]').length).toBe(1);
+				});
+
+				it('should enable the buttons in a specific state', function() {
+					
+					$.prompt(states);
+					
+					$.prompt.disableStateButtons('s1');
+					$.prompt.disableStateButtons('s2');
+					$.prompt.enableStateButtons('s2');
+
+					expect($('.jqistate[data-jqi-name="s1"] button[disabled]').length).toBe(1);
+					expect($('.jqistate[data-jqi-name="s2"] button[disabled]').length).toBe(0);
+				});
+			});
+
+			// ====================================================================================
 			describe('$.prompt.close()', function() {
 				it('should close the prompt', function() {
 					
