@@ -1,6 +1,6 @@
 {
 	"name": "jquery-impromptu",
-	"version": "6.0.1",
+	"version": "6.1.0",
 	"main": [
 		"dist/jquery-impromptu.css",
 		"dist/jquery-impromptu.js"

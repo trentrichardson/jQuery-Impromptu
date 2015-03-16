@@ -2,8 +2,8 @@
 	"name": "jquery-impromptu",
 	"title": "jQuery-Impromptu",
 	"description": "An extension to help provide a more pleasant way to spontaneously prompt a user for input.",
-	"version": "6.0.1",
-	"modified": "2014-12-27",
+	"version": "6.1.0",
+	"modified": "2015-03-15",
 	"homepage": "http://trentrichardson.com/Impromptu",
 	"author": {
 		"name": "Trent Richardson",
