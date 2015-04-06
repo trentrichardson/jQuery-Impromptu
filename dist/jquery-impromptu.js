@@ -1,4 +1,4 @@
-/*! jQuery-Impromptu - v6.1.0 - 2015-03-15
+/*! jQuery-Impromptu - v6.1.1 - 2015-03-15
 * http://trentrichardson.com/Impromptu
 * Copyright (c) 2015 Trent Richardson; Licensed MIT */
 (function(root, factory) {
@@ -632,7 +632,8 @@
 				bodyHeight = document.body.scrollHeight, //$(document.body).outerHeight(true),
 				windowHeight = $(window).height(),
 				documentHeight = $(document).height(),
-				height = bodyHeight > windowHeight ? bodyHeight : windowHeight,
+				scroll = (bodyHeight > windowHeight),
+				height = scroll ? bodyHeight : windowHeight,
 				top = parseInt($window.scrollTop(),10) + (t.options.top.toString().indexOf('%') >= 0?
 						(windowHeight*(parseInt(t.options.top,10)/100)) : parseInt(t.options.top,10));
 
@@ -675,7 +676,9 @@
 						width: (pos.width !== undefined)? pos.width : null
 					});
 					top = (offset.top + pos.y) - (t.options.top.toString().indexOf('%') >= 0? (windowHeight*(parseInt(t.options.top,10)/100)) : parseInt(t.options.top,10));
-					$('html,body').animate({ scrollTop: top }, 'slow', 'swing', function(){});
+					if(scroll){
+						$('html,body').animate({ scrollTop: top }, 'slow', 'swing', function(){});
+					}
 				}
 			}
 			// custom state width animation
