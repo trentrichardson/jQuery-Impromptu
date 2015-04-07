@@ -665,10 +665,10 @@
 			if(pos && pos.container){
 				var offset = $(pos.container).offset(),
 					hasScrolled = false;
-
-				top = (offset.top + pos.y) - (t.options.top.toString().indexOf('%') >= 0? (windowHeight*(parseInt(t.options.top,10)/100)) : parseInt(t.options.top,10));
 					
 				if($.isPlainObject(offset) && offset.top !== undefined){
+					top = (offset.top + pos.y) - (t.options.top.toString().indexOf('%') >= 0? (windowHeight*(parseInt(t.options.top,10)/100)) : parseInt(t.options.top,10));
+
 					t.jqi.css({
 						position: "absolute"
 					});
