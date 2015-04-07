@@ -629,9 +629,9 @@
 				bodyHeight = document.body.scrollHeight, //$(document.body).outerHeight(true),
 				windowHeight = $(window).height(),
 				documentHeight = $(document).height(),
-				scroll = (bodyHeight > windowHeight),
-				height = scroll ? bodyHeight : windowHeight,
-				top = parseInt($window.scrollTop(),10) + (t.options.top.toString().indexOf('%') >= 0?
+				height = (bodyHeight > windowHeight) ? bodyHeight : windowHeight,
+				scrollTop = parseInt($window.scrollTop(),10),
+				top = scrollTop + (t.options.top.toString().indexOf('%') >= 0?
 						(windowHeight*(parseInt(t.options.top,10)/100)) : parseInt(t.options.top,10));
 
 			// when resizing the window turn off animation
@@ -660,8 +660,11 @@
 
 			// tour positioning
 			if(pos && pos.container){
-				var offset = $(pos.container).offset();
+				var offset = $(pos.container).offset(),
+					hasScrolled = false;
 
+				top = (offset.top + pos.y) - (t.options.top.toString().indexOf('%') >= 0? (windowHeight*(parseInt(t.options.top,10)/100)) : parseInt(t.options.top,10));
+					
 				if($.isPlainObject(offset) && offset.top !== undefined){
 					t.jqi.css({
 						position: "absolute"
@@ -671,10 +674,19 @@
 						left: offset.left + pos.x,
 						marginLeft: 0,
 						width: (pos.width !== undefined)? pos.width : null
+					}, function(){
+						// if it didn't scroll before, check that the bottom is within view. Since width 
+						// is animated we must use the callback before we know the height
+						if(!hasScrolled && (offset.top + pos.y + t.jqi.outerHeight(true)) > (scrollTop + windowHeight)){
+							$('html,body').animate({ scrollTop: top }, 'slow', 'swing', function(){});
+							hasScrolled = true;
+						}
 					});
-					top = (offset.top + pos.y) - (t.options.top.toString().indexOf('%') >= 0? (windowHeight*(parseInt(t.options.top,10)/100)) : parseInt(t.options.top,10));
-					if(scroll){
+
+					// scroll if the top is out of the viewing area
+					if(top < scrollTop || top > scrollTop + windowHeight){
 						$('html,body').animate({ scrollTop: top }, 'slow', 'swing', function(){});
+						hasScrolled = true;
 					}
 				}
 			}
