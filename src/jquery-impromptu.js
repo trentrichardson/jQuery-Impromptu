@@ -81,6 +81,7 @@
 		persistent: true,
 		timeout: 0,
 		states: {},
+		initialState: 0,
 		state: {
 			name: null,
 			title: '',
@@ -366,8 +367,10 @@
 			t.jqif[opts.show](opts.overlayspeed);
 			t.jqi[opts.show](opts.promptspeed, function(){
 
-				var $firstState = t.jqi.find('.'+ opts.prefix +'states .'+ opts.prefix +'state').eq(0);
-				t.goToState($firstState.data('jqi-name'));
+				t.goToState(
+					isNaN(opts.initialState) ? opts.initialState : 
+						t.jqi.find('.'+ opts.prefix +'states .'+ opts.prefix +'state').eq(opts.initialState).data('jqi-name')
+				);
 
 				t.jqib.trigger('impromptu:loaded');
 			});

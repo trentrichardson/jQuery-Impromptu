@@ -1,4 +1,4 @@
-/*! jQuery-Impromptu - v6.1.1 - 2015-04-19
+/*! jQuery-Impromptu - v6.1.2 - 2015-04-19
 * http://trentrichardson.com/Impromptu
 * Copyright (c) 2015 Trent Richardson; Licensed MIT */
 (function(root, factory) {
@@ -84,6 +84,7 @@
 		persistent: true,
 		timeout: 0,
 		states: {},
+		initialState: 0,
 		state: {
 			name: null,
 			title: '',
@@ -369,8 +370,10 @@
 			t.jqif[opts.show](opts.overlayspeed);
 			t.jqi[opts.show](opts.promptspeed, function(){
 
-				var $firstState = t.jqi.find('.'+ opts.prefix +'states .'+ opts.prefix +'state').eq(0);
-				t.goToState($firstState.data('jqi-name'));
+				t.goToState(
+					isNaN(opts.initialState) ? opts.initialState : 
+						t.jqi.find('.'+ opts.prefix +'states .'+ opts.prefix +'state').eq(opts.initialState).data('jqi-name')
+				);
 
 				t.jqib.trigger('impromptu:loaded');
 			});
