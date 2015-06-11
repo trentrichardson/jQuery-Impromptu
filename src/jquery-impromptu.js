@@ -433,14 +433,15 @@
 				arrow = '',
 				title = '',
 				opts = t.options,
+				pos = $.isFunction(stateobj.position) ? stateobj.position() : stateobj.position,
 				$jqistates = t.jqi.find('.'+ opts.prefix +'states'),
 				buttons = [],
 				showHtml,defbtn,k,v,l,i=0;
 
 			stateobj = $.extend({},Imp.defaults.state, {name:statename}, stateobj);
 
-			if(stateobj.position.arrow !== null){
-				arrow = '<div class="'+ opts.prefix + 'arrow '+ opts.prefix + 'arrow'+ stateobj.position.arrow +'"></div>';
+			if($.isPlainObject(pos) && pos.arrow !== null){
+				arrow = '<div class="'+ opts.prefix + 'arrow '+ opts.prefix + 'arrow'+ pos.arrow +'"></div>';
 			}
 			if(stateobj.title && stateobj.title !== ''){
 				title = '<div class="lead '+ opts.prefix + 'title '+ opts.classes.title +'">'+  stateobj.title +'</div>';
@@ -627,7 +628,7 @@
 				restoreFx = $.fx.off,
 				$state = t.getCurrentState(),
 				stateObj = t.options.states[$state.data('jqi-name')],
-				pos = stateObj? stateObj.position : undefined,
+				pos = stateObj ? $.isFunction(stateObj.position) ? stateObj.position() : stateObj.position : undefined,
 				$window = $(window),
 				bodyHeight = document.body.scrollHeight, //$(document.body).outerHeight(true),
 				windowHeight = $(window).height(),
