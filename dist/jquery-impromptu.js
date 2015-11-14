@@ -1,4 +1,4 @@
-/*! jQuery-Impromptu - v6.2.2 - 2015-05-10
+/*! jQuery-Impromptu - v6.2.2 - 2015-11-14
 * http://trentrichardson.com/Impromptu
 * Copyright (c) 2015 Trent Richardson; Licensed MIT */
 (function(root, factory) {
