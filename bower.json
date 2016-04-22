@@ -1,5 +1,6 @@
 {
 	"name": "jquery-impromptu",
+	"license": "MIT",
 	"main": [
 		"dist/jquery-impromptu.css",
 		"dist/jquery-impromptu.js"
